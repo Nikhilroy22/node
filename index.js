@@ -19,6 +19,12 @@ app.get('/', (req, res) => {
   res.render('index', { title: 'রিয়েল-টাইম চ্যাট' });
 });
 
+// Catch-all 404 handler (must be last)
+app.use((req, res, next) => {
+  res.status(404).render('404', { url: req.originalUrl });
+});
+
+
 // Socket.IO
 io.on('connection', (socket) => {
   console.log('User Connected');
