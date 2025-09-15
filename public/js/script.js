@@ -1,3 +1,5 @@
+console.log('eruda show');
+
 const socket = io();
 
 const form = document.getElementById('form');
