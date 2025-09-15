@@ -21,7 +21,7 @@ app.get('/', (req, res) => {
 
 // Socket.IO
 io.on('connection', (socket) => {
-  console.log('একজন ইউজার কানেক্টেড');
+  console.log('User Connected');
 
   socket.on('chat message', (msg) => {
     io.emit('chat message', msg);
