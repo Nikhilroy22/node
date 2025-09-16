@@ -3,6 +3,35 @@ const http = require('http');
 const { Server } = require('socket.io');
 const path = require('path');
 
+const initSqlJs = require("sql.js");
+const fs = require("fs");
+
+(async () => {
+  // SQLite লোড করো
+  const SQL = await initSqlJs();
+
+  // ডাটাবেস তৈরি (নতুন)
+  const db = new SQL.Database();
+
+  // টেবিল তৈরি
+  db.run("CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, email TEXT)");
+
+  // ডাটা ইনসার্ট
+  db.run("INSERT INTO users (name, email) VALUES (?, ?)", ["Nikhil", "test@example.com"]);
+  db.run("INSERT INTO users (name, email) VALUES (?, ?)", ["Arif", "arif@example.com"]);
+
+  // ডাটা রিড
+  const stmt = db.prepare("SELECT * FROM users");
+  while (stmt.step()) {
+    const row = stmt.getAsObject();
+    console.log(row); // {id: 1, name: 'Nikhil', email: 'test@example.com'}
+  }
+
+  // ডাটাবেস সেভ করো (binary ফাইলে)
+  const data = db.export();
+  fs.writeFileSync("mydb.sqlite", Buffer.from(data));
+})();
+
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
