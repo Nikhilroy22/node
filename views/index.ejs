@@ -20,22 +20,5 @@
     <button>পাঠান</button>
   </form>
 
-  <button onclick="sendNotification()">🔔 নোটিফিকেশন পাঠাও</button>
-
-    <script>
-      function sendNotification() {
-        if ("Notification" in window) {
-  Notification.requestPermission().then(permission => {
-    if (permission === "granted") {
-      new Notification("🔔 নতুন মেসেজ", {
-        body: "এটি সাধারণ নোটিফিকেশন",
-        icon: "icon.png"
-      });
-    }
-  });
-}
-      }
-    </script>
-  
 </body>
 </html>

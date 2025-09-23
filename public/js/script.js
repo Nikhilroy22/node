@@ -7,12 +7,7 @@ const input = document.getElementById('input');
 const messages = document.getElementById('messages');
 
 
-// 🔔 Notification permission
-if (Notification.permission !== "granted") {
-  console.log("noti");
-  
-  Notification.requestPermission();
-}
+
 
 form.addEventListener('submit', function(e) {
   e.preventDefault();
@@ -29,9 +24,7 @@ socket.on('chat message', function(msg) {
   messages.scrollTop = messages.scrollHeight;
   
   // 🔔 Push Notification দেখানো
-  if (Notification.permission === "granted") {
-    console.log("msgg");
-  }
+  
   
 });
 

@@ -2,35 +2,15 @@ const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
 const path = require('path');
-
-const initSqlJs = require("sql.js");
+const dbModule = require('./db');
 const fs = require("fs");
 
-(async () => {
-  // SQLite লোড করো
-  const SQL = await initSqlJs();
+// ✅ Import External Route
+const webRoutes = require('./routes/webRoutes');
 
-  // ডাটাবেস তৈরি (নতুন)
-  const db = new SQL.Database();
-
-  // টেবিল তৈরি
-  db.run("CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, email TEXT)");
-
-  // ডাটা ইনসার্ট
-  db.run("INSERT INTO users (name, email) VALUES (?, ?)", ["Nikhil", "test@example.com"]);
-  db.run("INSERT INTO users (name, email) VALUES (?, ?)", ["Arif", "arif@example.com"]);
-
-  // ডাটা রিড
-  const stmt = db.prepare("SELECT * FROM users");
-  while (stmt.step()) {
-    const row = stmt.getAsObject();
-    console.log(row); // {id: 1, name: 'Nikhil', email: 'test@example.com'}
-  }
-
-  // ডাটাবেস সেভ করো (binary ফাইলে)
-  const data = db.export();
-  fs.writeFileSync("mydb.sqlite", Buffer.from(data));
-})();
+dbModule.example()
+  .then(() => console.log('database'))
+  .catch(console.error);
 
 const app = express();
 const server = http.createServer(app);
@@ -40,19 +20,11 @@ const io = new Server(server);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Static ফাইলের জন্য
+// Static ফাইল
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Routes
-app.get('/', (req, res) => {
-  res.render('index', { title: 'রিয়েল-টাইম চ্যাট' });
-});
-
-// Catch-all 404 handler (must be last)
-app.use((req, res, next) => {
-  res.status(404).render('404', { url: req.originalUrl });
-});
-
+// ✅ Use external routes
+app.use('/', webRoutes);
 
 // Socket.IO
 io.on('connection', (socket) => {
