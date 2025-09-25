@@ -1,24 +1,51 @@
 const express = require('express');
+
 const http = require('http');
 const { Server } = require('socket.io');
 const path = require('path');
-const dbModule = require('./db');
+
 const fs = require("fs");
 
+const session = require('express-session');
+const flash = require('connect-flash');
+const FileStore = require('session-file-store')(session);
 // ✅ Import External Route
 const webRoutes = require('./routes/webRoutes');
-
-dbModule.example()
-  .then(() => console.log('database'))
-  .catch(console.error);
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
+
+// Session + Flash config
+app.use(session({
+  store: new FileStore({
+    path: './sessions',           // ✅ session data এই ফোল্ডারে সংরক্ষণ হবে
+    secret: 'keyboard cat',       // optional
+    retries: 1                    // read/write fail হলে retry করবে
+  }),
+  secret: 'secret123',
+  resave: false,
+  saveUninitialized: true
+}));
+app.use(flash());
+
+// Make flash variables available to all views
+app.use((req, res, next) => {
+  const flashErrors = req.flash('errorss');
+  res.locals.errors = flashErrors.length > 0 ? flashErrors[0] : {};
+  res.locals.oldInput = req.flash('oldInput')[0] || {};
+  next();
+});
+
+
 // EJS সেট করা
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+
+// Middleware
+app.use(express.urlencoded({ extended: true })); // form data
+app.use(express.json()); // JSON data
 
 // Static ফাইল
 app.use(express.static(path.join(__dirname, 'public')));
@@ -26,19 +53,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 // ✅ Use external routes
 app.use('/', webRoutes);
 
-// Socket.IO
-io.on('connection', (socket) => {
-  console.log('User Connected');
-
-  socket.on('chat message', (msg) => {
-    io.emit('chat message', msg);
-  });
-
-  socket.on('disconnect', () => {
-    console.log('ইউজার ডিসকানেক্ট');
-  });
+// 500 Error Handler (যদি কোডে কোনো সমস্যা হয়)
+app.use((err, req, res, next) => {
+  console.error('Internal Error:', err.stack);
+  res.status(500).render('500');
 });
 
+//Server Start
 server.listen(3000, () => {
   console.log('Server চলছে: http://localhost:3000');
 });

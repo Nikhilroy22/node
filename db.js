@@ -2,42 +2,42 @@
 const initSqlJs = require('sql.js');
 const fs = require('fs');
 
-async function loadDatabase(path) {
-  const SQL = await initSqlJs();
+const DB_PATH = 'mydb.sqlite';
 
-  let db;
-  if (fs.existsSync(path)) {
-    const filebuffer = fs.readFileSync(path);
-    db = new SQL.Database(filebuffer);
-  } else {
-    db = new SQL.Database(); // নতুন ইন-মেমোরি ডাটাবেস
-  }
+async function loadDb() {
+  const SQL = await initSqlJs();
+  const fileBuffer = fs.existsSync(DB_PATH) ? fs.readFileSync(DB_PATH) : null;
+  const db = fileBuffer ? new SQL.Database(fileBuffer) : new SQL.Database();
+
+  // Table তৈরি (যদি না থাকে)
+  db.run(`
+    CREATE TABLE IF NOT EXISTS users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL
+    );
+  `);
+
   return db;
 }
 
-async function saveDatabase(db, path) {
+async function getUsers() {
+  const db = await loadDb();
+  const result = db.exec("SELECT * FROM users;");
+  const columns = result[0]?.columns || [];
+  const rows = result[0]?.values || [];
+
+  return rows.map(row =>
+    Object.fromEntries(columns.map((col, i) => [col, row[i]]))
+  );
+}
+
+async function createUser(name) {
+  const db = await loadDb();
+  db.run("INSERT INTO users (name) VALUES (?);", [name]);
+
+  // Save DB to file
   const data = db.export();
-  fs.writeFileSync(path, Buffer.from(data));
+  fs.writeFileSync(DB_PATH, Buffer.from(data));
 }
 
-async function example() {
-  const db = await loadDatabase('mydb.sqlite');
-
-  // টেবিল তৈরি (যদি না থাকে)
-  db.run(`CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL
-  );`);
-
-  // ইনসার্ট ডাটা
-  db.run("INSERT INTO users (name) VALUES (?);", ["Alice"]);
-
-  // সিলেক্ট করুন
-  const res = db.exec("SELECT * FROM users;");
-  console.log('Users:', JSON.stringify(res, null, 2));
-
-  // সেভ করুন
-  await saveDatabase(db, 'mydb.sqlite');
-}
-
-module.exports = { loadDatabase, saveDatabase, example };
+module.exports = { getUsers, createUser };

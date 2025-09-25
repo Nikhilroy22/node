@@ -1,15 +1,50 @@
 // routes/webRoutes.js
 const express = require('express');
 const router = express.Router();
+const { getUsers, createUser } = require('../db');
+const authController = require('../controller/LoginController');
+const authMiddleware = require('../middleware/authMiddleware');
+
 
 // Home page
 router.get('/', (req, res) => {
-  res.render('index', { title: 'রিয়েল-টাইম চ্যাট' });
+  if (!req.session.user) {
+    return res.redirect('/login');
+  }
+  res.render('index', { title: 'HOME PAGE',
+  user: req.session.user});
 });
+
+
+
+// GET /login
+router.get('/login',authMiddleware, authController.showLogin);
+
+// POST /login
+router.post('/login',authMiddleware, authController.loginUser);
+
+// Logout
+router.get('/logout', (req, res) => {
+  req.session.destroy(err => {
+    if (err) {
+      console.error('Logout error:', err);
+      return res.status(500).send('সেশন মুছতে সমস্যা হয়েছে');
+    }
+
+    // Cookie ও মুছে ফেলতে চাইলে:
+    res.clearCookie('connect.sid');
+
+    // লগআউটের পর রিডাইরেক্ট করো
+    res.redirect('/login');
+  });
+});
+
+
 
 // 404 fallback (মনে রাখবেন: এটাকে সব শেষে রাখতে হবে)
 router.use((req, res) => {
   res.status(404).render('404', { url: req.originalUrl });
 });
+
 
 module.exports = router;
