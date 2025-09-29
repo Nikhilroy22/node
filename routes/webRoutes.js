@@ -13,8 +13,8 @@ const authMiddleware = require('../middleware/authMiddleware');
 //Middleware
 router.get('/demo', async(req, res) => {
   const kk = await getUsers()
- console.log(req.headers);
-  res.send(req.headers);
+ //console.log(req.headers);
+  res.send(kk);
 });
 
 router.get('/game', (req, res) => {
@@ -32,9 +32,12 @@ router.get('/login',authMiddleware, authController.showLogin);
 
 // POST /login
 router.post('/login',authMiddleware, authController.loginUser);
+
 // Get /Sign Up
-router.get('/signup', SignUpController.SignUp);
+router.get('/signup', authMiddleware, SignUpController.SignUp);
+
 // Post /Sign Up
+router.post('/signup', authMiddleware, SignUpController.SignUpPost);
 
 
 // Logout

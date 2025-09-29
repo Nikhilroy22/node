@@ -3,39 +3,40 @@
 <div class="login-container">
         
         <div class="login-right">
-            <form class="login-form" id="loginForm">
+            <form class="login-form" id="loginForrm" method="post" action="/signup">
                 <h2 class="form-title">Sign Up</h2>
                 
                 <div class="form-group">
                     <label for="username">Username</label>
                     <div class="input-container">
-                        <input type="text" id="username" placeholder="Username" >
+                        <input type="text" id="username" name="user" placeholder="Username" >
                         <span class="icon">👤</span>
                     </div>
-                    <div class="error" id="usernameError">ব্যবহারকারীর নাম প্রয়োজন</div>
+                    <% if (errors.user) { %>
+  <div class="error"><%= errors.user %></div>
+  <% } %>
                 </div>
                 
                 <div class="form-group">
                     <label for="password">Password</label>
                     <div class="input-container">
-                        <input type="password" id="password" placeholder="Password" >
+                        <input type="password" name="pass" id="password" placeholder="Password" >
                         <button type="button" class="password-toggle" id="togglePassword">👁️</button>
                     </div>
-                    <div class="error" id="passwordError">পাসওয়ার্ড প্রয়োজন</div>
+                    <% if (errors.pass) { %>
+      <div class="error">
+        
+        <%= errors.pass %>
+      </div>
+      
+    <% } %>
                 </div>
                 
-                <div class="options">
-                    <div class="remember">
-                        <input type="checkbox" id="remember">
-                        <label for="remember">আমাকে মনে রাখুন</label>
-                    </div>
-                    <a href="#" class="forgot-password">পাসওয়ার্ড ভুলে গেছেন?</a>
-                </div>
                 
-                <button type="submit" class="btn">Login</button>
+                <button type="submit" class="btn">Sign Up</button>
                 
                 <div class="signup-link">
-                    অ্যাকাউন্ট নেই? <a href="#">এখানে রেজিস্টার করুন</a>
+                    Already Account <a href="/login">Login</a>
                 </div>
             </form>
         </div>

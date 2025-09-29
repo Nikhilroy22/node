@@ -47,13 +47,17 @@
     },
     "flash": {}
   },
-  "Iq8FSpTVD_ykOunvaShF4oBptiyiFtyN": {
+  "RvuJ07SfpMpNKu2gBKmnAglci7sfL_J9": {
     "cookie": {
       "originalMaxAge": null,
       "expires": null,
       "httpOnly": true,
       "path": "/"
     },
-    "flash": {}
+    "flash": {},
+    "user": {
+      "id": 6,
+      "username": "Kala"
+    }
   }
 }

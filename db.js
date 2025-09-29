@@ -13,10 +13,12 @@ async function loadDb() {
   db.run(`
     CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL
+      username TEXT NOT NULL,
+      password TEXT NOT NULL
     );
   `);
-
+// 👉 যদি ফাইল না থাকে, তাহলে নতুন ফাইল সেভ করে দেবে
+ 
   return db;
 }
 
@@ -31,13 +33,19 @@ async function getUsers() {
   );
 }
 
-async function createUser(name) {
+async function createUser(username, password) {
   const db = await loadDb();
-  db.run("INSERT INTO users (name) VALUES (?);", [name]);
+  db.run("INSERT INTO users (username, password) VALUES (?, ?);", [username, password]);
+
+  
+  const result = db.exec("SELECT last_insert_rowid() as id;");
+  const id = result[0].values[0][0];
 
   // Save DB to file
   const data = db.export();
   fs.writeFileSync(DB_PATH, Buffer.from(data));
+  
+  return { id, username };
 }
 
 module.exports = { getUsers, createUser };

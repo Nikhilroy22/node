@@ -1,4 +1,4 @@
- document.addEventListener('DOMContentLoaded', function() {
+/* document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('loginForm');
             const togglePassword = document.getElementById('togglePassword');
             const passwordInput = document.getElementById('password');
@@ -79,4 +79,4 @@
                     hideError(this, document.getElementById('passwordError'));
                 }
             });
-        });
+        }); */
