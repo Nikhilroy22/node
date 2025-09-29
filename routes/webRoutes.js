@@ -2,18 +2,28 @@
 const express = require('express');
 const router = express.Router();
 const { getUsers, createUser } = require('../db');
+
+//Controller
 const authController = require('../controller/LoginController');
+const SignUpController = require('../controller/SignupController')
+const Home = require('../controller/HomeController');
+
 const authMiddleware = require('../middleware/authMiddleware');
 
+//Middleware
+router.get('/demo', async(req, res) => {
+  const kk = await getUsers()
+ console.log(req.headers);
+  res.send(req.headers);
+});
+
+router.get('/game', (req, res) => {
+  
+  res.render('game')
+});
 
 // Home page
-router.get('/', (req, res) => {
-  if (!req.session.user) {
-    return res.redirect('/login');
-  }
-  res.render('index', { title: 'HOME PAGE',
-  user: req.session.user});
-});
+router.get('/', Home.HomePage);
 
 
 
@@ -22,6 +32,10 @@ router.get('/login',authMiddleware, authController.showLogin);
 
 // POST /login
 router.post('/login',authMiddleware, authController.loginUser);
+// Get /Sign Up
+router.get('/signup', SignUpController.SignUp);
+// Post /Sign Up
+
 
 // Logout
 router.get('/logout', (req, res) => {

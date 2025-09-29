@@ -3,6 +3,7 @@ const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
 const path = require('path');
+const JSONFileStore = require('./jsonFileStore'); // যদি আলাদা ফাইল করো
 
 const fs = require("fs");
 
@@ -19,19 +20,16 @@ const io = new Server(server);
 
 // Session + Flash config
 app.use(session({
-  store: new FileStore({
-    path: './sessions',           // ✅ session data এই ফোল্ডারে সংরক্ষণ হবে
-    secret: 'keyboard cat',       // optional
-    retries: 1                    // read/write fail হলে retry করবে
-  }),
+  store: new JSONFileStore({ filePath: './sessions.json' }),
   secret: 'secret123',
   resave: false,
-  saveUninitialized: true
+  saveUninitialized: false
 }));
 app.use(flash());
 
 // Make flash variables available to all views
 app.use((req, res, next) => {
+  res.locals.dev = 'devv';
   const flashErrors = req.flash('errorss');
   res.locals.errors = flashErrors.length > 0 ? flashErrors[0] : {};
   res.locals.oldInput = req.flash('oldInput')[0] || {};
@@ -55,7 +53,7 @@ app.use('/', webRoutes);
 
 // 500 Error Handler (যদি কোডে কোনো সমস্যা হয়)
 app.use((err, req, res, next) => {
-  console.error('Internal Error:', err.stack);
+  //console.error('Internal Error:', err.stack);
   res.status(500).render('500');
 });
 
