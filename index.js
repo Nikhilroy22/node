@@ -1,9 +1,11 @@
 const express = require('express');
 
 const http = require('http');
-const { Server } = require('socket.io');
 const path = require('path');
 const JSONFileStore = require('./jsonFileStore'); // যদি আলাদা ফাইল করো
+
+const { Server } = require('socket.io');
+const socketHandler = require('./socketHandler'); // import
 
 const fs = require("fs");
 
@@ -18,13 +20,15 @@ const server = http.createServer(app);
 const io = new Server(server);
 
 
+
 // Session + Flash config
-app.use(session({
+const sessionMiddleware = session({
   store: new JSONFileStore({ filePath: './sessions.json' }),
   secret: 'secret123',
   resave: false,
   saveUninitialized: false
-}));
+})
+app.use(sessionMiddleware);
 app.use(flash());
 
 // Make flash variables available to all views
@@ -33,6 +37,7 @@ app.use((req, res, next) => {
   const flashErrors = req.flash('errorss');
   res.locals.errors = flashErrors.length > 0 ? flashErrors[0] : {};
   res.locals.oldInput = req.flash('oldInput')[0] || {};
+  //ccc = "Janu";
   next();
 });
 
@@ -57,7 +62,11 @@ app.use((err, req, res, next) => {
   res.status(500).render('500');
 });
 
+
+// Socket.IO handler আলাদা ফাইল থেকে কল
+socketHandler(io, sessionMiddleware);
+
 //Server Start
 server.listen(3000, () => {
-  console.log('Server চলছে: http://localhost:3000');
+  console.log('Server  http://localhost:3000');
 });

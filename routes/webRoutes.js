@@ -10,6 +10,10 @@ const Home = require('../controller/HomeController');
 
 const authMiddleware = require('../middleware/authMiddleware');
 
+
+
+
+
 //Middleware
 router.get('/demo', async(req, res) => {
   const kk = await getUsers()

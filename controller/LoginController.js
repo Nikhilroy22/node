@@ -1,34 +1,34 @@
+const { getUsers, createUser } = require('../db');
+
 // Dummy user data
-const users = [
+/*const users = [
   { user: 'admin', pass: '12345' },
   { user: 'alice', pass: 'alicepass' },
 ];
-
+*/
 // GET /login
 exports.showLogin = (req, res) => {
   res.render('login');
 };
 
 // POST /login
-exports.loginUser = (req, res) => {
+exports.loginUser = async (req, res) => {
   const { user, pass } = req.body;
+  const users = await getUsers();
   const errors = {};
 
   // ফাঁকা ইনপুট চেক
-  if (!user || user.trim() === '') {
-    errors.user = 'নাম ফিল্ড খালি রাখা যাবে না';
-  }
-  if (!pass || pass.trim() === '') {
-    errors.pass = 'পাসওয়ার্ড ফিল্ড খালি রাখা যাবে না';
-  }
+  if (!user || user.trim() === '') errors.user = 'নাম ফিল্ড খালি রাখা যাবে না';
+  if (!pass || pass.trim() === '') errors.pass = 'পাসওয়ার্ড ফিল্ড খালি রাখা যাবে না';
 
-  // শুধু তখনই ইউজার চেক করবো, যদি উপরের validation পাস করে
+  // ইউজার চেক
+  let foundUser = null;
   if (Object.keys(errors).length === 0) {
-    const foundUser = users.find(u => u.user === user);
+    foundUser = users.find(u => u.username === user);
 
     if (!foundUser) {
       errors.user = 'এই নামে কোনো অ্যাকাউন্ট পাওয়া যায়নি';
-    } else if (foundUser.pass !== pass) {
+    } else if (foundUser.password !== pass) {
       errors.pass = 'পাসওয়ার্ড সঠিক নয়';
     }
   }
@@ -39,9 +39,12 @@ exports.loginUser = (req, res) => {
     req.flash('oldInput', req.body);
     return res.redirect('/login');
   }
-req.session.user = "nikhil";
-  // সফল লগইন
-  //res.send('লগইন সফল');
-res.redirect('/');
-  
+
+  // Session এ user সংরক্ষণ
+  req.session.user = {
+    id: foundUser.id,
+    username: foundUser.username
+  };
+
+  res.redirect('/');
 };
