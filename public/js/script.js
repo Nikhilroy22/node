@@ -1,6 +1,4 @@
-/* document.addEventListener('DOMContentLoaded', function() {
-            const form = document.getElementById('loginForm');
-            const togglePassword = document.getElementById('togglePassword');
+const togglePassword = document.getElementById('togglePassword');
             const passwordInput = document.getElementById('password');
             
             // Toggle password visibility
@@ -9,6 +7,17 @@
                 passwordInput.setAttribute('type', type);
                 this.textContent = type === 'password' ? '👁️' : '🔒';
             });
+
+
+
+
+
+
+
+
+/* document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('loginForm');
+            
             
             // Form validation
             form.addEventListener('submit', function(e) {

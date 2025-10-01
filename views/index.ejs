@@ -1,6 +1,13 @@
 
 
 <%- include('header') %>
+<style>
+  
+  
+</style>
+
+<div class="home-container">
+  
 <h1>Wellcome, <%= user.username %></h1>
 
 <p>আপনি সফলভাবে লগইন করেছেন।</p>
@@ -9,8 +16,9 @@
 
 <input id="msg">
 <button onclick="sendMsg()">Send</button>
-<ul id="messages"></ul>
+<h1 id="messages"></h1>
 
+</div>
 
-<ul id="userList"></ul>
+<h1 id="userList"></h1>
 <%- include('footer') %>

@@ -16,7 +16,7 @@
 
     socket.on('chat message', msg => {
         const li = document.createElement('li');
-        li.textContent = msg;
+        li.textContent = msg.user;
         document.getElementById('messages').appendChild(li);
     });
     
