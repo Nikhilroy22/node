@@ -21,9 +21,9 @@ router.get('/demo', async(req, res) => {
   res.send(kk);
 });
 
-router.get('/game', (req, res) => {
+router.get('/crash', (req, res) => {
   
-  res.render('game')
+  res.render('crash')
 });
 
 // Home page

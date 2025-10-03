@@ -16,8 +16,12 @@
 
     socket.on('chat message', msg => {
         const li = document.createElement('li');
-        li.textContent = msg.user;
+        li.style.color = "red";
+        li.textContent = msg.text;
         document.getElementById('messages').appendChild(li);
+        setTimeout(() => {
+  li.style.color = "green";
+}, 5000);
     });
     
     
