@@ -10,22 +10,31 @@ module.exports = (io, sessionMiddleware) => {
     const req = socket.request;
     if (!req.session.user) {
       console.log("❌ Unauthorized socket connection");
-      return next(new Error("Authentication required"));
+      socket.login = "Not";
+      //return next(new Error("Authentication required"));
+      return next();
+      
     }
+    
     socket.username = req.session.user.username;
     console.log("✅ User connected:", socket.username);
-    next();
+   // console.log(req.session)
+    
+  return  next();
   });
 
   const activeUsers = new Map();
 
   io.on("connection", (socket) => {
     activeUsers.set(socket.id, socket.username);
+    console.log(socket.login);
     io.emit("activeUsers", Array.from(activeUsers.values()));
 
     socket.on("chat message", (msg) => {
       io.emit("chat message", { user: socket.username, text: msg });
     });
+    
+    
 
     socket.on("placeBet", (data) => {
       if (!gameState.isRunning) {
@@ -39,7 +48,7 @@ module.exports = (io, sessionMiddleware) => {
 
       const player = {
         id: socket.id,
-        name: data.name || socket.username,
+        name: socket.username || "nikhil",
         amount: parseFloat(data.amount),
         betTime: new Date(),
         cashOutMultiplier: null,
@@ -79,7 +88,7 @@ module.exports = (io, sessionMiddleware) => {
     socket.on("disconnect", () => {
       activeUsers.delete(socket.id);
       io.emit("activeUsers", Array.from(activeUsers.values()));
-      console.log("❌ User disconnected:", socket.username);
+      console.log("❌ User disconnected:", socket.username || "null");
     });
   });
 

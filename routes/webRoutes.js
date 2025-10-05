@@ -23,7 +23,7 @@ router.get('/demo', async(req, res) => {
 
 router.get('/crash', (req, res) => {
   
-  res.render('crash')
+  res.render('crash', {user: req.session.user})
 });
 
 // Home page

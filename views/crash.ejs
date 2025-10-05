@@ -14,28 +14,11 @@
             <p>Bet Smart, Cash Out Big, Win Professional</p>
         </div>
 
-        <!-- Stats Bar -->
-        <div class="stats-bar">
-            <div class="stat-card">
-                <div class="stat-value" id="gameId">1</div>
-                <div class="stat-label">Current Game</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="totalPlayers">0</div>
-                <div class="stat-label">Active Players</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="totalBets">৳0</div>
-                <div class="stat-label">Total Bets</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="highestMultiplier">1.00x</div>
-                <div class="stat-label">Current Multiplier</div>
-            </div>
-        </div>
+        
 
-        <!-- Message Display -->
-        <div id="message" class="message"></div>
+        
+        <!-- Toast Container -->
+<div id="toastContainer"></div>
 
         <!-- Main Game Layout -->
         <div class="game-layout">
@@ -68,21 +51,19 @@
                     
                     <div class="bet-form">
                         <div class="form-group">
-                            <label for="playerName">PLAYER NAME</label>
-                            <input type="text" id="playerName" placeholder="Enter your name" value="ProPlayer">
-                        </div>
-                        
-                        <div class="form-group">
                             <label for="betAmount">BET AMOUNT (৳)</label>
                             <input type="number" id="betAmount" placeholder="Min: ৳10" min="10" value="100">
-                            <div class="quick-bets" id="quickBets">
-                                <!-- Quick bets will be inserted here by JavaScript -->
-                            </div>
+                
+                <!-- Quick bets will be inserted here by JavaScript -->
+                    <!--        <div class="quick-bets" id="quickBets">
+                                
+                            </div> -->
+                            
                         </div>
                         
                         <div class="btn-group">
                             <button class="btn btn-bet" id="placeBetBtn">PLACE BET</button>
-                            <button class="btn btn-cashout" id="cashOutBtn" disabled>CASH OUT</button>
+                        <!--    <button class="btn btn-cashout" id="cashOutBtn" disabled>CASH OUT</button> -->
                         </div>
                     </div>
                 </div>
@@ -123,8 +104,35 @@
                         </div>
                     </div>
                 </div>
+                
+                
+            </div>
+            
+        </div>
+        
+        
+        
+        
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="stat-value" id="gameId">1</div>
+                <div class="stat-label">Current Game</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalPlayers">0</div>
+                <div class="stat-label">Active Players</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalBets">৳0</div>
+                <div class="stat-label">Total Bets</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="highestMultiplier">1.00x</div>
+                <div class="stat-label">Current Multiplier</div>
             </div>
         </div>
+        
     </div>
 <script src="/js/eruda.js"></script>
   <script>

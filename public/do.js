@@ -1,38 +1,38 @@
 const socket = io();
 
-//console.log(kk[5]);
-
 let currentMultiplier = 1.00;
 let hasPlacedBet = false;
 let gameRunning = false;
 let userBalance = 10000;
-
-
-let pendingBet = null;
+let autoCashoutValue = null;
 
 // DOM elements
 const elements = {
     multiplier: document.getElementById('multiplier'),
     status: document.getElementById('status'),
     betAmount: document.getElementById('betAmount'),
-   
+    playerName: document.getElementById('playerName'),
     placeBetBtn: document.getElementById('placeBetBtn'),
-    
+    cashOutBtn: document.getElementById('cashOutBtn'),
     playersList: document.getElementById('playersList'),
     historyList: document.getElementById('historyList'),
-    
+    message: document.getElementById('message'),
     balance: document.getElementById('balance'),
     gameId: document.getElementById('gameId'),
     totalPlayers: document.getElementById('totalPlayers'),
     totalBets: document.getElementById('totalBets'),
-    highestMultiplier: document.getElementById('highestMultiplier')
+    highestMultiplier: document.getElementById('highestMultiplier'),
+    autoCashoutInput: document.getElementById('autoCashout'),
+    setAutoCashoutBtn: document.getElementById('setAutoCashoutBtn'),
+    currentAutoCashout: document.getElementById('currentAutoCashout')
 };
 
 // Quick bet buttons
 const quickBets = [10, 50, 100, 500, 1000, 5000];
+const autoCashoutPresets = [2, 5, 10, 20, 30, 50];
 
 // Initialize quick bets
-/*function initializeQuickBets() {
+function initializeQuickBets() {
     const quickBetsContainer = document.getElementById('quickBets');
     quickBets.forEach(amount => {
         const button = document.createElement('div');
@@ -43,11 +43,34 @@ const quickBets = [10, 50, 100, 500, 1000, 5000];
         });
         quickBetsContainer.appendChild(button);
     });
-}*/
+    
+    const autoCashoutContainer = document.getElementById('autoCashoutPresets');
+    autoCashoutPresets.forEach(multiplier => {
+        const button = document.createElement('div');
+        button.className = 'quick-bet';
+        button.textContent = multiplier + 'x';
+        button.addEventListener('click', () => {
+            elements.autoCashoutInput.value = multiplier;
+            setAutoCashout();
+        });
+        autoCashoutContainer.appendChild(button);
+    });
+}
 
 // Update balance display
 function updateBalance() {
     elements.balance.textContent = '৳' + userBalance.toLocaleString();
+}
+
+// Set auto cashout
+function setAutoCashout() {
+    const multiplier = parseFloat(elements.autoCashoutInput.value);
+    if (multiplier && multiplier > 1) {
+        autoCashoutValue = multiplier;
+        socket.emit('setAutoCashout', { multiplier: multiplier });
+        elements.currentAutoCashout.textContent = multiplier + 'x';
+        showMessage(`Auto cashout set at ${multiplier}x`, 'info');
+    }
 }
 
 // Game update handler
@@ -55,9 +78,10 @@ socket.on('gameUpdate', (data) => {
     gameRunning = true;
     currentMultiplier = data.multiplier;
     
-    elements.multiplier.textContent = currentMultiplier.toFixed(2) + 'xb';
+    elements.multiplier.textContent = currentMultiplier.toFixed(2) + 'x';
     elements.multiplier.className = 'multiplier rising';
     
+    // Multiplier color based on value
     if (currentMultiplier < 2) {
         elements.multiplier.style.color = 'var(--danger)';
     } else if (currentMultiplier < 10) {
@@ -73,21 +97,21 @@ socket.on('gameUpdate', (data) => {
     
     updatePlayersList(data.players);
     updateStats(data.players);
+    
+    // Auto cashout warning
+    if (autoCashoutValue && currentMultiplier >= autoCashoutValue * 0.8) {
+        elements.status.textContent = `Auto cashout soon! (${autoCashoutValue}x)`;
+        elements.status.style.color = 'var(--warning)';
+    }
 });
 
 socket.on('gameStart', (data) => {
     gameRunning = true;
-    //hasPlacedBet = false;
+    hasPlacedBet = false;
+    autoCashoutValue = null;
+    elements.currentAutoCashout.textContent = 'None';
     
-    if (pendingBet) {
-    
-    socket.emit('placeBet',{ amount: pendingBet});
-    
-    console.log("geci")
-    pendingBet = null; // Reset pending
-}
-    
-    elements.multiplier.textContent = '2.00x';
+    elements.multiplier.textContent = '1.00x';
     elements.multiplier.className = 'multiplier';
     elements.multiplier.style.color = 'var(--text)';
     
@@ -96,7 +120,7 @@ socket.on('gameStart', (data) => {
     
     elements.gameId.textContent = data.gameId;
     
-    showToast(`Game #${data.gameId} has started! Most games crash below 50x.`, 'info');
+    showMessage(`Game #${data.gameId} has started! Most games crash below 50x.`, 'info');
     resetBettingUI();
 });
 
@@ -107,17 +131,23 @@ socket.on('gameCrash', (data) => {
     elements.multiplier.className = 'multiplier crashed';
     
     let statusMessage = `Crashed at ${data.crashPoint.toFixed(2)}x!`;
-    if (data.crashPoint < 10) statusMessage += " (Low)";
-    else if (data.crashPoint < 30) statusMessage += " (Medium)";
-    else if (data.crashPoint < 50) statusMessage += " (High)";
-    else statusMessage += " (RARE!)";
+    if (data.crashPoint < 10) {
+        statusMessage += " (Low)";
+    } else if (data.crashPoint < 30) {
+        statusMessage += " (Medium)";
+    } else if (data.crashPoint < 50) {
+        statusMessage += " (High)";
+    } else {
+        statusMessage += " (RARE!)";
+    }
     
     elements.status.textContent = statusMessage;
     elements.status.style.color = 'var(--danger)';
     
-    showToast(`Game crashed at ${data.crashPoint.toFixed(2)}x!`, 'error');
+    showMessage(`Game crashed at ${data.crashPoint.toFixed(2)}x!`, 'error');
     updateHistory(data.history);
     
+    // 🕒 15 সেকেন্ড কাউন্টডাউন
     let countdown = 15;
     const countdownInterval = setInterval(() => {
         if (countdown > 0) {
@@ -129,44 +159,65 @@ socket.on('gameCrash', (data) => {
         }
     }, 1000);
     
+    
     setTimeout(() => {
-        elements.playersList.innerHTML = '<div class="player-item"><div class="player-info"><div class="player-avatar">?</div><span>No active players nj</span></div></div>';
+        elements.playersList.innerHTML = '<div class="player-item"><div class="player-info"><div class="player-avatar">?</div><span>No active players</span></div></div>';
     }, 3000);
 });
 
-
-//show tast msg
 socket.on('betSuccess', (data) => {
     hasPlacedBet = true;
     userBalance -= parseFloat(elements.betAmount.value);
     updateBalance();
     
-    showToast(`Bet placed! ${elements.betAmount.value} টাকা`,'success');
-    //showMessage(`Bet placed! ${elements.betAmount.value} টাকা`, 'success');
+    let message = `Bet placed! ${elements.betAmount.value} টাকা`;
+    if (data.autoCashout) {
+        message += ` | Auto cashout: ${data.autoCashout}x`;
+    }
+    
+    showMessage(message, 'success');
     updateBettingUI();
 });
 
-
-//cashout success
 socket.on('cashOutSuccess', (data) => {
     const winAmount = parseFloat(data.amount);
     userBalance += winAmount;
     updateBalance();
-    showToast(`Success! You won ৳${winAmount.toLocaleString()}! (${data.multiplier}x)`, 'success');
+    showMessage(`Success! You won ৳${winAmount.toLocaleString()}! (${data.multiplier}x)`, 'success');
     hasPlacedBet = false;
+    autoCashoutValue = null;
+    elements.currentAutoCashout.textContent = 'None';
     updateBettingUI();
 });
 
+socket.on('autoCashoutTriggered', (data) => {
+    const winAmount = parseFloat(data.amount);
+    userBalance += winAmount;
+    updateBalance();
+    showMessage(`Auto cashout! Won ৳${winAmount.toLocaleString()} at ${data.multiplier}x!`, 'success');
+    hasPlacedBet = false;
+    autoCashoutValue = null;
+    elements.currentAutoCashout.textContent = 'None';
+    updateBettingUI();
+});
+
+socket.on('autoCashoutSet', (data) => {
+    showMessage(`Auto cashout set at ${data.multiplier}x`, 'info');
+});
+
 socket.on('playerJoined', (data) => {
-    showToast(`${data.player.name} placed a bet of ৳${data.player.amount}!`, 'info');
+    showMessage(`${data.player.name} placed a bet of ৳${data.player.amount}!`, 'info');
 });
 
 socket.on('playerCashedOut', (data) => {
-    showToast(`${data.player.name} won ৳${data.winAmount.toLocaleString()}!`, 'success');
+    const message = data.auto ? 
+        `🤖 ${data.player.name} auto-cashed out ৳${data.winAmount.toLocaleString()}!` :
+        `🎉 ${data.player.name} won ৳${data.winAmount.toLocaleString()}!`;
+    showMessage(message, 'success');
 });
 
 socket.on('error', (data) => {
-    showToast(data.message, 'error');
+    showMessage(data.message, 'error');
 });
 
 socket.on('gameState', (data) => {
@@ -185,51 +236,10 @@ socket.on('gameState', (data) => {
     }
 });
 
-// Place Bet
+// Enhanced placeBet function
 function placeBet() {
     const amount = parseFloat(elements.betAmount.value);
-    
-    // যদি game চলছে → Pending রাখো
-    if (gameRunning) {
-      
-       if (hasPlacedBet) {
-      socket.emit('cashOut');
-      return;
-       }else if (pendingBet) {
-    
-    updateBettingUI();
-    pendingBet = null; // Reset pending
-    return;
-
-      
-    }else{
-      showToast('running Please wait...', 'error');
-        pendingBet = amount;
-       // showMessage('Game running... your bet will be placed next round!', 'info');
-        elements.placeBetBtn.textContent = 'Cancel';
-       // elements.placeBetBtn.disabled = true;
-       
-       console.log(pendingBet);
-        return;
-  }  }else if (!gameRunning) {
-    if (pendingBet) {
-    
-    updateBettingUI();
-    pendingBet = null; // Reset pending
-    return;
-
-      
-    }else{
-        showToast('not running beting pending', 'error');
-        pendingBet = amount;
-        elements.placeBetBtn.textContent = 'Cancel';
-        return;}
-    }
-    
-    
-    
-   
-    
+    const name = elements.playerName.value || 'Anonymous';
     
     if (!amount || amount < 10) {
         showMessage('Minimum bet amount is ৳10!', 'error');
@@ -241,43 +251,52 @@ function placeBet() {
         return;
     }
     
-    
-    
-    //socket.emit('placeBet', { amount: amount});
-}
-
-
-
-
-// UI update
-function updateBettingUI() {
-  
-  
-  
-
-  
-    if (hasPlacedBet) {
-        elements.placeBetBtn.disabled = false;
-        elements.placeBetBtn.textContent = 'Cash Out';
-        elements.placeBetBtn.className = 'btn btn-cashout';
-        
-    } else {
-      //  elements.placeBetBtn.disabled = !gameRunning || userBalance < 10;
-        elements.placeBetBtn.textContent = 'PLACE BET';
-        elements.placeBetBtn.className = 'btn btn-bet';
-        
-          elements.placeBetBtn.disabled = false;
+    if (!gameRunning) {
+        showMessage('Game not running! Please wait...', 'error');
+        return;
     }
     
-  //  elements.betAmount.disabled = hasPlacedBet || !gameRunning;
-   // elements.playerName.disabled = hasPlacedBet || !gameRunning;
+    socket.emit('placeBet', {
+        amount: amount,
+        name: name,
+        autoCashout: autoCashoutValue
+    });
+}
+
+// Enhanced cashOut function
+function cashOut() {
+    if (!hasPlacedBet) {
+        showMessage('You haven\'t placed a bet!', 'error');
+        return;
+    }
+    
+    socket.emit('cashOut');
+}
+
+// Enhanced UI update functions
+function updateBettingUI() {
+    if (hasPlacedBet) {
+        elements.placeBetBtn.disabled = true;
+        elements.placeBetBtn.textContent = 'BET PLACED';
+        elements.cashOutBtn.disabled = false;
+        elements.setAutoCashoutBtn.disabled = true;
+    } else {
+        elements.placeBetBtn.disabled = !gameRunning || userBalance < 10;
+        elements.placeBetBtn.textContent = 'PLACE BET';
+        elements.cashOutBtn.disabled = true;
+        elements.setAutoCashoutBtn.disabled = !gameRunning;
+    }
+    
+    elements.betAmount.disabled = hasPlacedBet || !gameRunning;
+    elements.playerName.disabled = hasPlacedBet || !gameRunning;
+    elements.autoCashoutInput.disabled = hasPlacedBet || !gameRunning;
 }
 
 function resetBettingUI() {
     hasPlacedBet = false;
     updateBettingUI();
 }
-// active player
+
 function updatePlayersList(players) {
     elements.playersList.innerHTML = '';
     
@@ -286,7 +305,7 @@ function updatePlayersList(players) {
             <div class="player-item">
                 <div class="player-info">
                     <div class="player-avatar">?</div>
-                    <span>No active players nj</span>
+                    <span>No active players</span>
                 </div>
             </div>
         `;
@@ -296,6 +315,7 @@ function updatePlayersList(players) {
     players.forEach(player => {
         const playerItem = document.createElement('div');
         playerItem.className = 'player-item';
+        
         const avatarText = player.name.charAt(0).toUpperCase();
         let status = 'Playing';
         let amountInfo = `৳${player.amount}`;
@@ -312,7 +332,9 @@ function updatePlayersList(players) {
                 <div class="player-avatar">${avatarText}</div>
                 <div>
                     <div>${player.name}</div>
-                    <div style="font-size: 0.8em; color: var(--text-secondary);">${status}</div>
+                    <div style="font-size: 0.8em; color: var(--text-secondary);">
+                        ${status} ${player.autoCashout ? `| Auto: ${player.autoCashout}x` : ''}
+                    </div>
                 </div>
             </div>
             <div class="player-stats">
@@ -330,16 +352,22 @@ function updateHistory(history) {
     
     history.forEach(game => {
         const historyItem = document.createElement('div');
+        
         let className = 'history-item ';
         if (game.crashPoint < 2) className += 'low';
         else if (game.crashPoint < 5) className += 'medium';
         else if (game.crashPoint < 10) className += 'high';
         else if (game.crashPoint < 30) className += 'very-high';
         else className += 'mega';
+        
         historyItem.className = className;
         
         const date = new Date(game.timestamp);
-        const time = date.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
+        const time = date.toLocaleTimeString('en-US', { 
+            hour12: false,
+            hour: '2-digit',
+            minute: '2-digit'
+        });
         
         historyItem.innerHTML = `
             <div class="history-multiplier">${game.crashPoint.toFixed(2)}x</div>
@@ -354,15 +382,27 @@ function updateHistory(history) {
 function updateStats(players) {
     elements.totalPlayers.textContent = players.length;
     elements.totalBets.textContent = '৳' + players.reduce((sum, player) => sum + player.amount, 0).toLocaleString();
+    
     const activePlayers = players.filter(p => !p.hasCashedOut);
     if (activePlayers.length > 0) {
         elements.highestMultiplier.textContent = currentMultiplier.toFixed(2) + 'x';
     }
 }
 
+function showMessage(message, type) {
+    elements.message.textContent = message;
+    elements.message.className = `message ${type}`;
+    
+    setTimeout(() => {
+        elements.message.textContent = '';
+        elements.message.className = 'message';
+    }, 5000);
+}
+
 // Event listeners
 elements.placeBetBtn.addEventListener('click', placeBet);
-
+elements.cashOutBtn.addEventListener('click', cashOut);
+elements.setAutoCashoutBtn.addEventListener('click', setAutoCashout);
 
 // Keyboard shortcuts
 document.addEventListener('keydown', (e) => {
@@ -371,10 +411,23 @@ document.addEventListener('keydown', (e) => {
         cashOut();
     }
     
+    // Quick bet number keys (1-6)
     if (e.code >= 'Digit1' && e.code <= 'Digit6' && !e.ctrlKey && !e.altKey) {
         e.preventDefault();
         const index = parseInt(e.code.replace('Digit', '')) - 1;
-        if (quickBets[index]) elements.betAmount.value = quickBets[index];
+        if (quickBets[index]) {
+            elements.betAmount.value = quickBets[index];
+        }
+    }
+    
+    // Auto cashout presets (7-0)
+    if (e.code >= 'Digit7' && e.code <= 'Digit0' && !e.ctrlKey && !e.altKey) {
+        e.preventDefault();
+        const index = parseInt(e.code.replace('Digit', '')) - 7;
+        if (autoCashoutPresets[index]) {
+            elements.autoCashoutInput.value = autoCashoutPresets[index];
+            setAutoCashout();
+        }
     }
 });
 
@@ -383,29 +436,6 @@ elements.betAmount.focus();
 
 // Initialize
 socket.emit('getGameState');
-//initializeQuickBets();
+initializeQuickBets();
 updateBalance();
 updateBettingUI();
-
-
-
-
-function showToast(message, type = 'info') {
-  const container = document.getElementById('toastContainer');
-  const toast = document.createElement('div');
-  toast.className = `toast ${type}`;
-  toast.textContent = message;
-  
-  container.appendChild(toast);
-
-  // Auto remove after 5s
-  setTimeout(() => {
-    toast.remove();
-  }, 25000);
-}
-
-
-//showToast('Bet placed! ৳100', 'success');
-//showToast('Insufficient balance!', 'error');
-//showToast('Waiting for next round...', 'info');
-//showToast('Minimum bet is ৳10!', 'warning');

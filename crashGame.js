@@ -115,7 +115,7 @@ function endGame(io) {
     });
 
     gameState.gameId++;
-    setTimeout(() => startGame(io), 5000);
+    setTimeout(() => startGame(io), 15000);
 }
 
 module.exports = { gameState, startGame };

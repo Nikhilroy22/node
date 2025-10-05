@@ -1,5 +1,5 @@
 {
-  "LbwFmBZ5nDOC-_M4oTYHZmAGXZ3433f0": {
+  "QpahIBXVYy-5aKtD6bcXeiKeVkz8k5aR": {
     "cookie": {
       "originalMaxAge": null,
       "expires": null,
@@ -7,9 +7,12 @@
       "path": "/"
     },
     "flash": {},
-    "user": "nikhil"
+    "user": {
+      "id": 1,
+      "username": "Kala"
+    }
   },
-  "5-PfG38Rf52xR-GLzw099NgNYKSNXpYJ": {
+  "5gRoD6JY-wN6KR8LIAva5ZnrNkMoiPzU": {
     "cookie": {
       "originalMaxAge": null,
       "expires": null,
@@ -18,27 +21,7 @@
     },
     "flash": {}
   },
-  "VBJZmiHMNV7WQNLYyo-4a46-Q9O3j6uL": {
-    "cookie": {
-      "originalMaxAge": null,
-      "expires": null,
-      "httpOnly": true,
-      "path": "/"
-    },
-    "flash": {},
-    "user": "nikhil"
-  },
-  "uKaE48HTxnVO2Jy_5DvmmWMWZuLbGsrU": {
-    "cookie": {
-      "originalMaxAge": null,
-      "expires": null,
-      "httpOnly": true,
-      "path": "/"
-    },
-    "flash": {},
-    "user": "nikhil"
-  },
-  "mwq8ZdOHJb1SqLmEhw1HAlS_STzM0Xmr": {
+  "WrbcOmtEVBcyyMz0MuiBnwxc8crXyDLX": {
     "cookie": {
       "originalMaxAge": null,
       "expires": null,
@@ -46,184 +29,5 @@
       "path": "/"
     },
     "flash": {}
-  },
-  "6b9hfkKt30_9InmumiVJhchk55-PF9eo": {
-    "cookie": {
-      "originalMaxAge": null,
-      "expires": null,
-      "httpOnly": true,
-      "path": "/"
-    },
-    "flash": {},
-    "user": {
-      "id": 8,
-      "username": "Pakhi"
-    }
-  },
-  "LCu7xXp0U-bgaRFxaNbsOclVnWcDTK3O": {
-    "cookie": {
-      "originalMaxAge": null,
-      "expires": null,
-      "httpOnly": true,
-      "path": "/"
-    },
-    "flash": {},
-    "user": {
-      "id": 8,
-      "username": "Pakhi"
-    }
-  },
-  "vYn9A9sShm_xMQOE2OF01fVuHrcOtZSa": {
-    "cookie": {
-      "originalMaxAge": null,
-      "expires": null,
-      "httpOnly": true,
-      "path": "/"
-    },
-    "flash": {},
-    "user": {
-      "id": 8,
-      "username": "Pakhi"
-    }
-  },
-  "jRA0AUCM1ZFWyxG4fVoSC1zEaOIUGcoJ": {
-    "cookie": {
-      "originalMaxAge": null,
-      "expires": null,
-      "httpOnly": true,
-      "path": "/"
-    },
-    "flash": {}
-  },
-  "9GYSi9RzBgM5mFIR2IwHawJ_eB3tfSZw": {
-    "cookie": {
-      "originalMaxAge": null,
-      "expires": null,
-      "httpOnly": true,
-      "path": "/"
-    },
-    "flash": {},
-    "user": {
-      "id": 8,
-      "username": "Pakhi"
-    }
-  },
-  "2tBDBtl_4tXbSV53-oWLk1e5p_7NubcI": {
-    "cookie": {
-      "originalMaxAge": null,
-      "expires": null,
-      "httpOnly": true,
-      "path": "/"
-    },
-    "flash": {},
-    "user": {
-      "id": 10,
-      "username": "Mon"
-    }
-  },
-  "ACvV0xXYkJU_2UHjzC28SFNO16C81z8b": {
-    "cookie": {
-      "originalMaxAge": null,
-      "expires": null,
-      "httpOnly": true,
-      "path": "/"
-    },
-    "flash": {},
-    "user": {
-      "id": 8,
-      "username": "Pakhi"
-    }
-  },
-  "oYLYYadCwi91XFMAkVRRsQuxICm84aUt": {
-    "cookie": {
-      "originalMaxAge": null,
-      "expires": null,
-      "httpOnly": true,
-      "path": "/"
-    },
-    "flash": {},
-    "user": {
-      "id": 10,
-      "username": "Mon"
-    }
-  },
-  "BaP-5nxypuCJt3ftWMmtj5Pg14URbRRu": {
-    "cookie": {
-      "originalMaxAge": null,
-      "expires": null,
-      "httpOnly": true,
-      "path": "/"
-    },
-    "flash": {}
-  },
-  "gTpovlgZXLV2FUS5w3QPjJDBpeZYv00i": {
-    "cookie": {
-      "originalMaxAge": null,
-      "expires": null,
-      "httpOnly": true,
-      "path": "/"
-    },
-    "flash": {},
-    "user": {
-      "id": 11,
-      "username": "Pakhi"
-    }
-  },
-  "YhwqLHmKUvGxDUQvGX2g_wJ_TVflXxLn": {
-    "cookie": {
-      "originalMaxAge": null,
-      "expires": null,
-      "httpOnly": true,
-      "path": "/"
-    },
-    "flash": {},
-    "user": {
-      "id": 10,
-      "username": "Mon"
-    }
-  },
-  "W2OYXzZQteUIHPv3mKJEaM2-6wsRfPln": {
-    "cookie": {
-      "originalMaxAge": null,
-      "expires": null,
-      "httpOnly": true,
-      "path": "/"
-    },
-    "flash": {}
-  },
-  "9csJRQgO1Yhy0ToAzN03J_0drMBYw-Kw": {
-    "cookie": {
-      "originalMaxAge": null,
-      "expires": null,
-      "httpOnly": true,
-      "path": "/"
-    },
-    "flash": {},
-    "user": {
-      "id": 8,
-      "username": "Pakhi"
-    }
-  },
-  "AxGRY9x3_iaeQhzXrqXqMZ-F9f39q7_w": {
-    "cookie": {
-      "originalMaxAge": null,
-      "expires": null,
-      "httpOnly": true,
-      "path": "/"
-    },
-    "flash": {}
-  },
-  "z1I-sWp_s9j5L5A2ZEcloyGl5DnyvkZp": {
-    "cookie": {
-      "originalMaxAge": null,
-      "expires": null,
-      "httpOnly": true,
-      "path": "/"
-    },
-    "flash": {},
-    "user": {
-      "id": 8,
-      "username": "Pakhi"
-    }
   }
 }
