@@ -8,6 +8,9 @@ let gameState = {
     history: [],
     gameId: 1
 };
+let countdownTime = 15; // পরের গেম শুরু হওয়ার countdown
+let countdownInterval = null;
+
 
 // 🎯 Crash Point Generator
 function generateCrashPoint() {
@@ -71,7 +74,7 @@ function startGame(io) {
 
         const elapsedTime = (Date.now() - gameStartTime) / 1000;
         gameState.currentMultiplier = Math.min(
-            parseFloat((1 + (elapsedTime * 0.08)).toFixed(2)),
+            parseFloat((1 + (elapsedTime * 0.32)).toFixed(2)),
             gameState.crashPoint
         );
 
@@ -114,8 +117,33 @@ function endGame(io) {
         history: gameState.history.slice(0, 10)
     });
 
-    gameState.gameId++;
-    setTimeout(() => startGame(io), 15000);
+   // gameState.gameId++;
+    //setTimeout(() => startGame(io), 15000);
+    
+    // ✅ Countdown শুরু
+    startCountdown(io);
 }
+
+
+// ⏳ Countdown function
+function startCountdown(io) {
+    countdownTime = 15; // countdown reset
+    io.emit('countdown', countdownTime);
+
+    clearInterval(countdownInterval);
+    countdownInterval = setInterval(() => {
+        countdownTime--;
+
+        if (countdownTime >= 0) {
+            io.emit('countdown', countdownTime); // সব client কে পাঠাও
+        } else {
+            clearInterval(countdownInterval);
+            //io.emit('countdownEnd'); // Countdown শেষ
+            gameState.gameId++;       // নতুন gameId
+            startGame(io);            // নতুন গেম শুরু
+        }
+    }, 1000);
+}
+
 
 module.exports = { gameState, startGame };

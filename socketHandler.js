@@ -1,6 +1,8 @@
 // socketHandler.js
 const { gameState, startGame } = require('./crashGame');
 
+const { getUserById, updateAmount } = require('./db');
+
 module.exports = (io, sessionMiddleware) => {
   io.use((socket, next) => {
     sessionMiddleware(socket.request, {}, next);
@@ -17,6 +19,7 @@ module.exports = (io, sessionMiddleware) => {
     }
     
     socket.username = req.session.user.username;
+    socket.sessionid = req.session.user.id;
     console.log("✅ User connected:", socket.username);
    // console.log(req.session)
     
@@ -25,7 +28,11 @@ module.exports = (io, sessionMiddleware) => {
 
   const activeUsers = new Map();
 
-  io.on("connection", (socket) => {
+
+
+// Game Code
+
+  io.on("connection", async (socket) => {
     activeUsers.set(socket.id, socket.username);
     console.log(socket.login);
     io.emit("activeUsers", Array.from(activeUsers.values()));
@@ -34,9 +41,23 @@ module.exports = (io, sessionMiddleware) => {
       io.emit("chat message", { user: socket.username, text: msg });
     });
     
+  //  Live Balance
+ await livebalance(socket);
     
 
-    socket.on("placeBet", (data) => {
+    socket.on("placeBet", async (data) => {
+      
+      if(socket.sessionid){
+        const user = await getUserById(socket.sessionid);
+  
+  const newtk = user.Amount - parseFloat(data.amount);
+  
+ await updateAmount(user.id, newtk);
+        
+        
+      }
+      
+      
       if (!gameState.isRunning) {
         return socket.emit('error', { message: 'গেম চলমান নেই!' });
       }
@@ -61,9 +82,11 @@ module.exports = (io, sessionMiddleware) => {
 
       io.emit('playerJoined', { player, totalPlayers: gameState.players.length });
       socket.emit('betSuccess', { message: `বেট সফল! ${player.amount} টাকা` });
+      
+      await livebalance(socket);
     });
 
-    socket.on("cashOut", () => {
+    socket.on("cashOut", async () => {
       const player = gameState.players.find(p => p.id === socket.id);
       if (!player || player.hasCashedOut) return;
 
@@ -73,6 +96,9 @@ module.exports = (io, sessionMiddleware) => {
 
       socket.emit('cashOutSuccess', { amount: winAmount, multiplier: gameState.currentMultiplier });
       io.emit('playerCashedOut', { player, winAmount, multiplier: gameState.currentMultiplier });
+      
+      
+      await livebalance(socket);
     });
 
     socket.on("getGameState", () => {
@@ -94,4 +120,25 @@ module.exports = (io, sessionMiddleware) => {
 
   // প্রথম গেম শুরু
   setTimeout(() => startGame(io), 1000);
+  
+  
+  
+  
+  
 };
+
+  //LIVE BALAMCE
+  async function livebalance(socket){
+    
+    if(socket.sessionid){
+    const userb = await  getUserById(socket.sessionid);
+    
+    socket.emit("taka", {tk: userb.Amount});
+    }else{
+      
+     socket.emit("taka", {tk: "Not Login"}); 
+      
+    }
+    
+    
+  }

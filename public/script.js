@@ -1,6 +1,6 @@
 const socket = io();
-
-//console.log(kk[5]);
+const rand = Math.random();
+//console.log(rand);
 
 let currentMultiplier = 1.00;
 let hasPlacedBet = false;
@@ -32,7 +32,7 @@ const elements = {
 const quickBets = [10, 50, 100, 500, 1000, 5000];
 
 // Initialize quick bets
-/*function initializeQuickBets() {
+function initializeQuickBets() {
     const quickBetsContainer = document.getElementById('quickBets');
     quickBets.forEach(amount => {
         const button = document.createElement('div');
@@ -43,12 +43,18 @@ const quickBets = [10, 50, 100, 500, 1000, 5000];
         });
         quickBetsContainer.appendChild(button);
     });
-}*/
-
+}
+//initializeQuickBets();
 // Update balance display
 function updateBalance() {
     elements.balance.textContent = '৳' + userBalance.toLocaleString();
 }
+
+socket.on("taka",(data) => {
+console.log(data.tk);
+
+});
+
 
 // Game update handler
 socket.on('gameUpdate', (data) => {
@@ -102,6 +108,8 @@ socket.on('gameStart', (data) => {
 
 socket.on('gameCrash', (data) => {
     gameRunning = false;
+    hasPlacedBet = false;
+    
     
     elements.multiplier.textContent = data.crashPoint.toFixed(2) + 'x';
     elements.multiplier.className = 'multiplier crashed';
@@ -118,7 +126,19 @@ socket.on('gameCrash', (data) => {
     showToast(`Game crashed at ${data.crashPoint.toFixed(2)}x!`, 'error');
     updateHistory(data.history);
     
-    let countdown = 15;
+    
+     if(!pendingBet){
+      
+      //elements.placeBetBtn.textContent = 'PLACE BET';
+       // elements.placeBetBtn.className = 'btn btn-bet';
+        updateBettingUI();        // UI refresh
+      
+
+    }
+    
+    
+    
+ /*   let countdown = 15;
     const countdownInterval = setInterval(() => {
         if (countdown > 0) {
             elements.status.textContent = `Next game starts in ${countdown}s...`;
@@ -127,7 +147,7 @@ socket.on('gameCrash', (data) => {
         } else {
             clearInterval(countdownInterval);
         }
-    }, 1000);
+    }, 1000); */
     
     setTimeout(() => {
         elements.playersList.innerHTML = '<div class="player-item"><div class="player-info"><div class="player-avatar">?</div><span>No active players nj</span></div></div>';
@@ -207,6 +227,7 @@ function placeBet() {
         pendingBet = amount;
        // showMessage('Game running... your bet will be placed next round!', 'info');
         elements.placeBetBtn.textContent = 'Cancel';
+        elements.placeBetBtn.className = 'btn btn-cashout';
        // elements.placeBetBtn.disabled = true;
        
        console.log(pendingBet);
@@ -214,8 +235,8 @@ function placeBet() {
   }  }else if (!gameRunning) {
     if (pendingBet) {
     
-    updateBettingUI();
     pendingBet = null; // Reset pending
+    updateBettingUI();
     return;
 
       
@@ -223,6 +244,7 @@ function placeBet() {
         showToast('not running beting pending', 'error');
         pendingBet = amount;
         elements.placeBetBtn.textContent = 'Cancel';
+        elements.placeBetBtn.className = 'btn btn-cashout';
         return;}
     }
     
@@ -259,9 +281,9 @@ function updateBettingUI() {
     if (hasPlacedBet) {
         elements.placeBetBtn.disabled = false;
         elements.placeBetBtn.textContent = 'Cash Out';
-        elements.placeBetBtn.className = 'btn btn-cashout';
+          elements.placeBetBtn.className = 'btn btn-cashout';
         
-    } else {
+    }else{
       //  elements.placeBetBtn.disabled = !gameRunning || userBalance < 10;
         elements.placeBetBtn.textContent = 'PLACE BET';
         elements.placeBetBtn.className = 'btn btn-bet';
@@ -409,3 +431,16 @@ function showToast(message, type = 'info') {
 //showToast('Insufficient balance!', 'error');
 //showToast('Waiting for next round...', 'info');
 //showToast('Minimum bet is ৳10!', 'warning');
+
+
+//countdown Interval
+
+socket.on('countdown', (time) => {
+    elements.status.textContent = `পরের গেম শুরু হবে ${time} সেকেন্ড পরে...`;
+    elements.status.style.color = 'var(--warning)';
+});
+
+socket.on('countdownEnd', () => {
+    elements.status.textContent = 'নতুন গেম শুরু হচ্ছে!';
+    elements.status.style.color = 'var(--accent)';
+});

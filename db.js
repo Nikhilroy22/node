@@ -48,6 +48,33 @@ fs.writeFileSync(DB_PATH, Buffer.from(data));
 return { id, username };
 }
 
-module.exports = { getUsers, createUser };
+
+async function updateAmount(id, newAmount) {
+  const db = await loadDb();
+
+  // Amount আপডেট করা
+  db.run("UPDATE users SET Amount = ? WHERE id = ?;", [newAmount, id]);
+
+  // ফাইল সেভ করা (কারণ sql.js ইন-মেমরি কাজ করে)
+  const data = db.export();
+  fs.writeFileSync(DB_PATH, Buffer.from(data));
+
+ // return { username, newAmount };
+}
+
+
+async function getUserById(id) {
+  const db = await loadDb();
+  const stmt = db.prepare(`SELECT * FROM users WHERE id = ?`);
+  stmt.bind([id]);
+  const result = stmt.step() ? stmt.getAsObject() : null;
+  stmt.free();
+  
+  const data = db.export();
+  fs.writeFileSync(DB_PATH, Buffer.from(data));
+  return result;
+}
+
+module.exports = { getUsers, createUser, updateAmount, getUserById };
 
 

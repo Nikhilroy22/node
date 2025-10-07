@@ -57,10 +57,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', webRoutes);
 
 // 500 Error Handler (যদি কোডে কোনো সমস্যা হয়)
-app.use((err, req, res, next) => {
+//app.use((err, req, res, next) => {
   //console.error('Internal Error:', err.stack);
-  res.status(500).render('500');
-});
+//  res.status(500).render('500');
+//});
 
 
 // Socket.IO handler আলাদা ফাইল থেকে কল
