@@ -51,8 +51,8 @@ function updateBalance() {
 }
 
 socket.on("taka",(data) => {
-console.log(data.tk);
-
+//console.log(data.tk);
+document.getElementById('taka').textContent  = '৳' + data.tk;
 });
 
 

@@ -53,7 +53,7 @@ module.exports = (io, sessionMiddleware) => {
   const newtk = user.Amount - parseFloat(data.amount);
   
  await updateAmount(user.id, newtk);
-        
+        await livebalance(socket);
         
       }
       
@@ -79,14 +79,21 @@ module.exports = (io, sessionMiddleware) => {
 
       gameState.players.push(player);
       console.log(`💰 Bet placed: ${player.name} - ${player.amount} টাকা`);
+console.log(gameState.players);
+
 
       io.emit('playerJoined', { player, totalPlayers: gameState.players.length });
       socket.emit('betSuccess', { message: `বেট সফল! ${player.amount} টাকা` });
       
-      await livebalance(socket);
+      
     });
 
     socket.on("cashOut", async () => {
+      
+      
+      
+      
+      
       const player = gameState.players.find(p => p.id === socket.id);
       if (!player || player.hasCashedOut) return;
 
@@ -94,11 +101,23 @@ module.exports = (io, sessionMiddleware) => {
       player.hasCashedOut = true;
       const winAmount = parseFloat((player.amount * gameState.currentMultiplier).toFixed(2));
 
+if(socket.sessionid){
+        const user = await getUserById(socket.sessionid);
+       
+  const newtk = user.Amount + parseFloat((player.amount * gameState.currentMultiplier).toFixed(2));;
+  
+ await updateAmount(user.id, newtk);
+        await livebalance(socket);
+        
+      }
+
+
+
       socket.emit('cashOutSuccess', { amount: winAmount, multiplier: gameState.currentMultiplier });
       io.emit('playerCashedOut', { player, winAmount, multiplier: gameState.currentMultiplier });
       
       
-      await livebalance(socket);
+      //await livebalance(socket);
     });
 
     socket.on("getGameState", () => {
@@ -133,7 +152,7 @@ module.exports = (io, sessionMiddleware) => {
     if(socket.sessionid){
     const userb = await  getUserById(socket.sessionid);
     
-    socket.emit("taka", {tk: userb.Amount});
+    socket.emit("taka", {tk: userb.Amount.toFixed(2)});
     }else{
       
      socket.emit("taka", {tk: "Not Login"}); 

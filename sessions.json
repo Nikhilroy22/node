@@ -110,5 +110,36 @@
       "path": "/"
     },
     "flash": {}
+  },
+  "BXMvyHK0wLqzzc_CpoiYhm-1PU4BDHJs": {
+    "cookie": {
+      "originalMaxAge": null,
+      "expires": null,
+      "httpOnly": true,
+      "path": "/"
+    },
+    "flash": {}
+  },
+  "C1KIzd-C3Jr5a8MbrpqASgUuZMrrp-S1": {
+    "cookie": {
+      "originalMaxAge": null,
+      "expires": null,
+      "httpOnly": true,
+      "path": "/"
+    },
+    "flash": {},
+    "user": {
+      "id": 2,
+      "username": "Puja"
+    }
+  },
+  "XRrKVSOGDz9l2wsfE42i2oAVhhR1_ED0": {
+    "cookie": {
+      "originalMaxAge": null,
+      "expires": null,
+      "httpOnly": true,
+      "path": "/"
+    },
+    "flash": {}
   }
 }
