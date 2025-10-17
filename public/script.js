@@ -9,6 +9,11 @@ let userBalance = 10000;
 
 
 let pendingBet = null;
+//let pendingBet = null;
+
+//const spinSound = new Audio('sound/background.mp3');
+
+
 
 // DOM elements
 const elements = {
@@ -83,6 +88,7 @@ socket.on('gameUpdate', (data) => {
 
 socket.on('gameStart', (data) => {
     gameRunning = true;
+    
     //hasPlacedBet = false;
     
     if (pendingBet) {
@@ -109,6 +115,8 @@ socket.on('gameStart', (data) => {
 socket.on('gameCrash', (data) => {
     gameRunning = false;
     hasPlacedBet = false;
+    
+    playSound('sound/plane-crash.mp3');
     
     
     elements.multiplier.textContent = data.crashPoint.toFixed(2) + 'x';
@@ -169,6 +177,8 @@ socket.on('betSuccess', (data) => {
 
 //cashout success
 socket.on('cashOutSuccess', (data) => {
+  playSound('sound/cashout.mp3');
+  
     const winAmount = parseFloat(data.amount);
     userBalance += winAmount;
     updateBalance();
@@ -208,7 +218,7 @@ socket.on('gameState', (data) => {
 // Place Bet
 function placeBet() {
     const amount = parseFloat(elements.betAmount.value);
-    
+    //playSound('sound/background.mp3');
     // যদি game চলছে → Pending রাখো
     if (gameRunning) {
       
@@ -444,3 +454,6 @@ socket.on('countdownEnd', () => {
     elements.status.textContent = 'নতুন গেম শুরু হচ্ছে!';
     elements.status.style.color = 'var(--accent)';
 });
+
+
+
