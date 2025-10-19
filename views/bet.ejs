@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Live Odds - BetSlip Modal</title>
+  <style>
+    body { background:#111; color:#fff; font-family:sans-serif; padding:20px; }
+    .match { background:#222; padding:10px; margin:10px 0; border-radius:8px; }
+    .team { display:flex; justify-content:space-between; margin:5px 0; }
+    .btn { background:#007bff; color:#fff; border:none; border-radius:5px; padding:5px 10px; cursor:pointer; }
+    .btn:hover { background:#0056b3; }
+    .blink { animation: blink 0.3s linear; }
+    @keyframes blink { from{background:yellow;color:black;} to{background:transparent;color:white;} }
+    .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); justify-content:center; align-items:center; }
+    .modal-content { background:#222; padding:20px; border-radius:10px; text-align:center; width:300px; }
+    .close { float:right; cursor:pointer; color:red; }
+  </style>
+</head>
+<body>
+  <h2>⚡ Live Odds (1xBet)</h2>
+  <div id="matches">Loading...</div>
+
+  <!-- Bet Slip Modal -->
+  <div class="modal" id="betModal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <h3 id="matchTitle"></h3>
+      <p>Team: <b id="teamName"></b></p>
+      <p>Odds: <span id="teamOdds"></span></p>
+      <button class="btn">Place Bet</button>
+    </div>
+  </div>
+  
+  <script src="/js/eruda.js"></script>
+  <script>
+    eruda.init(); // Console চালু হবে
+  </script>
+
+<script>
+let liveMatches = {};
+let selectedBet = null;
+
+async function fetchOdds() {
+  try {
+    const res = await fetch("/res");
+    const data = await res.json();
+    const matches = data?.Value || [];
+    const container = document.getElementById("matches");
+    container.innerHTML = "";
+
+    matches.forEach(m => {
+      const id = m.I;
+      const teamA = m.O1E;
+      const teamB = m.O2E;
+      const oddsA = m.E?.[0]?.C || 1.0;
+      const oddsB = m.E?.[1]?.C || 1.0;
+
+      liveMatches[id] = { teamA, teamB, oddsA, oddsB };
+
+      const div = document.createElement("div");
+      div.className = "match";
+      div.innerHTML = `
+        <h4>${teamA} vs ${teamB}</h4>
+        <div class="team">
+          <span>${teamA}</span>
+          <button class="btn" onclick="openModal('${id}','A')">${oddsA}</button>
+        </div>
+        <div class="team">
+          <span>${teamB}</span>
+          <button class="btn" onclick="openModal('${id}','B')">${oddsB}</button>
+        </div>
+      `;
+      container.appendChild(div);
+    });
+
+    updateModalOdds();
+  } catch(err) {
+    console.error(err);
+  }
+  setTimeout(fetchOdds, 3000);
+}
+
+function openModal(matchId, team) {
+  const match = liveMatches[matchId];
+  selectedBet = { matchId, team };
+  document.getElementById("matchTitle").innerText = `${match.teamA} vs ${match.teamB}`;
+  document.getElementById("teamName").innerText = team === 'A' ? match.teamA : match.teamB;
+  document.getElementById("teamOdds").innerText = team === 'A' ? match.oddsA : match.oddsB;
+  document.getElementById("betModal").style.display = "flex";
+}
+
+function closeModal() {
+  document.getElementById("betModal").style.display = "none";
+  selectedBet = null;
+}
+
+function updateModalOdds() {
+  if(!selectedBet) return;
+  const bet = liveMatches[selectedBet.matchId];
+  if(!bet) return;
+
+  const oddsEl = document.getElementById("teamOdds");
+  const newOdds = selectedBet.team === "A" ? bet.oddsA : bet.oddsB;
+
+  if(oddsEl.innerText != newOdds) {
+    oddsEl.innerText = newOdds;
+    oddsEl.classList.add("blink");
+    setTimeout(() => oddsEl.classList.remove("blink"), 500);
+  }
+}
+
+fetchOdds();
+</script>
+</body>
+</html>

@@ -15,6 +15,10 @@
       "httpOnly": true,
       "path": "/"
     },
-    "flash": {}
+    "flash": {},
+    "user": {
+      "id": 1,
+      "username": "Pakhi"
+    }
   }
 }

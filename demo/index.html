@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demo Casino Game</title>
+ 
+ <style>
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background: #111;
+}
+
+.iframe-container {
+  position: fixed;  /* fixed covers full viewport */
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 999;
+}
+
+.iframe-container iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+</style>
+ 
+</head>
+<body>
+<div class="iframe-container">
+  <iframe id="gameFrame" src="" allowfullscreen></iframe>
+</div>
+
+
+
+  <script>
+    const gameFrame = document.getElementById('gameFrame');
+
+    // Replace this with real casino iframe URL (sandbox/demo)
+    const iframeURL = "https://demogamesfree.mmfqzbkdui.net/gs2c/html5Game.do?extGame=1&symbol=vs20olympx&gname=Gates of Olympus 1000&jurisdictionID=99&lobbyUrl=https%3A%2F%2F1xbet86.com%2Fslots&mgckey=stylename@1xbet_sw~SESSION@d54a87f0-94c0-484c-b5b8-588987d5fdae";
+
+
+const kk = "https://chicken-road.inout.games/api/modes/game?gameMode=chicken-road&operatorId=403bf73a-1a05-45ac-a841-169471cbc445&authToken=d61d3acd-e2c2-48c4-969c-eb3156b956c0&currency=BDT&lang=en&theme=&gameCustomizationId=&lobbyUrl=";
+
+    gameFrame.src = kk;
+  </script>
+</body>
+</html>

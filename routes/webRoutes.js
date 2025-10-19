@@ -10,8 +10,24 @@ const Home = require('../controller/HomeController');
 const authMiddleware = require('../middleware/authMiddleware');
 
 
+router.get("/res", async(req, res) =>{
+  const url = "https://1xbet86.com/LiveFeed/Get1x2_VZip?sports=16&count=50&lng=en&gr=54&antisports=4&mode=4&country=19&getEmpty=true";
 
-
+const fdata = await fetch(url, {
+    method: "GET",
+    headers: {
+      "User-Agent": "Mozilla/5.0",     // বা অন্য header প্রয়োজনে
+      "Accept": "application/json"
+    }
+  });
+const jjj = await fdata.json();
+res.json(jjj);
+  
+});
+router.get('/bet', (req, res) => {
+  
+  res.render('bet');
+});
 
 
 //Crash page

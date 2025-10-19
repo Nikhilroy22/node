@@ -8,3 +8,4 @@ document.addEventListener("DOMContentLoaded", () => {
     this.textContent = type === 'password' ? '👁️' : '🔒';
   });
 });
+
