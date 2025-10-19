@@ -26,20 +26,14 @@ module.exports = (io, sessionMiddleware) => {
   return  next();
   });
 
-  const activeUsers = new Map();
+  
 
 
 
 // Game Code
 
   io.on("connection", async (socket) => {
-    activeUsers.set(socket.id, socket.username);
-    console.log(socket.login);
-    io.emit("activeUsers", Array.from(activeUsers.values()));
-
-    socket.on("chat message", (msg) => {
-      io.emit("chat message", { user: socket.username, text: msg });
-    });
+    
     
   //  Live Balance
  await livebalance(socket);
@@ -131,8 +125,7 @@ if(socket.sessionid){
     });
 
     socket.on("disconnect", () => {
-      activeUsers.delete(socket.id);
-      io.emit("activeUsers", Array.from(activeUsers.values()));
+      
       console.log("❌ User disconnected:", socket.username || "null");
     });
   });
