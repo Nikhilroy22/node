@@ -1,15 +1,11 @@
 {
-  "ha6JIIBQqpIQBx9-ux_qzEK8E1Q5uFxA": {
+  "cNIjgag1PvZpacvIvBYjCim9wTx41_N3": {
     "cookie": {
       "originalMaxAge": null,
       "expires": null,
       "httpOnly": true,
       "path": "/"
     },
-    "flash": {},
-    "user": {
-      "id": 2,
-      "username": "Pakhi"
-    }
+    "flash": {}
   }
 }
