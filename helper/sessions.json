@@ -7,5 +7,18 @@
       "path": "/"
     },
     "flash": {}
+  },
+  "6ssWHNDK0QexfeF-4HFUqgnBwdTT37L7": {
+    "cookie": {
+      "originalMaxAge": null,
+      "expires": null,
+      "httpOnly": true,
+      "path": "/"
+    },
+    "flash": {},
+    "user": {
+      "id": 1,
+      "username": "Pakhi"
+    }
   }
 }
