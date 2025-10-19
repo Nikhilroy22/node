@@ -26,3 +26,50 @@
   display: block;
   font-size: 18px;
 }
+
+
+
+
+nav {
+    margin: 0 0 50px 0;
+}
+.nav-container {
+
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background-color: #1a4c7d;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+    overflow-x: auto;
+}
+.nav-container .logo {
+     margin-left: 9px;
+    font-weight: bold;
+    font-size: 30px;
+    color: #ffffff;
+}
+ .logo span {
+            color: #00a2e8;
+        }
+.nav--ul__two {
+  margin-right: 9px;
+  display: flex;
+  gap: 0.8rem;
+  font-weight: bold;
+
+}
+
+
+.logo a{
+  color: #fff;
+}
+
+ .balance {
+            background-color: #8bc34a;
+            color: #ffffff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 16px;
+        }
