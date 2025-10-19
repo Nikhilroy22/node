@@ -1,3 +1,6 @@
+@import url("bottom-nav.css");
+
+
 * {
             margin: 0;
             padding: 0;
@@ -234,4 +237,6 @@
             content: "🔒";
             margin-right: 8px;
         }
-    </style>
+    
+    
+   

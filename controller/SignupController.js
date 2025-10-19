@@ -1,4 +1,4 @@
-const { getUsers, createUser } = require('../db');
+const { getUsers, createUser } = require('../model/db');
 
 
 exports.SignUp = (req, res) => {

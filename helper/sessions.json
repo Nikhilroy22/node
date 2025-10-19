@@ -1,0 +1,15 @@
+{
+  "ha6JIIBQqpIQBx9-ux_qzEK8E1Q5uFxA": {
+    "cookie": {
+      "originalMaxAge": null,
+      "expires": null,
+      "httpOnly": true,
+      "path": "/"
+    },
+    "flash": {},
+    "user": {
+      "id": 2,
+      "username": "Pakhi"
+    }
+  }
+}

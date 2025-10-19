@@ -2,10 +2,10 @@ const express = require('express');
 
 const http = require('http');
 const path = require('path');
-const JSONFileStore = require('./jsonFileStore'); // যদি আলাদা ফাইল করো
+const JSONFileStore = require('./helper/jsonFileStore'); // যদি আলাদা ফাইল করো
 
 const { Server } = require('socket.io');
-const socketHandler = require('./socketHandler'); // import
+const socketHandler = require('./socket/socketHandler'); // import
 
 const fs = require("fs");
 
@@ -23,7 +23,7 @@ const io = new Server(server);
 
 // Session + Flash config
 const sessionMiddleware = session({
-  store: new JSONFileStore({ filePath: './sessions.json' }),
+  store: new JSONFileStore({ filePath: './helper/sessions.json' }),
   secret: 'secret123',
   resave: false,
   saveUninitialized: false

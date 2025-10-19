@@ -1,7 +1,7 @@
 // routes/webRoutes.js
 const express = require('express');
 const router = express.Router();
-const { getUsers, createUser } = require('../db');
+const { getUsers, createUser } = require('../model/db');
 
 //Controller
 const authController = require('../controller/LoginController');

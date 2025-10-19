@@ -1,4 +1,4 @@
-const { getUsers, createUser } = require('../db');
+const { getUsers, createUser } = require('../model/db');
 
 // Dummy user data
 /*const users = [

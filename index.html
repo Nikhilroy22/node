@@ -1,66 +1,53 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Sound Toggle Demo</title>
-<style>
-body{font-family:sans-serif;background:#0c1726;color:#fff;display:flex;flex-direction:column;align-items:center;padding:40px;}
-button{padding:10px 16px;margin:6px;border-radius:6px;border:none;cursor:pointer;background:#7dd3fc;color:#012233;font-weight:600;}
-label{margin-right:10px;}
-</style>
-</head>
-<body>
-
-<h2>Gem Slot Sound Demo</h2>
-
-<!-- Sound Toggle Radio -->
-<div>
-    <label><input type="radio" name="sound" value="on" checked> Sound ON</label>
-    <label><input type="radio" name="sound" value="off"> Sound OFF</label>
-</div>
-
-<!-- Spin button -->
-<button id="spinBtn">Spin</button>
-
-<script>
-let soundEnabled = true;
-
-// Web Audio API play function
-async function playSound(url){
-    if(!soundEnabled) return; // sound off
-    try{
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const resp = await fetch(url);
-        const arrayBuffer = await resp.arrayBuffer();
-        const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
-        const source = ctx.createBufferSource();
-        source.buffer = audioBuffer;
-        source.connect(ctx.destination);
-        source.start(0);
-        source.onended = ()=>{ try{ctx.close();}catch(e){} };
-        return new Promise(resolve => source.onended = ()=>{ try{ctx.close();}catch(e){} resolve(); });
-    } catch(err){
-        console.warn('playSound failed', err);
-        return Promise.resolve();
-    }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demo Casino Game</title>
+ 
+ <style>
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background: #111;
 }
 
-// Spin button example
-document.getElementById('spinBtn').addEventListener('click', ()=>{
-    console.log("Spin clicked! Sound enabled:", soundEnabled);
-    playSound('spin.mp3'); // এখানে spin sound path বসাও
-});
+.iframe-container {
+  position: fixed;  /* fixed covers full viewport */
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 999;
+}
 
-// Radio toggle
-const radios = document.querySelectorAll('input[name="sound"]');
-radios.forEach(radio=>{
-    radio.addEventListener('change', (e)=>{
-        soundEnabled = e.target.value === 'on';
-        console.log('Sound switched:', soundEnabled ? 'ON':'OFF');
-    });
-});
-</script>
+.iframe-container iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+</style>
+ 
+</head>
+<body>
+<div class="iframe-container">
+  <iframe id="gameFrame" src="" allowfullscreen></iframe>
+</div>
 
+
+
+  <script>
+    const gameFrame = document.getElementById('gameFrame');
+
+    // Replace this with real casino iframe URL (sandbox/demo)
+    const iframeURL = "https://demogamesfree.mmfqzbkdui.net/gs2c/html5Game.do?extGame=1&symbol=vs20olympx&gname=Gates of Olympus 1000&jurisdictionID=99&lobbyUrl=https%3A%2F%2F1xbet86.com%2Fslots&mgckey=stylename@1xbet_sw~SESSION@d54a87f0-94c0-484c-b5b8-588987d5fdae";
+
+
+const kk = "https://chicken-road.inout.games/api/modes/game?gameMode=chicken-road&operatorId=403bf73a-1a05-45ac-a841-169471cbc445&authToken=d61d3acd-e2c2-48c4-969c-eb3156b956c0&currency=BDT&lang=en&theme=&gameCustomizationId=&lobbyUrl=";
+
+    gameFrame.src = kk;
+  </script>
 </body>
 </html>

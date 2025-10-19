@@ -1,7 +1,7 @@
 // socketHandler.js
 const { gameState, startGame } = require('./crashGame');
 
-const { getUserById, updateAmount } = require('./db');
+const { getUserById, updateAmount } = require('../model/db');
 
 module.exports = (io, sessionMiddleware) => {
   io.use((socket, next) => {

@@ -1,4 +1,4 @@
-const { getUsers, updateAmount, getUserById } = require('../db');
+const { getUsers, updateAmount, getUserById } = require('../model/db');
 
 
 exports.HomePage = 
