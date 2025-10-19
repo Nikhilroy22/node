@@ -1,56 +1,45 @@
 <%- include('header') %>
 
 <div class="login-container">
-<div class="login-right">
-  
-<form class="login-form" action="/login" method="POST">
-  <h2 class="form-title">Login</h2>
-  <div class="form-group">
-    <label for="username">Username</label>
-    <div class="input-container">
-    <input type="text" name="user" placeholder="নাম লিখুন" value="<%= oldInput.user || '' %>">
-    
-    <span class="icon">👤</span>
-  </div>
-  <% if (errors.user) { %>
-  <div class="error"><%= errors.user %></div>
-  <% } %>
-  </div>
+  <div class="login-right">
+    <form class="login-form" action="/login" method="POST">
+      <h2 class="form-title">Login</h2>
 
-        <div class="form-group">
-    
-                    <label for="password">Password</label>
-                    <div class="input-container">
-    <input type="password" name="pass" id="password" placeholder="পাসওয়ার্ড লিখুন" value="<%= oldInput.pass || '' %>">
-    
-    
-    
-    <button type="button" class="password-toggle" id="togglePassword">👁️</button>
-    
-    
-  </div>
-  <% if (errors.pass) { %>
-      <div class="error">
-        
-        <%= errors.pass %>
+      <!-- Username -->
+      <div class="form-group">
+        <label for="username">Username</label>
+        <div class="input-container">
+          <input type="text" name="user" id="username" placeholder="নাম লিখুন" value="<%= oldInput.user || '' %>">
+          <span class="icon">👤</span>
+        </div>
+        <% if (errors.user) { %>
+          <div class="error"><%= errors.user %></div>
+        <% } %>
       </div>
-      
-    <% } %>
-  </div>
-  
-  <div class="options">
-                    
-                    <a href="#" class="forgot-password">Forgot Password</a>
-                </div>
-  
-  <button type="submit" class="btn">Login</button>
-  
-  <div class="signup-link">Create new account <a href="/signup">Sign Up</a>
-  
-</form>
 
-  </div>
-  </div>
+      <!-- Password -->
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="input-container">
+          <input type="password" name="pass" id="password" placeholder="পাসওয়ার্ড লিখুন" value="<%= oldInput.pass || '' %>">
+          <button type="button" class="password-toggle" id="togglePassword">👁️</button>
+        </div>
+        <% if (errors.pass) { %>
+          <div class="error"><%= errors.pass %></div>
+        <% } %>
+      </div>
 
+      <div class="options">
+        <a href="#" class="forgot-password">Forgot Password</a>
+      </div>
+
+      <button type="submit" class="btn">Login</button>
+
+      <div class="signup-link">
+        Create new account <a href="/signup">Sign Up</a>
+      </div>
+    </form>
+  </div>
+</div>
 
 <%- include('footer') %>
