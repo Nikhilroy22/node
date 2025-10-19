@@ -1,7 +1,6 @@
 // routes/webRoutes.js
 const express = require('express');
 const router = express.Router();
-const { getUsers, createUser } = require('../model/db');
 
 //Controller
 const authController = require('../controller/LoginController');
@@ -14,13 +13,8 @@ const authMiddleware = require('../middleware/authMiddleware');
 
 
 
-//Middleware
-router.get('/demo', async(req, res) => {
-  const kk = await getUsers()
- //console.log(req.headers);
-  res.send(kk);
-});
 
+//Crash page
 router.get('/crash', (req, res) => {
   
   res.render('crash', {user: req.session.user})
