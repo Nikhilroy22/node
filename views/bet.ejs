@@ -144,15 +144,16 @@ async function placeBet() {
 
   try {
     // 🟢 এখানে await ব্যবহার করা হয়েছে
-    const res = await fetch('/bet', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        matchId: selectedBet.matchId,
-        team: selectedBet.team,
-        amount
-      })
-    });
+   const res = await fetch('/bet', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    matchId: selectedBet.matchId,
+    team: selectedBet.team,
+    amount,
+    odds  // ✅ নতুন যোগ করা
+  })
+});
 
     const data = await res.json(); // রেসপন্স JSON হিসেবে ধরো
     console.log("✅ Server Response:", data);
