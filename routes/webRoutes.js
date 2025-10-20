@@ -7,7 +7,7 @@ const authController = require('../controller/LoginController');
 const SignUpController = require('../controller/SignupController')
 const Home = require('../controller/HomeController');
 const authMiddleware = require('../middleware/authMiddleware');
-const BetController = require('../middleware/BetController');
+const BetController = require('../controller/BetController');
 
 // Bet ROUTE
 router.get("/res", BetController.betapi);
