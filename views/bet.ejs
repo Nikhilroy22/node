@@ -11,7 +11,7 @@
     .team { display:flex; justify-content:space-between; margin:5px 0; }
     .btn { background:#007bff; color:#fff; border:none; border-radius:5px; padding:5px 10px; cursor:pointer; }
     .btn:hover { background:#0056b3; }
-    .blink { animation: blink 0.3s linear; }
+    .blink { animation: blink 1.0s linear; }
     @keyframes blink { from{background:yellow;color:black;} to{background:transparent;color:white;} }
     .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); justify-content:center; align-items:center; }
     .modal-content { background:#222; padding:20px; border-radius:10px; text-align:center; width:300px; }
@@ -120,7 +120,7 @@ function updateModalOdds() {
   if(oddsEl.innerText != newOdds) {
     oddsEl.innerText = newOdds;
     oddsEl.classList.add("blink");
-    setTimeout(() => oddsEl.classList.remove("blink"), 500);
+    setTimeout(() => oddsEl.classList.remove("blink"), 2000);
   }
 }
 
