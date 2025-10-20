@@ -29,6 +29,11 @@ router.get('/bet', (req, res) => {
   res.render('bet');
 });
 
+router.post('/bet', (req, res) => {
+  
+  res.json('bet');
+});
+
 
 //Crash page
 router.get('/crash', (req, res) => {
