@@ -15,9 +15,55 @@
     .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); justify-content:center; align-items:center; }
     .modal-content { background:#222; padding:20px; border-radius:10px; text-align:center; width:300px; }
     .close { float:right; cursor:pointer; color:red; }
+    
+    
+    #toastContainer {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.toast {
+  min-width: 220px;
+  background: #222;
+  color: #fff;
+  padding: 12px 18px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  opacity: 0;
+  transform: translateX(100%);
+  animation: slideIn 0.3s forwards, fadeOut 0.5s ease-in 4.5s forwards;
+  font-family: 'Poppins', sans-serif;
+}
+
+.toast.success { border-left: 5px solid #22c55e; }   /* Green */
+.toast.error { border-left: 5px solid #ef4444; }     /* Red */
+.toast.info { border-left: 5px solid #3b82f6; }      /* Blue */
+.toast.warning { border-left: 5px solid #f59e0b; }   /* Yellow */
+
+@keyframes slideIn {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
   </style>
 </head>
 <body>
+  <!-- Toast Container -->
+<div id="toastContainer"></div>
+  
   <h2>⚡ Live Odds (1xBet Style)</h2>
   <div id="matches">Loading...</div>
 
@@ -68,7 +114,14 @@
         m.AE?.forEach(j => {
           j.ME?.forEach(k => {
             if (k.CE === 1) {
+              
+              // testtype determine
+    const testtype = k.T === 9 ? `Total over ${k.P}` 
+                   : k.T === 10 ? `Total under ${k.P}`
+                   : k.T;
+              
               nestedOdds.push({
+                nametest: testtype,
                 name: k.T || "Extra Option",
                 odds: k.C,
                 key: `${id}_${k.CE}_${k.T || "x"}`
@@ -97,7 +150,7 @@
           ${nestedOdds.length ? `
             <div class="team" style="margin-top:10px;">
               ${nestedOdds.map(o => 
-                `<button class="btn" id="${o.key}" onclick="openModal('${id}','X','${o.key}',${o.odds})">${o.name}: ${o.odds}</button>`
+                `<button class="btn" id="${o.key}" onclick="openModal('${id}','X','${o.key}',${o.odds})">${o.nametest} - ${o.odds}</button>`
               ).join("")}
             </div>
           ` : ""}
@@ -144,7 +197,7 @@
     else {
       const opt = match.nestedOdds.find(o => o.key === selectedBet.name);
       if (opt) newOdds = opt.odds;
-      console.log(opt);
+      //console.log(opt);
     }
 
     if (parseFloat(el.innerText) !== newOdds) {
@@ -158,7 +211,7 @@
   async function placeBet() {
   if (!selectedBet) return alert("No option selected!");
   const amount = parseFloat(document.getElementById("betAmount").value);
-  if (!amount || amount <= 0) return alert("Please enter valid amount!");
+  if (!amount || amount <= 0) return showToast('Please enter valid amount!', 'error'); //alert("Please enter valid amount!");
 
   try {
     const res = await fetch("/bet", {
@@ -173,10 +226,12 @@
       })
     });
 
+//console.log(selectedBet.matchId);
     const data = await res.json();
     if (data.success) {
-      alert(`✅ Bet Placed!\n${selectedBet.team} @ ${selectedBet.odds}`);
-      console.log("SuccessFull Bet")
+      showToast(`✅ Bet Placed!\n${selectedBet.team} @ ${selectedBet.odds}`, 'success');
+      //alert(`✅ Bet Placed!\n${selectedBet.team} @ ${selectedBet.odds}`);
+      //console.log("SuccessFull Bet")
       closeModal();
     } else {
       alert(data.message || "Failed to place bet!");
@@ -185,6 +240,23 @@
     console.error("Bet error:", err);
   }
 }
+
+
+function showToast(message, type = 'info') {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+  
+  container.appendChild(toast);
+
+  // Auto remove after 5s
+  setTimeout(() => {
+    toast.remove();
+  }, 25000);
+}
+
+
 
   fetchOdds();
   </script>
