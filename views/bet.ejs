@@ -229,7 +229,8 @@
 //console.log(selectedBet.matchId);
     const data = await res.json();
     if (data.success) {
-      showToast(`✅ Bet Placed!\n${selectedBet.team} @ ${selectedBet.odds}`, 'success');
+      console.log(data.data.odds);
+      showToast(`✅ Bet Placed!\n${selectedBet.team} @ ${data.data.odds}`, 'success');
       //alert(`✅ Bet Placed!\n${selectedBet.team} @ ${selectedBet.odds}`);
       //console.log("SuccessFull Bet")
       closeModal();
