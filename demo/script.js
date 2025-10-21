@@ -1,4 +1,5 @@
-https://1xbet86.com/LiveFeed/GetGameZip?id=663563406&lng=en&tzo=6&isSubGames=true&GroupEvents=true&countevents=50&grMode=4&country=19&fcountry=19&marketType=1&mobi=true&isNewBuilder=true
+https://1xbet86.com/LiveFeed/GetGameZip?id=663807822&lng=en&tzo=6&isSubGames=true&GroupEvents=true&countevents=50&grMode=4&country=19&fcountry=19&marketType=1&mobi=true&isNewBuilder=true
+https://1xbet86.com/LineFeed/GetGameZip?id=283971110&lng=en&tzo=6&isSubGames=true&GroupEvents=true&countevents=50&grMode=4&country=19&fcountry=19&marketType=1&mobi=true&isNewBuilder=true
 
 https://1xbet86.com/LiveFeed/GetGameZip?id=663549179&lng=en&tzo=6&isSubGames=true&GroupEvents=true&countevents=50&grMode=4&country=19&fcountry=19&marketType=1&mobi=true&isNewBuilder=true
 
@@ -12,3 +13,11 @@ https://1xbet86.com/LiveFeed/Get1x2_VZip?sports=10&count=50&lng=en&gr=54&antispo
 
 
 https://1xbet86.com/LiveFeed/Get1x2_VZip?sports=16&count=50&lng=en&gr=54&antisports=4&mode=4&country=19&getEmpty=true
+
+
+
+
+https://1xbet86.com/LiveFeed/Get1x2_VZip?count=50&lng=en&gr=54&mode=4&country=19&getEmpty=true
+
+
+https://1xbet86.com/LineFeed/Get1x2_VZip?count=50&lng=en&tz=6&mode=4&country=19&getEmpty=true&gr=54

@@ -2,172 +2,191 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Live Odds - BetSlip Modal</title>
   <style>
     body { background:#111; color:#fff; font-family:sans-serif; padding:20px; }
     .match { background:#222; padding:10px; margin:10px 0; border-radius:8px; }
-    .team { display:flex; justify-content:space-between; margin:5px 0; }
-    .btn { background:#007bff; color:#fff; border:none; border-radius:5px; padding:5px 10px; cursor:pointer; }
+    .team { display:flex; justify-content:space-between; margin:5px 0; flex-wrap:wrap; gap:5px; }
+    .btn { background:#007bff; color:#fff; border:none; border-radius:5px; padding:5px 10px; cursor:pointer; transition:0.3s; }
     .btn:hover { background:#0056b3; }
-    .blink { animation: blink 1.0s linear; }
-    @keyframes blink { from{background:yellow;color:black;} to{background:transparent;color:white;} }
+    .blink { animation: blink 1s linear; }
+    @keyframes blink { from{background:yellow;color:black;} to{background:#007bff;color:white;} }
     .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); justify-content:center; align-items:center; }
     .modal-content { background:#222; padding:20px; border-radius:10px; text-align:center; width:300px; }
     .close { float:right; cursor:pointer; color:red; }
   </style>
 </head>
 <body>
-  <h2>⚡ Live Odds (1xBet)</h2>
+  <h2>⚡ Live Odds (1xBet Style)</h2>
   <div id="matches">Loading...</div>
 
- <!-- Bet Slip Modal -->
-<div class="modal" id="betModal">
-  <div class="modal-content">
-    <span class="close" onclick="closeModal()">&times;</span>
-    <h3 id="matchTitle"></h3>
-    <p>Team: <b id="teamName"></b></p>
-    <p>Odds: <span id="teamOdds"></span></p>
+  <!-- Bet Slip Modal -->
+  <div class="modal" id="betModal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <h3 id="matchTitle"></h3>
+      <p>Option: <b id="teamName"></b></p>
+      <p>Odds: <span id="teamOdds"></span></p>
 
-    <!-- 💰 Bet Amount Input -->
-    <div style="margin:10px 0;">
-      <label for="betAmount">Bet Amount:</label><br>
-      <input 
-        type="number" 
-        id="betAmount" 
-        placeholder="Enter amount"
-        style="width:100%;padding:8px;margin-top:5px;border-radius:5px;border:1px solid #555;background:#111;color:#fff;"
-      />
+      <div style="margin:10px 0;">
+        <label for="betAmount">Bet Amount:</label><br>
+        <input type="number" id="betAmount" placeholder="Enter amount"
+          style="width:100%;padding:8px;margin-top:5px;border-radius:5px;border:1px solid #555;background:#111;color:#fff;" />
+      </div>
+
+      <button class="btn" onclick="placeBet()">Place Bet</button>
     </div>
-
-    <button class="btn" onclick="placeBet()">Place Bet</button>
   </div>
-</div>
-  
+
   <script src="/js/eruda.js"></script>
   <script>
     eruda.init(); // Console চালু হবে
   </script>
+  <script>
+  let liveMatches = {};
+  let selectedBet = null;
+  let pollTimer = null;
 
-<script>
-let liveMatches = {};
-let selectedBet = null;
+  async function fetchOdds() {
+    try {
+      const res = await fetch("/res");
+      const data = await res.json();
+      const matches = data?.Value || [];
+      const container = document.getElementById("matches");
+      container.innerHTML = "";
 
-async function fetchOdds() {
+      matches.forEach(m => {
+        const id = m.I;
+        const teamA = m.O1E;
+        const teamB = m.O2E;
+        const oddsA = m.E?.[0]?.C || 1.0;
+        const oddsB = m.E?.[1]?.C || 1.0;
+
+        // Nested AE-ME odds সংগ্রহ
+        const nestedOdds = [];
+        m.AE?.forEach(j => {
+          j.ME?.forEach(k => {
+            if (k.CE === 1) {
+              nestedOdds.push({
+                name: k.T || "Extra Option",
+                odds: k.C,
+                key: `${id}_${k.CE}_${k.T || "x"}`
+              });
+            }
+          });
+        });
+
+        // Data store
+        liveMatches[id] = { teamA, teamB, oddsA, oddsB, nestedOdds };
+
+        // HTML build
+        const div = document.createElement("div");
+        div.className = "match";
+        div.innerHTML = `
+          <h4>${teamA} vs ${teamB}</h4>
+          <div class="team">
+            <span>${teamA}</span>
+            <button class="btn" onclick="openModal('${id}','A','${teamA}',${oddsA})">${oddsA}</button>
+          </div>
+          <div class="team">
+            <span>${teamB}</span>
+            <button class="btn" onclick="openModal('${id}','B','${teamB}',${oddsB})">${oddsB}</button>
+          </div>
+
+          ${nestedOdds.length ? `
+            <div class="team" style="margin-top:10px;">
+              ${nestedOdds.map(o => 
+                `<button class="btn" id="${o.key}" onclick="openModal('${id}','X','${o.key}',${o.odds})">${o.name}: ${o.odds}</button>`
+              ).join("")}
+            </div>
+          ` : ""}
+        `;
+        container.appendChild(div);
+      });
+
+      updateModalOdds();
+    } catch (err) {
+      console.error("Fetch error net pblm:", err);
+    }
+
+    clearTimeout(pollTimer);
+    pollTimer = setTimeout(fetchOdds, 3000); // ৩ সেকেন্ড পর রিফ্রেশ
+  }
+
+  // 🧾 Modal
+  function openModal(matchId, team, name, odds) {
+    selectedBet = { matchId, team, name, odds };
+    const match = liveMatches[matchId];
+    document.getElementById("matchTitle").innerText = `${match.teamA} vs ${match.teamB}`;
+    document.getElementById("teamName").innerText = name;
+    document.getElementById("teamOdds").innerText = odds;
+    document.getElementById("betModal").style.display = "flex";
+  }
+
+  function closeModal() {
+    document.getElementById("betModal").style.display = "none";
+    selectedBet = null;
+    document.getElementById("betAmount").value = "";
+  }
+
+  // 🔁 Odds update (real-time)
+  function updateModalOdds() {
+    if (!selectedBet) return;
+    const match = liveMatches[selectedBet.matchId];
+    if (!match) return;
+
+    const el = document.getElementById("teamOdds");
+    let newOdds = selectedBet.odds;
+
+    if (selectedBet.team === "A") newOdds = match.oddsA;
+    else if (selectedBet.team === "B") newOdds = match.oddsB;
+    else {
+      const opt = match.nestedOdds.find(o => o.key === selectedBet.name);
+      if (opt) newOdds = opt.odds;
+      console.log(opt);
+    }
+
+    if (parseFloat(el.innerText) !== newOdds) {
+      el.innerText = newOdds;
+      el.classList.add("blink");
+      setTimeout(() => el.classList.remove("blink"), 1000);
+    }
+  }
+
+  // 💰 Bet place (demo)
+  async function placeBet() {
+  if (!selectedBet) return alert("No option selected!");
+  const amount = parseFloat(document.getElementById("betAmount").value);
+  if (!amount || amount <= 0) return alert("Please enter valid amount!");
+
   try {
-    const res = await fetch("/res");
-    const data = await res.json();
-    const matches = data?.Value || [];
-    const container = document.getElementById("matches");
-    container.innerHTML = "";
-
-    matches.forEach(m => {
-      const id = m.I;
-      const teamA = m.O1E;
-      const teamB = m.O2E;
-      const oddsA = m.E?.[0]?.C || 1.0;
-      const oddsB = m.E?.[1]?.C || 1.0;
-
-      liveMatches[id] = { teamA, teamB, oddsA, oddsB };
-
-      const div = document.createElement("div");
-      div.className = "match";
-      div.innerHTML = `
-        <h4>${teamA} vs ${teamB}</h4>
-        <div class="team">
-          <span>${teamA}</span>
-          <button class="btn" onclick="openModal('${id}','A')">${oddsA}</button>
-        </div>
-        <div class="team">
-          <span>${teamB}</span>
-          <button class="btn" onclick="openModal('${id}','B')">${oddsB}</button>
-        </div>
-      `;
-      container.appendChild(div);
+    const res = await fetch("/bet", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        matchId: selectedBet.matchId,
+        team: selectedBet.team,
+        label: selectedBet.team,
+        amount,
+        odds: selectedBet.odds
+      })
     });
 
-    updateModalOdds();
-  } catch(err) {
-    console.error(err);
-  }
-  setTimeout(fetchOdds, 3000);
-}
-
-function openModal(matchId, team) {
-  const match = liveMatches[matchId];
-  selectedBet = { matchId, team };
-  document.getElementById("matchTitle").innerText = `${match.teamA} vs ${match.teamB}`;
-  document.getElementById("teamName").innerText = team === 'A' ? match.teamA : match.teamB;
-  document.getElementById("teamOdds").innerText = team === 'A' ? match.oddsA : match.oddsB;
-  document.getElementById("betModal").style.display = "flex";
-}
-
-function closeModal() {
-  document.getElementById("betModal").style.display = "none";
-  selectedBet = null;
-  document.getElementById("betAmount").value = "";
-}
-
-function updateModalOdds() {
-  if(!selectedBet) return;
-  const bet = liveMatches[selectedBet.matchId];
-  if(!bet) return;
-
-  const oddsEl = document.getElementById("teamOdds");
-  const newOdds = selectedBet.team === "A" ? bet.oddsA : bet.oddsB;
-
-  if(oddsEl.innerText != newOdds) {
-    oddsEl.innerText = newOdds;
-    oddsEl.classList.add("blink");
-    setTimeout(() => oddsEl.classList.remove("blink"), 2000);
-  }
-}
-
-fetchOdds();
-</script>
-
-
-<script>
-async function placeBet() {
-  if (!selectedBet) return alert("No team selected!");
-
-  const amount = parseFloat(document.getElementById("betAmount").value);
-  if (!amount || amount <= 0) {
-    alert("Please enter a valid bet amount!");
-    return;
-  }
-
-  const bet = liveMatches[selectedBet.matchId];
-  const teamName = selectedBet.team === "A" ? bet.teamA : bet.teamB;
-  const odds = selectedBet.team === "A" ? bet.oddsA : bet.oddsB;
-
-  try {
-    // 🟢 এখানে await ব্যবহার করা হয়েছে
-   const res = await fetch('/bet', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    matchId: selectedBet.matchId,
-    team: selectedBet.team,
-    amount,
-    odds  // ✅ নতুন যোগ করা
-  })
-});
-
-    const data = await res.json(); // রেসপন্স JSON হিসেবে ধরো
-    console.log("✅  data Server Response:", data);
-    
-    amount.value = "";
-
-    alert(`✅ Bet Placed!\n\nMatch: ${bet.teamA} vs ${bet.teamB}\nTeam: ${teamName}\nOdds: ${odds}\nAmount: ${amount}`);
-
-    closeModal();
+    const data = await res.json();
+    if (data.success) {
+      alert(`✅ Bet Placed!\n${selectedBet.team} @ ${selectedBet.odds}`);
+      console.log("SuccessFull Bet")
+      closeModal();
+    } else {
+      alert(data.message || "Failed to place bet!");
+    }
   } catch (err) {
-    console.error("❌ Error placing bet:", err);
-    alert("Failed to place bet. Please try again!");
+    console.error("Bet error:", err);
   }
 }
-</script>
+
+  fetchOdds();
+  </script>
 </body>
 </html>

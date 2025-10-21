@@ -1,1271 +1,198 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Badminton Match Betting Odds</title>
-    <style>
-        :root {
-            --primary-color: #3a7bd5;
-            --secondary-color: #00d2ff;
-            --accent-color: #ff6b6b;
-            --light-bg: #f8f9fa;
-            --dark-bg: #343a40;
-            --success-color: #28a745;
-            --warning-color: #ffc107;
-            --danger-color: #dc3545;
-            --border-radius: 8px;
-            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background-color: #f5f7fa;
-            color: #333;
-            line-height: 1.6;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            padding: 20px;
-            border-radius: var(--border-radius);
-            margin-bottom: 20px;
-            box-shadow: var(--box-shadow);
-        }
-        
-        .match-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        
-        .players {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            margin-bottom: 15px;
-        }
-        
-        .player {
-            text-align: center;
-            flex: 1;
-            padding: 10px;
-        }
-        
-        .player-name {
-            font-size: 1.2rem;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        
-        .player-odds {
-            font-size: 1.4rem;
-            font-weight: bold;
-            color: var(--accent-color);
-        }
-        
-        .match-details {
-            text-align: center;
-            width: 100%;
-            margin-top: 10px;
-        }
-        
-        .match-status {
-            background-color: var(--warning-color);
-            color: #333;
-            padding: 5px 15px;
-            border-radius: 20px;
-            display: inline-block;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        
-        .score {
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin: 10px 0;
-        }
-        
-        .current-set {
-            font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.8);
-        }
-        
-        .markets-tabs {
-            display: flex;
-            background-color: white;
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            margin-bottom: 20px;
-            box-shadow: var(--box-shadow);
-        }
-        
-        .tab {
-            padding: 12px 20px;
-            cursor: pointer;
-            flex: 1;
-            text-align: center;
-            transition: all 0.3s ease;
-            border-bottom: 3px solid transparent;
-        }
-        
-        .tab.active {
-            border-bottom: 3px solid var(--primary-color);
-            font-weight: bold;
-            color: var(--primary-color);
-        }
-        
-        .tab:hover {
-            background-color: var(--light-bg);
-        }
-        
-        .market-content {
-            background-color: white;
-            border-radius: var(--border-radius);
-            padding: 20px;
-            box-shadow: var(--box-shadow);
-            margin-bottom: 20px;
-        }
-        
-        .market-group {
-            margin-bottom: 25px;
-        }
-        
-        .market-title {
-            font-size: 1.1rem;
-            font-weight: bold;
-            margin-bottom: 15px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid #eee;
-            color: var(--dark-bg);
-        }
-        
-        .odds-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 15px;
-        }
-        
-        .odds-item {
-            background-color: var(--light-bg);
-            border-radius: var(--border-radius);
-            padding: 15px;
-            text-align: center;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            border: 1px solid #e9ecef;
-        }
-        
-        .odds-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            border-color: var(--primary-color);
-        }
-        
-        .odds-name {
-            font-size: 0.9rem;
-            margin-bottom: 8px;
-            color: #666;
-        }
-        
-        .odds-value {
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: var(--primary-color);
-        }
-        
-        .odds-item.highlighted {
-            background-color: rgba(58, 123, 213, 0.1);
-            border-color: var(--primary-color);
-        }
-        
-        .set-info {
-            background-color: white;
-            border-radius: var(--border-radius);
-            padding: 15px;
-            margin-bottom: 20px;
-            box-shadow: var(--box-shadow);
-        }
-        
-        .set-title {
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: var(--dark-bg);
-        }
-        
-        .set-scores {
-            display: flex;
-            justify-content: space-around;
-        }
-        
-        .set-score {
-            text-align: center;
-            flex: 1;
-        }
-        
-        .set-number {
-            font-size: 0.9rem;
-            color: #666;
-            margin-bottom: 5px;
-        }
-        
-        .set-points {
-            font-size: 1.2rem;
-            font-weight: bold;
-        }
-        
-        .current-set {
-            color: var(--primary-color);
-            font-weight: bold;
-        }
-        
-        footer {
-            text-align: center;
-            margin-top: 30px;
-            padding: 20px;
-            color: #666;
-            font-size: 0.9rem;
-        }
-        
-        @media (max-width: 768px) {
-            .players {
-                flex-direction: column;
-            }
-            
-            .player {
-                margin-bottom: 15px;
-            }
-            
-            .odds-container {
-                grid-template-columns: 1fr;
-            }
-            
-            .markets-tabs {
-                flex-wrap: wrap;
-            }
-            
-            .tab {
-                flex: 1 0 50%;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Live Odds - BetSlip Modal</title>
+  <style>
+    body { background:#111; color:#fff; font-family:sans-serif; padding:20px; }
+    .match { background:#222; padding:10px; margin:10px 0; border-radius:8px; }
+    .team { display:flex; justify-content:space-between; margin:5px 0; }
+    .btn { background:#007bff; color:#fff; border:none; border-radius:5px; padding:5px 10px; cursor:pointer; }
+    .btn:hover { background:#0056b3; }
+    .blink { animation: blink 1.0s linear; }
+    @keyframes blink { from{background:yellow;color:black;} to{background:transparent;color:white;} }
+    .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); justify-content:center; align-items:center; }
+    .modal-content { background:#222; padding:20px; border-radius:10px; text-align:center; width:300px; }
+    .close { float:right; cursor:pointer; color:red; }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <div class="match-info">
-                <div class="players">
-                    <div class="player" id="player1">
-                        <div class="player-name">Loading...</div>
-                        <div class="player-odds">-</div>
-                    </div>
-                    <div class="player" id="player2">
-                        <div class="player-name">Loading...</div>
-                        <div class="player-odds">-</div>
-                    </div>
-                </div>
-                <div class="match-details">
-                    <div class="match-status">LIVE</div>
-                    <div class="score" id="match-score">-</div>
-                    <div class="current-set" id="current-set-info">-</div>
-                    <div id="tournament-info">Loading...</div>
-                </div>
-            </div>
-        </header>
-        
-        <div class="set-info">
-            <div class="set-title">Set Results</div>
-            <div class="set-scores" id="set-scores">
-                <!-- Set scores will be populated by JavaScript -->
-            </div>
-        </div>
-        
-        <div class="markets-tabs">
-            <div class="tab active" data-tab="popular">Popular</div>
-            <div class="tab" data-tab="total">Total</div>
-            <div class="tab" data-tab="handicap">Handicap</div>
-            <div class="tab" data-tab="all">All Markets</div>
-        </div>
-        
-        <div class="market-content" id="market-content">
-            <!-- Market content will be populated by JavaScript -->
-        </div>
-        
-        <footer>
-            <p>Odds are subject to change. Please gamble responsibly.</p>
-        </footer>
+  <h2>⚡ Live Odds (1xBet)</h2>
+  <div id="matches">Loading...</div>
+
+ <!-- Bet Slip Modal -->
+<div class="modal" id="betModal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <h3 id="matchTitle"></h3>
+    <p>Team: <b id="teamName"></b></p>
+    <p>Odds: <span id="teamOdds"></span></p>
+
+    <!-- 💰 Bet Amount Input -->
+    <div style="margin:10px 0;">
+      <label for="betAmount">Bet Amount:</label><br>
+      <input 
+        type="number" 
+        id="betAmount" 
+        placeholder="Enter amount"
+        style="width:100%;padding:8px;margin-top:5px;border-radius:5px;border:1px solid #555;background:#111;color:#fff;"
+      />
     </div>
 
-    <script>
-        // JSON data (in a real application, this would come from an API)
-        const matchData = {
-            "Error": "",
-            "ErrorCode": 0,
-            "Guid": "",
-            "Id": 0,
-            "Success": true,
-            "Value": {
-                "CHIMG": "8150df37db85eed950bc63f68f0d181b.png",
-                "CID": 2,
-                "CN": "World",
-                "CO": 17,
-                "COI": 225,
-                "DI": "44",
-                "EC": 32,
-                "EGC": 5,
-                "GE": [
-                    {
-                        "E": [
-                            [
-                                {
-                                    "C": 2.21,
-                                    "CV": "2.21",
-                                    "G": 1,
-                                    "GS": 1,
-                                    "T": 1
-                                }
-                            ],
-                            [
-                                {
-                                    "C": 1.608,
-                                    "CV": "1.608",
-                                    "G": 1,
-                                    "GS": 1,
-                                    "T": 3
-                                }
-                            ]
-                        ],
-                        "G": 1,
-                        "GS": 1
-                    },
-                    {
-                        "E": [
-                            [
-                                {
-                                    "C": 1.32,
-                                    "CV": "1.32",
-                                    "G": 17,
-                                    "GS": 4,
-                                    "P": 106.5,
-                                    "T": 9
-                                },
-                                {
-                                    "C": 1.515,
-                                    "CV": "1.515",
-                                    "G": 17,
-                                    "GS": 4,
-                                    "P": 107.5,
-                                    "T": 9
-                                },
-                                {
-                                    "C": 1.9,
-                                    "CE": 1,
-                                    "CV": "1.9",
-                                    "G": 17,
-                                    "GS": 4,
-                                    "P": 108.5,
-                                    "T": 9
-                                },
-                                {
-                                    "C": 2.456,
-                                    "CV": "2.456",
-                                    "G": 17,
-                                    "GS": 4,
-                                    "P": 109.5,
-                                    "T": 9
-                                },
-                                {
-                                    "C": 3.6,
-                                    "CV": "3.6",
-                                    "G": 17,
-                                    "GS": 4,
-                                    "P": 110.5,
-                                    "T": 9
-                                }
-                            ],
-                            [
-                                {
-                                    "C": 3.03,
-                                    "CV": "3.03",
-                                    "G": 17,
-                                    "GS": 4,
-                                    "P": 106.5,
-                                    "T": 10
-                                },
-                                {
-                                    "C": 2.34,
-                                    "CV": "2.34",
-                                    "G": 17,
-                                    "GS": 4,
-                                    "P": 107.5,
-                                    "T": 10
-                                },
-                                {
-                                    "C": 1.9,
-                                    "CE": 1,
-                                    "CV": "1.9",
-                                    "G": 17,
-                                    "GS": 4,
-                                    "P": 108.5,
-                                    "T": 10
-                                },
-                                {
-                                    "C": 1.47,
-                                    "CV": "1.47",
-                                    "G": 17,
-                                    "GS": 4,
-                                    "P": 109.5,
-                                    "T": 10
-                                },
-                                {
-                                    "C": 1.2,
-                                    "CV": "1.2",
-                                    "G": 17,
-                                    "GS": 4,
-                                    "P": 110.5,
-                                    "T": 10
-                                }
-                            ]
-                        ],
-                        "G": 17,
-                        "GS": 4
-                    },
-                    {
-                        "E": [
-                            [
-                                {
-                                    "C": 3.064,
-                                    "CV": "3.064",
-                                    "G": 2,
-                                    "GS": 3,
-                                    "P": -11.5,
-                                    "T": 7
-                                },
-                                {
-                                    "C": 2.21,
-                                    "CV": "2.21",
-                                    "G": 2,
-                                    "GS": 3,
-                                    "P": -10.5,
-                                    "T": 7
-                                },
-                                {
-                                    "C": 1.69,
-                                    "CE": 1,
-                                    "CV": "1.69",
-                                    "G": 2,
-                                    "GS": 3,
-                                    "P": -6.5,
-                                    "T": 7
-                                },
-                                {
-                                    "C": 1.495,
-                                    "CV": "1.495",
-                                    "G": 2,
-                                    "GS": 3,
-                                    "P": -5.5,
-                                    "T": 7
-                                },
-                                {
-                                    "C": 1.336,
-                                    "CV": "1.336",
-                                    "G": 2,
-                                    "GS": 3,
-                                    "P": -4.5,
-                                    "T": 7
-                                }
-                            ],
-                            [
-                                {
-                                    "C": 1.315,
-                                    "CV": "1.315",
-                                    "G": 2,
-                                    "GS": 3,
-                                    "P": 11.5,
-                                    "T": 8
-                                },
-                                {
-                                    "C": 1.608,
-                                    "CV": "1.608",
-                                    "G": 2,
-                                    "GS": 3,
-                                    "P": 10.5,
-                                    "T": 8
-                                },
-                                {
-                                    "C": 2.07,
-                                    "CE": 1,
-                                    "CV": "2.07",
-                                    "G": 2,
-                                    "GS": 3,
-                                    "P": 6.5,
-                                    "T": 8
-                                },
-                                {
-                                    "C": 2.4,
-                                    "CV": "2.4",
-                                    "G": 2,
-                                    "GS": 3,
-                                    "P": 5.5,
-                                    "T": 8
-                                },
-                                {
-                                    "C": 2.955,
-                                    "CV": "2.955",
-                                    "G": 2,
-                                    "GS": 3,
-                                    "P": 4.5,
-                                    "T": 8
-                                }
-                            ]
-                        ],
-                        "G": 2,
-                        "GS": 3
-                    },
-                    {
-                        "E": [
-                            [
-                                {
-                                    "C": 1.336,
-                                    "CV": "1.336",
-                                    "G": 15,
-                                    "GS": 5,
-                                    "P": 56.5,
-                                    "T": 11
-                                },
-                                {
-                                    "C": 1.495,
-                                    "CV": "1.495",
-                                    "G": 15,
-                                    "GS": 5,
-                                    "P": 57.5,
-                                    "T": 11
-                                },
-                                {
-                                    "C": 1.96,
-                                    "CE": 1,
-                                    "CV": "1.96",
-                                    "G": 15,
-                                    "GS": 5,
-                                    "P": 59.5,
-                                    "T": 11
-                                }
-                            ],
-                            [
-                                {
-                                    "C": 2.955,
-                                    "CV": "2.955",
-                                    "G": 15,
-                                    "GS": 5,
-                                    "P": 56.5,
-                                    "T": 12
-                                },
-                                {
-                                    "C": 2.4,
-                                    "CV": "2.4",
-                                    "G": 15,
-                                    "GS": 5,
-                                    "P": 57.5,
-                                    "T": 12
-                                },
-                                {
-                                    "C": 1.845,
-                                    "CE": 1,
-                                    "CV": "1.845",
-                                    "G": 15,
-                                    "GS": 5,
-                                    "P": 59.5,
-                                    "T": 12
-                                }
-                            ]
-                        ],
-                        "G": 15,
-                        "GS": 5
-                    },
-                    {
-                        "E": [
-                            [
-                                {
-                                    "C": 1.315,
-                                    "CV": "1.315",
-                                    "G": 62,
-                                    "GS": 6,
-                                    "P": 49.5,
-                                    "T": 13
-                                },
-                                {
-                                    "C": 1.51,
-                                    "CE": 1,
-                                    "CV": "1.51",
-                                    "G": 62,
-                                    "GS": 6,
-                                    "P": 51.5,
-                                    "T": 13
-                                }
-                            ],
-                            [
-                                {
-                                    "C": 3.064,
-                                    "CV": "3.064",
-                                    "G": 62,
-                                    "GS": 6,
-                                    "P": 49.5,
-                                    "T": 14
-                                },
-                                {
-                                    "C": 2.36,
-                                    "CE": 1,
-                                    "CV": "2.36",
-                                    "G": 62,
-                                    "GS": 6,
-                                    "P": 51.5,
-                                    "T": 14
-                                }
-                            ]
-                        ],
-                        "G": 62,
-                        "GS": 6
-                    }
-                ],
-                "I": 663593597,
-                "KI": 1,
-                "L": "CB 25. Champions League",
-                "LE": "CB 25. Champions League",
-                "LI": 2731337,
-                "LR": "CB 25. Champions League",
-                "MEC": [
-                    {
-                        "EC": 32,
-                        "MT": 2,
-                        "N": "Popular"
-                    },
-                    {
-                        "EC": 20,
-                        "MT": 3,
-                        "N": "Total"
-                    },
-                    {
-                        "EC": 10,
-                        "MT": 4,
-                        "N": "Handicap"
-                    },
-                    {
-                        "EC": 0,
-                        "MT": 5,
-                        "N": "Players"
-                    },
-                    {
-                        "EC": 0,
-                        "MT": 6,
-                        "N": "Goals"
-                    },
-                    {
-                        "EC": 0,
-                        "MT": 7,
-                        "N": "Intervals"
-                    },
-                    {
-                        "EC": 0,
-                        "MT": 8,
-                        "N": "Other"
-                    },
-                    {
-                        "EC": 0,
-                        "MT": 10,
-                        "N": "Points"
-                    },
-                    {
-                        "EC": 0,
-                        "MT": 11,
-                        "N": "Games"
-                    },
-                    {
-                        "EC": 0,
-                        "MT": 12,
-                        "N": "Result + Total"
-                    },
-                    {
-                        "EC": 0,
-                        "MT": 13,
-                        "N": "Asian markets"
-                    },
-                    {
-                        "EC": 32,
-                        "MT": 1,
-                        "N": "All markets"
-                    }
-                ],
-                "MS": [0],
-                "N": 175325,
-                "O1": "Kean Yew Loh",
-                "O1C": 169,
-                "O1E": "Kean Yew Loh",
-                "O1I": 97237,
-                "O1IMG": [
-                    "001948796368a04b3ca87eb8952d890c.png"
-                ],
-                "O1IS": [97237],
-                "O1R": "LOH Kean Yew",
-                "O2": "Anthony Sinisuka Ginting",
-                "O2C": 72,
-                "O2E": "Anthony Sinisuka Ginting",
-                "O2I": 74575,
-                "O2IMG": [
-                    "8037acc8988e0b43b04e894ee4442b19.png"
-                ],
-                "O2IS": [74575],
-                "O2R": "Anthony Sinisuka GINTING",
-                "PN": "",
-                "S": 1760908800,
-                "SE": "Badminton",
-                "SI": 16,
-                "SN": "Badminton",
-                "SR": "Бадминтон",
-                "SUBA": true,
-                "T": 12,
-                "TG": "",
-                "TN": "Set",
-                "TNS": "Sets",
-                "V": "",
-                "VE": "",
-                "HMH": 1,
-                "R": 12,
-                "SC": {
-                    "CP": 3,
-                    "CPS": "3rd set",
-                    "FS": {
-                        "S1": 1,
-                        "S2": 1
-                    },
-                    "I": "",
-                    "P": 2,
-                    "PS": [
-                        {
-                            "Key": 1,
-                            "Value": {
-                                "NF": "1st set",
-                                "S1": 21,
-                                "S2": 10
-                            }
-                        },
-                        {
-                            "Key": 2,
-                            "Value": {
-                                "NF": "2nd set",
-                                "S1": 19,
-                                "S2": 21
-                            }
-                        },
-                        {
-                            "Key": 3,
-                            "Value": {
-                                "NF": "3rd set",
-                                "S2": 1
-                            }
-                        }
-                    ],
-                    "S": [
-                        {
-                            "Key": "id_tourney",
-                            "Value": ""
-                        }
-                    ],
-                    "SLS": "39 minutes",
-                    "TS": 2367
-                },
-                "SG": [
-                    {
-                        "DI": "44",
-                        "EC": 141,
-                        "EGC": 21,
-                        "GE": [
-                            {
-                                "E": [
-                                    [
-                                        {
-                                            "C": 2.21,
-                                            "CV": "2.21",
-                                            "G": 1,
-                                            "GS": 1,
-                                            "T": 1
-                                        }
-                                    ],
-                                    [
-                                        {
-                                            "C": 1.608,
-                                            "CV": "1.608",
-                                            "G": 1,
-                                            "GS": 1,
-                                            "T": 3
-                                        }
-                                    ]
-                                ],
-                                "G": 1,
-                                "GS": 1
-                            },
-                            {
-                                "E": [
-                                    [
-                                        {
-                                            "C": 1.32,
-                                            "CV": "1.32",
-                                            "G": 17,
-                                            "GS": 4,
-                                            "P": 35.5,
-                                            "T": 9
-                                        },
-                                        {
-                                            "C": 1.515,
-                                            "CV": "1.515",
-                                            "G": 17,
-                                            "GS": 4,
-                                            "P": 36.5,
-                                            "T": 9
-                                        },
-                                        {
-                                            "C": 1.9,
-                                            "CE": 1,
-                                            "CV": "1.9",
-                                            "G": 17,
-                                            "GS": 4,
-                                            "P": 37.5,
-                                            "T": 9
-                                        },
-                                        {
-                                            "C": 2.456,
-                                            "CV": "2.456",
-                                            "G": 17,
-                                            "GS": 4,
-                                            "P": 38.5,
-                                            "T": 9
-                                        },
-                                        {
-                                            "C": 3.6,
-                                            "CV": "3.6",
-                                            "G": 17,
-                                            "GS": 4,
-                                            "P": 39.5,
-                                            "T": 9
-                                        }
-                                    ],
-                                    [
-                                        {
-                                            "C": 3.03,
-                                            "CV": "3.03",
-                                            "G": 17,
-                                            "GS": 4,
-                                            "P": 35.5,
-                                            "T": 10
-                                        },
-                                        {
-                                            "C": 2.34,
-                                            "CV": "2.34",
-                                            "G": 17,
-                                            "GS": 4,
-                                            "P": 36.5,
-                                            "T": 10
-                                        },
-                                        {
-                                            "C": 1.9,
-                                            "CE": 1,
-                                            "CV": "1.9",
-                                            "G": 17,
-                                            "GS": 4,
-                                            "P": 37.5,
-                                            "T": 10
-                                        },
-                                        {
-                                            "C": 1.47,
-                                            "CV": "1.47",
-                                            "G": 17,
-                                            "GS": 4,
-                                            "P": 38.5,
-                                            "T": 10
-                                        },
-                                        {
-                                            "C": 1.2,
-                                            "CV": "1.2",
-                                            "G": 17,
-                                            "GS": 4,
-                                            "P": 39.5,
-                                            "T": 10
-                                        }
-                                    ]
-                                ],
-                                "G": 17,
-                                "GS": 4
-                            },
-                            {
-                                "E": [
-                                    [
-                                        {
-                                            "C": 3.064,
-                                            "CV": "3.064",
-                                            "G": 2,
-                                            "GS": 3,
-                                            "P": -2.5,
-                                            "T": 7
-                                        },
-                                        {
-                                            "C": 1.69,
-                                            "CE": 1,
-                                            "CV": "1.69",
-                                            "G": 2,
-                                            "GS": 3,
-                                            "P": 2.5,
-                                            "T": 7
-                                        },
-                                        {
-                                            "C": 1.495,
-                                            "CV": "1.495",
-                                            "G": 2,
-                                            "GS": 3,
-                                            "P": 3.5,
-                                            "T": 7
-                                        },
-                                        {
-                                            "C": 1.336,
-                                            "CV": "1.336",
-                                            "G": 2,
-                                            "GS": 3,
-                                            "P": 4.5,
-                                            "T": 7
-                                        },
-                                        {
-                                            "C": 1.23,
-                                            "CV": "1.23",
-                                            "G": 2,
-                                            "GS": 3,
-                                            "P": 5.5,
-                                            "T": 7
-                                        }
-                                    ],
-                                    [
-                                        {
-                                            "C": 1.315,
-                                            "CV": "1.315",
-                                            "G": 2,
-                                            "GS": 3,
-                                            "P": 2.5,
-                                            "T": 8
-                                        },
-                                        {
-                                            "C": 2.07,
-                                            "CE": 1,
-                                            "CV": "2.07",
-                                            "G": 2,
-                                            "GS": 3,
-                                            "P": -2.5,
-                                            "T": 8
-                                        },
-                                        {
-                                            "C": 2.4,
-                                            "CV": "2.4",
-                                            "G": 2,
-                                            "GS": 3,
-                                            "P": -3.5,
-                                            "T": 8
-                                        },
-                                        {
-                                            "C": 2.955,
-                                            "CV": "2.955",
-                                            "G": 2,
-                                            "GS": 3,
-                                            "P": -4.5,
-                                            "T": 8
-                                        },
-                                        {
-                                            "C": 3.66,
-                                            "CV": "3.66",
-                                            "G": 2,
-                                            "GS": 3,
-                                            "P": -5.5,
-                                            "T": 8
-                                        }
-                                    ]
-                                ],
-                                "G": 2,
-                                "GS": 3
-                            }
-                        ],
-                        "I": 663601147,
-                        "MEC": [
-                            {
-                                "EC": 60,
-                                "MT": 2,
-                                "N": "Popular"
-                            },
-                            {
-                                "EC": 25,
-                                "MT": 3,
-                                "N": "Total"
-                            },
-                            {
-                                "EC": 10,
-                                "MT": 4,
-                                "N": "Handicap"
-                            },
-                            {
-                                "EC": 0,
-                                "MT": 5,
-                                "N": "Players"
-                            },
-                            {
-                                "EC": 24,
-                                "MT": 6,
-                                "N": "Goals"
-                            },
-                            {
-                                "EC": 0,
-                                "MT": 7,
-                                "N": "Intervals"
-                            },
-                            {
-                                "EC": 0,
-                                "MT": 8,
-                                "N": "Other"
-                            },
-                            {
-                                "EC": 0,
-                                "MT": 10,
-                                "N": "Points"
-                            },
-                            {
-                                "EC": 0,
-                                "MT": 11,
-                                "N": "Games"
-                            },
-                            {
-                                "EC": 0,
-                                "MT": 12,
-                                "N": "Result + Total"
-                            },
-                            {
-                                "EC": 0,
-                                "MT": 13,
-                                "N": "Asian markets"
-                            },
-                            {
-                                "EC": 141,
-                                "MT": 1,
-                                "N": "All markets"
-                            }
-                        ],
-                        "MG": 663593597,
-                        "N": 175328,
-                        "P": 3,
-                        "PN": "3rd set",
-                        "SI": 16,
-                        "T": 12,
-                        "TG": "",
-                        "V": "",
-                        "R": 12
-                    }
-                ],
-                "U": 1760911167,
-                "VA": 1,
-                "VI": "17486404"
-            }
-        };
+    <button class="btn" onclick="placeBet()">Place Bet</button>
+  </div>
+</div>
+  
+  <script src="/js/eruda.js"></script>
+  <script>
+    eruda.init(); // Console চালু হবে
+  </script>
 
-        // Function to get market name by group ID
-        function getMarketName(groupId) {
-            const marketNames = {
-                1: "Match Winner",
-                2: "Handicap",
-                15: "Total Points",
-                17: "Total Points (Current Set)",
-                62: "Player Points"
-            };
-            return marketNames[groupId] || `Market ${groupId}`;
-        }
+<script>
+let liveMatches = {};
+let selectedBet = null;
 
-        // Function to get player name by type
-        function getPlayerName(type) {
-            if (type === 1 || type === 7 || type === 9 || type === 11 || type === 13) {
-                return matchData.Value.O1;
-            } else if (type === 3 || type === 8 || type === 10 || type === 12 || type === 14) {
-                return matchData.Value.O2;
-            }
-            return "Unknown";
-        }
+async function fetchOdds() {
+  try {
+    const res = await fetch("/res");
+    const data = await res.json();
+    const matches = data?.Value || [];
+    const container = document.getElementById("matches");
+    container.innerHTML = "";
 
-        // Function to format handicap value
-        function formatHandicap(value, type) {
-            if (value > 0) {
-                return `+${value}`;
-            }
-            return value.toString();
-        }
 
-        // Function to display match information
-        function displayMatchInfo() {
-            // Player names and odds
-            document.getElementById('player1').querySelector('.player-name').textContent = matchData.Value.O1;
-            document.getElementById('player2').querySelector('.player-name').textContent = matchData.Value.O2;
+
+    matches.forEach(m => {
+      const id = m.I;
+      const teamA = m.O1E;
+      const teamB = m.O2E;
+      const oddsA = m.E?.[0]?.C || 1.0;
+      const oddsB = m.E?.[1]?.C || 1.0;
+      
+      
+      let extraValue = null
+      m.AE.forEach( j => {
+        j.ME.forEach( k => {
+          if(k.CE === 1){
+            console.log("jan 333",k.C);
             
-            // Get match winner odds
-            const matchWinnerGroup = matchData.Value.GE.find(group => group.G === 1);
-            if (matchWinnerGroup) {
-                document.getElementById('player1').querySelector('.player-odds').textContent = matchWinnerGroup.E[0][0].C;
-                document.getElementById('player2').querySelector('.player-odds').textContent = matchWinnerGroup.E[1][0].C;
-            }
+            extraValue = k.C;
             
-            // Tournament info
-            document.getElementById('tournament-info').textContent = `${matchData.Value.L} • ${matchData.Value.SE}`;
-            
-            // Match score
-            const totalScore = matchData.Value.SC.FS;
-            document.getElementById('match-score').textContent = `${totalScore.S1} - ${totalScore.S2}`;
-            
-            // Current set info
-            const currentSet = matchData.Value.SC.CPS;
-            document.getElementById('current-set-info').textContent = `${currentSet}: ${matchData.Value.SC.PS[2].Value.S1 || 0} - ${matchData.Value.SC.PS[2].Value.S2 || 0}`;
-            
-            // Set scores
-            const setScoresContainer = document.getElementById('set-scores');
-            setScoresContainer.innerHTML = '';
-            
-            matchData.Value.SC.PS.forEach(set => {
-                const setScore = document.createElement('div');
-                setScore.className = 'set-score';
-                
-                const setNumber = document.createElement('div');
-                setNumber.className = 'set-number';
-                setNumber.textContent = set.Value.NF;
-                
-                const setPoints = document.createElement('div');
-                setPoints.className = 'set-points';
-                setPoints.textContent = `${set.Value.S1 || 0} - ${set.Value.S2 || 0}`;
-                
-                if (set.Key === matchData.Value.SC.CP) {
-                    setNumber.classList.add('current-set');
-                    setPoints.classList.add('current-set');
-                }
-                
-                setScore.appendChild(setNumber);
-                setScore.appendChild(setPoints);
-                setScoresContainer.appendChild(setScore);
-            });
-        }
+          }
+          
+        });
+        
 
-        // Function to display betting markets
-        function displayMarkets() {
-            const marketContent = document.getElementById('market-content');
-            marketContent.innerHTML = '';
-            
-            matchData.Value.GE.forEach(group => {
-                const marketGroup = document.createElement('div');
-                marketGroup.className = 'market-group';
-                
-                const marketTitle = document.createElement('div');
-                marketTitle.className = 'market-title';
-                marketTitle.textContent = getMarketName(group.G);
-                marketGroup.appendChild(marketTitle);
-                
-                const oddsContainer = document.createElement('div');
-                oddsContainer.className = 'odds-container';
-                
-                // For each outcome in the group
-                group.E.forEach((outcomes, index) => {
-                    outcomes.forEach(outcome => {
-                        const oddsItem = document.createElement('div');
-                        oddsItem.className = 'odds-item';
-                        
-                        const oddsName = document.createElement('div');
-                        oddsName.className = 'odds-name';
-                        
-                        const oddsValue = document.createElement('div');
-                        oddsValue.className = 'odds-value';
-                        oddsValue.textContent = outcome.C;
-                        
-                        // Set the name based on market type
-                        if (group.G === 1) { // Match Winner
-                            oddsName.textContent = getPlayerName(outcome.T);
-                        } else if (group.G === 2 || group.G === 15 || group.G === 62) { // Handicap and Total Points
-                            if (outcome.P !== undefined) {
-                                oddsName.textContent = `${getPlayerName(outcome.T)} ${formatHandicap(outcome.P, outcome.T)}`;
-                            } else {
-                                oddsName.textContent = getPlayerName(outcome.T);
-                            }
-                        } else if (group.G === 17) { // Total Points (Current Set)
-                            if (outcome.P !== undefined) {
-                                oddsName.textContent = `Over ${outcome.P}`;
-                            }
-                        }
-                        
-                        oddsItem.appendChild(oddsName);
-                        oddsItem.appendChild(oddsValue);
-                        
-                        // Highlight if this is a special outcome
-                        if (outcome.CE === 1) {
-                            oddsItem.classList.add('highlighted');
-                        }
-                        
-                        oddsContainer.appendChild(oddsItem);
-                    });
-                });
-                
-                marketGroup.appendChild(oddsContainer);
-                marketContent.appendChild(marketGroup);
-            });
-        }
+      })
 
-        // Tab switching functionality
-        function setupTabs() {
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.addEventListener('click', function() {
-                    // Remove active class from all tabs
-                    document.querySelectorAll('.tab').forEach(t => {
-                        t.classList.remove('active');
-                    });
-                    
-                    // Add active class to clicked tab
-                    this.classList.add('active');
-                    
-                    // In a real implementation, we would load different market data here
-                    // based on the selected tab
-                    const tabName = this.getAttribute('data-tab');
-                    console.log(`Switched to ${tabName} tab`);
-                });
-            });
-        }
 
-        // Odds selection functionality
-        function setupOddsSelection() {
-            document.addEventListener('click', function(e) {
-                if (e.target.closest('.odds-item')) {
-                    const oddsItem = e.target.closest('.odds-item');
-                    
-                    // Remove highlighted class from all odds items
-                    document.querySelectorAll('.odds-item').forEach(item => {
-                        item.classList.remove('highlighted');
-                    });
-                    
-                    // Add highlighted class to clicked odds item
-                    oddsItem.classList.add('highlighted');
-                    
-                    // In a real implementation, we would add this to a bet slip
-                    const marketName = oddsItem.querySelector('.odds-name').textContent;
-                    const oddsValue = oddsItem.querySelector('.odds-value').textContent;
-                    console.log(`Selected: ${marketName} at odds ${oddsValue}`);
-                }
-            });
-        }
+      liveMatches[id] = { teamA, teamB, oddsA, oddsB };
 
-        // Initialize the application
-        function init() {
+      const div = document.createElement("div");
+      div.className = "match";
+      div.innerHTML = `
+        <h4>${teamA} vs ${teamB}</h4>
+        <div class="team">
+          <span>${teamA}</span>
+          <button class="btn" onclick="openModal('${id}','A')">${oddsA}</button>
+        </div>
+        <div class="team">
+          <span>${teamB}</span>
+          <button class="btn" onclick="openModal('${id}','B')">${oddsB}</button>
+        </div>
+        
+        
+        ${extraValue ? `<div style="margin-top:5px;color:#0f0;">Extra Odds: ${extraValue}</div>` : ""}
+        
+      `;
+      container.appendChild(div);
+      
+      //console.log(m);
+    });
+
+    updateModalOdds();
+  } catch(err) {
+    console.error(err);
+  }
+ // setTimeout(fetchOdds, 3000);
+}
+
+function openModal(matchId, team) {
+  const match = liveMatches[matchId];
+  selectedBet = { matchId, team };
+  document.getElementById("matchTitle").innerText = `${match.teamA} vs ${match.teamB}`;
+  document.getElementById("teamName").innerText = team === 'A' ? match.teamA : match.teamB;
+  document.getElementById("teamOdds").innerText = team === 'A' ? match.oddsA : match.oddsB;
+  document.getElementById("betModal").style.display = "flex";
+}
+
+function closeModal() {
+  document.getElementById("betModal").style.display = "none";
+  selectedBet = null;
+  document.getElementById("betAmount").value = "";
+}
+
+function updateModalOdds() {
+  if(!selectedBet) return;
+  const bet = liveMatches[selectedBet.matchId];
+  if(!bet) return;
+
+  const oddsEl = document.getElementById("teamOdds");
+  const newOdds = selectedBet.team === "A" ? bet.oddsA : bet.oddsB;
+
+  if(oddsEl.innerText != newOdds) {
+    oddsEl.innerText = newOdds;
+    oddsEl.classList.add("blink");
+    setTimeout(() => oddsEl.classList.remove("blink"), 2000);
+  }
+}
+
+fetchOdds();
+</script>
+
+
+<script>
+async function placeBet() {
+  if (!selectedBet) return alert("No team selected!");
+
+  const amount = parseFloat(document.getElementById("betAmount").value);
+  /*if (!amount || amount <= 0) {
+    alert("Please enter a valid bet amount!");
+    return;
+  }*/
+
+  const bet = liveMatches[selectedBet.matchId];
+  const teamName = selectedBet.team === "A" ? bet.teamA : bet.teamB;
+  const odds = selectedBet.team === "A" ? bet.oddsA : bet.oddsB;
+
+  try {
+    // 🟢 এখানে await ব্যবহার করা হয়েছে
+   const res = await fetch('/bet', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    matchId: selectedBet.matchId,
+    team: selectedBet.team,
+    amount,
+    odds  // ✅ নতুন যোগ করা
+  })
+});
+
+    const data = await res.json(); // রেসপন্স JSON হিসেবে ধরো
+    console.log("✅  data Server Response:", data);
+    
+    amount.value = "";
+
+    alert(`✅ Bet Placed!\n\nMatch: ${bet.teamA} vs ${bet.teamB}\nTeam: ${teamName}\nOdds: ${odds}\nAmount: ${amount}`);
+
+    closeModal();
+  } catch (err) {
+    console.error("❌ Error placing bet:", err);
+    alert("Failed to place bet. Please try again!");
+  }
+}
+</script>
+</body>
+</html>

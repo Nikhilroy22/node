@@ -1,71 +1,58 @@
 
 
 // Place Bet (POST)
+// controllers/betController.js
+
+
 exports.placeBet = async (req, res) => {
   try {
-    const { matchId, team, amount, odds } = req.body;
+    const { matchId, team, label, amount, odds } = req.body;
 
-    // 🔹 Basic Validation
-    if (!matchId || typeof matchId !== "string") {
-      return res.status(400).json({ success: false, message: "ম্যাচ আইডি দিতে হবে!" });
-    }
-    if (!team || !["A", "B"].includes(team)) {
-      return res.status(400).json({ success: false, message: "দল নির্বাচন সঠিক নয়!" });
-    }
-    if (!amount || isNaN(amount) || amount <= 0) {
-      return res.status(400).json({ success: false, message: "সঠিক টাকার পরিমাণ দিন!" });
-    }
-    if (!odds || isNaN(odds)) {
-      return res.status(400).json({ success: false, message: "অডস দিতে হবে!" });
-    }
+    if (!matchId) return res.status(400).json({ success: false, message: "❌ ম্যাচ আইডি দিতে হবে!" });
+    if (!amount || isNaN(amount) || amount <= 0) return res.status(400).json({ success: false, message: "❌ সঠিক টাকার পরিমাণ দিন!" });
 
-    // 🔹 Live odds আনব
     const url = "https://1xbet86.com/LiveFeed/Get1x2_VZip?sports=16&count=50&lng=en&gr=54&antisports=4&mode=4&country=19&getEmpty=true";
-    const fdata = await fetch(url, {
-      method: "GET",
-      headers: {
-        "User-Agent": "Mozilla/5.0",
-        "Accept": "application/json"
-      }
-    });
-    const jjj = await fdata.json();
-    const match = jjj?.Value?.find(m => m.I === parseInt(matchId));
+    const resp = await fetch(url);
+    const json = await resp.json();
 
-    if (!match) {
-      return res.status(404).json({ success: false, message: "ম্যাচ পাওয়া যায়নি!" });
+    const match = json?.Value?.find(m => String(m.I) === String(matchId));
+    if (!match) return res.status(404).json({ success: false, message: "ম্যাচ পাওয়া যায়নি!" });
+
+    // 🔹 Main odds
+    let serverOdds = team === "A" ? match.E?.[0]?.C : match.E?.[1]?.C;
+
+    // 🔹 যদি extra option হয়, তখন AE → ME থেকে খুঁজে বের করো
+    if (team === "X" && label) {
+      match.AE?.forEach(ae => {
+        ae.ME?.forEach(me => {
+          if (me.N === label || me.C === Number(odds)) {
+            serverOdds = me.C;
+          }
+        });
+      });
     }
 
-    const serverOdds = team === "A" ? match.E?.[0]?.C : match.E?.[1]?.C;
+    if (!serverOdds)
+      return res.status(400).json({ success: false, message: "❌ সার্ভার অডস পাওয়া যায়নি!" });
 
     // 🔹 Odds mismatch check
     if (Number(odds) !== Number(serverOdds)) {
-      return res.status(400).json({
+      return res.status(409).json({
         success: false,
-        message: `অডস পরিবর্তন হয়েছে! নতুন অডস ${serverOdds}`,
+        message: `⚠️ অডস পরিবর্তন হয়েছে! নতুন অডস ${serverOdds}`,
         newOdds: serverOdds
       });
     }
 
-    // ✅ যদি odds ঠিক থাকে, বেট অনুমোদন করব
-    const betData = {
-      matchId,
-      team,
-      amount,
-      odds,
-      time: new Date().toLocaleString("bn-BD")
-    };
-
-    console.log("🧾 নতুন বেট:", betData);
-
-    res.json({
+    return res.json({
       success: true,
-      message: "✅ বেট সফলভাবে দেওয়া হয়েছে!",
-      bet: betData
+      message: "✅ বেট সফলভাবে প্লেস হয়েছে!",
+      data: { matchId, team, label, amount, odds: serverOdds }
     });
 
   } catch (err) {
-    console.error("❌ Bet error:", err);
-    res.status(500).json({ success: false, message: "সার্ভারে সমস্যা হয়েছে!" });
+    console.error("Bet Error:", err.message);
+    return res.status(500).json({ success: false, message: "⚠️ সার্ভার সমস্যা হয়েছে!" });
   }
 };
 
