@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>header</title>
+</head>
+<body>
+  <h1>Match ID: <%= matchid %></h1>
+  
+  <input type="hidden" id="hiddenId" value="<%= matchid %>" />
+<button id="showIdBtn">Show ID</button>
+  
+  
+  
+<script src="/js/eruda.js"></script>
+  <script>
+    eruda.init(); // Console চালু হবে
+  </script>
+  <script>
+    
+    const hiddenInput = document.getElementById("hiddenId");
+const btn = document.getElementById("showIdBtn");
+
+btn.addEventListener("click", () => {
+  alert(hiddenInput.value); // Output: 999
+});
+    
+  </script>
+  
+
+
+</body>
+</html>
+  
+  

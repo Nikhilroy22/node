@@ -155,5 +155,14 @@
       "path": "/"
     },
     "flash": {}
+  },
+  "QQyQWxoP7k-w3LLjPjo4CGjld2hcM5LR": {
+    "cookie": {
+      "originalMaxAge": null,
+      "expires": null,
+      "httpOnly": true,
+      "path": "/"
+    },
+    "flash": {}
   }
 }

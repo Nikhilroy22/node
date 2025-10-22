@@ -137,7 +137,7 @@
         const div = document.createElement("div");
         div.className = "match";
         div.innerHTML = `
-          <h4>${teamA} vs ${teamB}</h4>
+         <a href="/bet/${id}"> <h4>${teamA} vs ${teamB}</h4> <a/>
           <div class="team">
             <span>${teamA}</span>
             <button class="btn" onclick="openModal('${id}','A','${teamA}',${oddsA})">${oddsA}</button>

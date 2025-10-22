@@ -8,11 +8,15 @@ const SignUpController = require('../controller/SignupController')
 const Home = require('../controller/HomeController');
 const authMiddleware = require('../middleware/authMiddleware');
 const BetController = require('../controller/BetController');
+const BetApiController = require('../controller/BetApiController');
 
 // Bet ROUTE
 router.get("/res", BetController.betapi);
 router.get('/bet', BetController.bethome);
 router.post('/bet', BetController.placeBet);
+
+//BetbApi
+router.get('/bet/:id', BetApiController.ParamsBet);
 
 
 //Crash page
