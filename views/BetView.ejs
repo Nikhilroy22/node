@@ -4,6 +4,44 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>header</title>
+  
+  <style>
+   /* Tabs */
+  .tabs{display:flex;gap:8px;margin-top:16px;overflow:auto;padding-bottom:6px}
+  .tab{
+    padding:10px 16px;border-radius:999px;background:rgba(255,255,255,0.01);
+    border:1px solid rgba(255,255,255,0.02);cursor:pointer;color:var(--muted);font-weight:600;
+  }
+  .tab.active{background:linear-gradient(90deg,var(--accent1), #0ea7ff);color:#021226;box-shadow:0 8px 28px rgba(0,217,255,0.06)}
+  
+    /* Markets grid */
+  .market{
+    margin-top:16px;padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.02);
+    background:linear-gradient(180deg, rgba(255,255,255,0.005), rgba(255,255,255,0.01));
+  }
+  .market-title{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--accent1);margin-bottom:12px}
+  .odds-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+  }
+  .odds-grid.two{grid-template-columns:repeat(2,1fr)}
+  .odds-grid.four{grid-template-columns:repeat(4,1fr)}
+  .odd{
+    background:linear-gradient(180deg,rgba(0,0,0,0.08), transparent);
+    padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.02);
+    cursor:pointer;transition:all .22s; text-align:center;
+  }
+  .odd:hover{transform:translateY(-6px);box-shadow:0 10px 30px rgba(2,8,23,0.5)}
+  .odd .lbl{font-size:13px;color:var(--muted);margin-bottom:8px}
+  .odd .oddv{font-weight:800;font-size:20px;color:var(--accent2)}
+  .odd.selected{background:linear-gradient(90deg,var(--accent1), #0ea7ff);color:#021226}
+  .odd.selected .lbl{color:rgba(2,18,38,0.7)}
+  .handicap-row{display:grid;grid-template-columns:160px 1fr 1fr;gap:10px;align-items:center}
+  .handicap-label{color:var(--muted);font-size:13px}
+    
+    
+  </style>
 </head>
 <body>
   <h1>Match ID: <%= matchid %></h1>
@@ -11,7 +49,50 @@
   <input type="hidden" id="hiddenId" value="<%= matchid %>" />
 <button id="showIdBtn">Show ID</button>
   
-  
+  <h1 id="timer"></h1>
+
+<!-- Tabs -->
+      <div class="tabs" id="tabs">
+        <div class="tab active">Main Markets</div>
+        <div class="tab">Goals</div>
+        <div class="tab">Handicap</div>
+        <div class="tab">Both Teams to Score</div>
+        <div class="tab">Corners</div>
+        <div class="tab">Cards</div>
+        <div class="tab">Half Time/Full Time</div>
+        <div class="tab">Player Props</div>
+      </div>
+      
+      
+<div class="market card" id="marketsRoot">
+        <div class="market-title">⚽ Match Result</div>
+        <div class="odds-grid" id="market1">
+          <div class="odd" data-label="Man United Win" data-odd="2.45" onclick="toggleSelection(this)">
+            <div class="lbl">Manchester United</div>
+            <div class="oddv">2.45</div>
+          </div>
+          <div class="odd" data-label="Draw" data-odd="3.20" onclick="toggleSelection(this)">
+            <div class="lbl">Draw</div>
+            <div class="oddv">3.20</div>
+          </div>
+          <div class="odd" data-label="Liverpool Win" data-odd="2.95" onclick="toggleSelection(this)">
+            <div class="lbl">Liverpool FC</div>
+            <div class="oddv">2.95</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="market card">
+        <div class="market-title">🎯 Total Goals</div>
+        <div class="odds-grid two" id="market2">
+          <div class="odd" data-label="Over 2.5" data-odd="1.75" onclick="toggleSelection(this)"><div class="lbl">Over 2.5</div><div class="oddv">1.75</div></div>
+          <div class="odd" data-label="Under 2.5" data-odd="2.10" onclick="toggleSelection(this)"><div class="lbl">Under 2.5</div><div class="oddv">2.10</div></div>
+          <div class="odd" data-label="Over 3.5" data-odd="2.85" onclick="toggleSelection(this)"><div class="lbl">Over 3.5</div><div class="oddv">2.85</div></div>
+          <div class="odd" data-label="Under 3.5" data-odd="1.45" onclick="toggleSelection(this)"><div class="lbl">Under 3.5</div><div class="oddv">1.45</div></div>
+        </div>
+      </div>
+
+
   
 <script src="/js/eruda.js"></script>
   <script>
@@ -23,11 +104,84 @@
 const btn = document.getElementById("showIdBtn");
 
 btn.addEventListener("click", () => {
-  alert(hiddenInput.value); // Output: 999
+  alert(hiddenInput.value);
 });
+
+
+let gameSeconds;
+let lastUpdate;
+
+async function viewodds() {
+  const res = await fetch(`/resview/${hiddenInput.value}`);
+  const data = await res.json();
+  console.log(data.Value.SC.SLS);
+
+  // ttt set
+  let ttt = data.Value.SC.SLS; // অথবা ttt = 66; যদি ডেমো
+  if (ttt === "Event in progress"){
+    document.getElementById("timer").textContent =
+      `Event in progress`;
     
+    return;
+  }
+  gameSeconds = parseInt(ttt) * 60; // Timer শুরু মান
+  lastUpdate = performance.now();
+
+  // Timer start
+  requestAnimationFrame(updateTimer);
+}
+
+function updateTimer(now) {
+  const delta = now - lastUpdate;
+
+  if (delta >= 1000) {
+    gameSeconds++;
+    lastUpdate = now;
+
+    const minutes = Math.floor(gameSeconds / 60);
+    const seconds = gameSeconds % 60;
+    document.getElementById("timer").textContent =
+      `${minutes} min ${seconds} sec`;
+  }
+
+  requestAnimationFrame(updateTimer);
+}
+
+// Viewodds call
+viewodds();
+// key-value সংরক্ষণ
+localStorage.setItem("name", "Nikhil");
+localStorage.setItem("age", "25");
+// key-value সংরক্ষণ
+sessionStorage.setItem("username", "Nikhil");
+sessionStorage.setItem("score", "50");
+
+
+
+
+async function ods(){
+
+
+const url = 'https://pinnacle-odds.p.rapidapi.com/kit/v1/markets?event_type=prematch&sport_id=2&is_have_odds=true';
+const options = {
+  method: 'GET',
+  headers: {
+    'x-rapidapi-key': '35d528aa48msh8cf2d567f028e86p18d5e4jsn4f3497160e7e',
+    'x-rapidapi-host': 'pinnacle-odds.p.rapidapi.com'
+  }
+};
+
+try {
+	const response = await fetch(url, options);
+	const result = await response.text();
+	console.log(result);
+} catch (error) {
+	console.error(error);
+}
+}
+ods();
   </script>
-  
+ 
 
 
 </body>

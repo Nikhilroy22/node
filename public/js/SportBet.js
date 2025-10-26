@@ -11,7 +11,7 @@ const fdata = await fetch(url, {
   });
 const jjj = await fdata.json();
 
-setTimeout(kalabd, 2000)
+
 console.log(jjj);
 }
-kalabd();
+//kalabd();

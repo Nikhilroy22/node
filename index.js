@@ -26,7 +26,10 @@ const sessionMiddleware = session({
   store: new JSONFileStore({ filePath: './helper/sessions.json' }),
   secret: 'secret123',
   resave: false,
-  saveUninitialized: false
+  saveUninitialized: false,
+  cookie: {
+    httpOnly: false
+  }
 })
 app.use(sessionMiddleware);
 app.use(flash());
@@ -64,7 +67,7 @@ app.use('/', webRoutes);
 
 
 // Socket.IO handler আলাদা ফাইল থেকে কল
-socketHandler(io, sessionMiddleware);
+//socketHandler(io, sessionMiddleware);
 
 //Server Start
 server.listen(3000, () => {

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tab Layout Demo</title>
+<style>
+    body { font-family: sans-serif; padding: 20px; background: #f5f5f5; }
+    h1 { text-align: center; margin-bottom: 30px; }
+
+    /* Tabs styling */
+    .tabs { display: flex; justify-content: center; cursor: pointer; margin-bottom: 20px; }
+    .tab {
+        padding: 10px 20px;
+        border: 1px solid #333;
+        border-bottom: none;
+        background: #fff;
+        margin-right: 5px;
+        border-radius: 5px 5px 0 0;
+        transition: 0.3s;
+    }
+    .tab:hover { background-color: #eee; }
+    .tab.active { background-color: #333; color: #fff; }
+
+    /* Tab content styling */
+    .tab-content { border: 1px solid #333; padding: 10px; background: #fff; border-radius: 0 5px 5px 5px; }
+    
+    /* Table styling */
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #333; padding: 8px; text-align: left; }
+    th { background-color: #333; color: #fff; }
+    tr:nth-child(even) { background-color: #f2f2f2; }
+</style>
+</head>
+<body>
+
+<h1>Tab Layout Example</h1>
+
+<!-- Tabs -->
+<div class="tabs">
+    <div class="tab active" data-tab="users">Users</div>
+    <div class="tab" data-tab="products">Products</div>
+</div>
+
+<!-- Tab Content -->
+<div class="tab-content" id="tab-content"></div>
+
+<script>
+    // Sample data
+    const data = {
+        users: [
+            { id: 1, name: "Nikhil", age: 25 },
+            { id: 2, name: "Rahim", age: 30 },
+            { id: 3, name: "Sajib", age: 22 }
+        ],
+        products: [
+            { id: 101, name: "Laptop", price: 50000 },
+            { id: 102, name: "Phone", price: 20000 },
+            { id: 103, name: "Tablet", price: 15000 }
+        ]
+    };
+
+    const tabs = document.querySelectorAll(".tab");
+    const tabContent = document.getElementById("tab-content");
+
+    // Function to render table
+    function renderTable(key) {
+        let html = "<table><thead>";
+
+        if(key === "users") {
+            html += "<tr><th>ID</th><th>Name</th><th>Age</th></tr></thead><tbody>";
+            data.users.forEach(u => {
+                html += `<tr><td>${u.id}</td><td>${u.name}</td><td>${u.age}</td></tr>`;
+            });
+        } else if(key === "products") {
+            html += "<tr><th>ID</th><th>Name</th><th>Price</th></tr></thead><tbody>";
+            data.products.forEach(p => {
+                html += `<tr><td>${p.id}</td><td>${p.name}</td><td>${p.price}</td></tr>`;
+            });
+        }
+
+        html += "</tbody></table>";
+        tabContent.innerHTML = html;
+    }
+
+    // Initial render
+    renderTable("users");
+
+    // Tab click event
+    tabs.forEach(tab => {
+        tab.addEventListener("click", () => {
+            tabs.forEach(t => t.classList.remove("active"));
+            tab.classList.add("active");
+            renderTable(tab.dataset.tab);
+        });
+    });
+</script>
+
+</body>
+</html>

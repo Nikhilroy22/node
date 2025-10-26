@@ -21,6 +21,6 @@ exports.HomePage =
   
   
   res.render('index', { title: 'HOME PAGE',
-  data});
+  data, showSplash: true});
 }
   

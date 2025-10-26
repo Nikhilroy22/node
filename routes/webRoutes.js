@@ -11,13 +11,18 @@ const BetController = require('../controller/BetController');
 const BetApiController = require('../controller/BetApiController');
 
 // Bet ROUTE
-router.get("/res", BetController.betapi);
+
 router.get('/bet', BetController.bethome);
 router.post('/bet', BetController.placeBet);
 
-//BetbApi
+
+
+//Betb Api Get
 router.get('/bet/:id', BetApiController.ParamsBet);
 
+//Bet API RES
+router.get("/res", BetController.betapi);
+router.get("/resview/:matchid", BetApiController.betapiview);
 
 //Crash page
 router.get('/crash', (req, res) => {

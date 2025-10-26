@@ -1,198 +1,151 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-  <title>Live Odds - BetSlip Modal</title>
-  <style>
-    body { background:#111; color:#fff; font-family:sans-serif; padding:20px; }
-    .match { background:#222; padding:10px; margin:10px 0; border-radius:8px; }
-    .team { display:flex; justify-content:space-between; margin:5px 0; }
-    .btn { background:#007bff; color:#fff; border:none; border-radius:5px; padding:5px 10px; cursor:pointer; }
-    .btn:hover { background:#0056b3; }
-    .blink { animation: blink 1.0s linear; }
-    @keyframes blink { from{background:yellow;color:black;} to{background:transparent;color:white;} }
-    .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); justify-content:center; align-items:center; }
-    .modal-content { background:#222; padding:20px; border-radius:10px; text-align:center; width:300px; }
-    .close { float:right; cursor:pointer; color:red; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scrollable Tabs Example</title>
+<style>
+    body { font-family: sans-serif; padding: 20px; background: #f5f5f5; }
+    h1 { text-align: center; margin-bottom: 30px; }
+
+    /* Tabs container (scrollable) */
+    .tabs {
+        display: flex;
+        overflow-x: auto;
+        white-space: nowrap;
+        scrollbar-width: thin; /* Firefox */
+        scrollbar-color: #888 #f1f1f1;
+        margin-bottom: 20px;
+        border-bottom: 1px solid #333;
+        padding-bottom: 5px;
+    }
+
+    /* For Webkit browsers */
+    .tabs::-webkit-scrollbar {
+        height: 6px;
+    }
+    .tabs::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+    .tabs::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 10px;
+    }
+    .tabs::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+
+    .tab {
+        flex: 0 0 auto; /* Prevent shrinking */
+        padding: 10px 20px;
+        border: 1px solid #333;
+        border-bottom: none;
+        background: #fff;
+        margin-right: 5px;
+        border-radius: 5px 5px 0 0;
+        transition: 0.3s;
+        cursor: pointer;
+    }
+
+    .tab:hover { background-color: #eee; }
+    .tab.active { background-color: #333; color: #fff; }
+
+    /* Tab content styling */
+    .tab-content {
+        border: 1px solid #333;
+        padding: 10px;
+        background: #fff;
+        border-radius: 0 5px 5px 5px;
+        transition: opacity 0.3s ease;
+    }
+
+    /* Table styling */
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #333; padding: 8px; text-align: left; }
+    th { background-color: #333; color: #fff; }
+    tr:nth-child(even) { background-color: #f2f2f2; }
+</style>
 </head>
 <body>
-  <h2>⚡ Live Odds (1xBet)</h2>
-  <div id="matches">Loading...</div>
 
- <!-- Bet Slip Modal -->
-<div class="modal" id="betModal">
-  <div class="modal-content">
-    <span class="close" onclick="closeModal()">&times;</span>
-    <h3 id="matchTitle"></h3>
-    <p>Team: <b id="teamName"></b></p>
-    <p>Odds: <span id="teamOdds"></span></p>
+<h1>Scrollable Tab Bar Example</h1>
 
-    <!-- 💰 Bet Amount Input -->
-    <div style="margin:10px 0;">
-      <label for="betAmount">Bet Amount:</label><br>
-      <input 
-        type="number" 
-        id="betAmount" 
-        placeholder="Enter amount"
-        style="width:100%;padding:8px;margin-top:5px;border-radius:5px;border:1px solid #555;background:#111;color:#fff;"
-      />
-    </div>
-
-    <button class="btn" onclick="placeBet()">Place Bet</button>
-  </div>
+<!-- Scrollable Tabs -->
+<div class="tabs">
+    <div class="tab active" data-tab="users">Users</div>
+    <div class="tab" data-tab="products">Products</div>
+    <div class="tab" data-tab="orders">Orders</div>
+    <div class="tab" data-tab="sales">Sales</div>
+    <div class="tab" data-tab="reports">Reports</div>
+    <div class="tab" data-tab="settings">Settings</div>
+    <div class="tab" data-tab="support">Support</div>
+    <div class="tab" data-tab="about">About</div>
+    <div class="tab" data-tab="extra1">Extra 1</div>
+    <div class="tab" data-tab="extra2">Extra 2</div>
+    <div class="tab" data-tab="extra3">Extra 3</div>
+    <div class="tab" data-tab="extra4">Extra 4</div>
 </div>
-  
-  <script src="/js/eruda.js"></script>
-  <script>
-    eruda.init(); // Console চালু হবে
-  </script>
+
+<!-- Tab Content -->
+<div class="tab-content" id="tab-content"></div>
 
 <script>
-let liveMatches = {};
-let selectedBet = null;
+    // Sample data
+    const data = {
+        users: [
+            { id: 1, name: "Nikhil", age: 25 },
+            { id: 2, name: "Rahim", age: 30 },
+            { id: 3, name: "Sajib", age: 22 }
+        ],
+        products: [
+            { id: 101, name: "Laptop", price: 50000 },
+            { id: 102, name: "Phone", price: 20000 },
+            { id: 103, name: "Tablet", price: 15000 }
+        ],
+        orders: [{ id: 1, status: "Pending" }, { id: 2, status: "Shipped" }],
+        sales: [{ month: "October", total: 150000 }],
+        reports: [{ id: "R1", title: "Annual Report" }],
+        settings: [{ key: "theme", value: "dark" }],
+        support: [{ contact: "support@example.com" }],
+        about: [{ text: "This is a demo about section." }]
+    };
 
-async function fetchOdds() {
-  try {
-    const res = await fetch("/res");
-    const data = await res.json();
-    const matches = data?.Value || [];
-    const container = document.getElementById("matches");
-    container.innerHTML = "";
+    const tabs = document.querySelectorAll(".tab");
+    const tabContent = document.getElementById("tab-content");
 
+    // Function to render table
+    function renderTable(key) {
+        let html = "<table><thead>";
+        const arr = data[key];
+        if (!arr) return `<p>No data available for <b>${key}</b>.</p>`;
 
+        const keys = Object.keys(arr[0]);
+        html += "<tr>" + keys.map(k => `<th>${k}</th>`).join("") + "</tr></thead><tbody>";
 
-    matches.forEach(m => {
-      const id = m.I;
-      const teamA = m.O1E;
-      const teamB = m.O2E;
-      const oddsA = m.E?.[0]?.C || 1.0;
-      const oddsB = m.E?.[1]?.C || 1.0;
-      
-      
-      let extraValue = null
-      m.AE.forEach( j => {
-        j.ME.forEach( k => {
-          if(k.CE === 1){
-            console.log("jan 333",k.C);
-            
-            extraValue = k.C;
-            
-          }
-          
+        arr.forEach(obj => {
+            html += "<tr>" + keys.map(k => `<td>${obj[k]}</td>`).join("") + "</tr>";
         });
-        
+        html += "</tbody></table>";
+        return html;
+    }
 
-      })
+    // Initial render
+    tabContent.innerHTML = renderTable("users");
 
-
-      liveMatches[id] = { teamA, teamB, oddsA, oddsB };
-
-      const div = document.createElement("div");
-      div.className = "match";
-      div.innerHTML = `
-        <h4>${teamA} vs ${teamB}</h4>
-        <div class="team">
-          <span>${teamA}</span>
-          <button class="btn" onclick="openModal('${id}','A')">${oddsA}</button>
-        </div>
-        <div class="team">
-          <span>${teamB}</span>
-          <button class="btn" onclick="openModal('${id}','B')">${oddsB}</button>
-        </div>
-        
-        
-        ${extraValue ? `<div style="margin-top:5px;color:#0f0;">Extra Odds: ${extraValue}</div>` : ""}
-        
-      `;
-      container.appendChild(div);
-      
-      //console.log(m);
+    // Tab click event
+    tabs.forEach(tab => {
+        tab.addEventListener("click", () => {
+            tabs.forEach(t => t.classList.remove("active"));
+            tab.classList.add("active");
+            tabContent.style.opacity = 0;
+            setTimeout(() => {
+                tabContent.innerHTML = renderTable(tab.dataset.tab);
+                tabContent.style.opacity = 1;
+            }, 200);
+        });
     });
-
-    updateModalOdds();
-  } catch(err) {
-    console.error(err);
-  }
- // setTimeout(fetchOdds, 3000);
-}
-
-function openModal(matchId, team) {
-  const match = liveMatches[matchId];
-  selectedBet = { matchId, team };
-  document.getElementById("matchTitle").innerText = `${match.teamA} vs ${match.teamB}`;
-  document.getElementById("teamName").innerText = team === 'A' ? match.teamA : match.teamB;
-  document.getElementById("teamOdds").innerText = team === 'A' ? match.oddsA : match.oddsB;
-  document.getElementById("betModal").style.display = "flex";
-}
-
-function closeModal() {
-  document.getElementById("betModal").style.display = "none";
-  selectedBet = null;
-  document.getElementById("betAmount").value = "";
-}
-
-function updateModalOdds() {
-  if(!selectedBet) return;
-  const bet = liveMatches[selectedBet.matchId];
-  if(!bet) return;
-
-  const oddsEl = document.getElementById("teamOdds");
-  const newOdds = selectedBet.team === "A" ? bet.oddsA : bet.oddsB;
-
-  if(oddsEl.innerText != newOdds) {
-    oddsEl.innerText = newOdds;
-    oddsEl.classList.add("blink");
-    setTimeout(() => oddsEl.classList.remove("blink"), 2000);
-  }
-}
-
-fetchOdds();
 </script>
 
-
-<script>
-async function placeBet() {
-  if (!selectedBet) return alert("No team selected!");
-
-  const amount = parseFloat(document.getElementById("betAmount").value);
-  /*if (!amount || amount <= 0) {
-    alert("Please enter a valid bet amount!");
-    return;
-  }*/
-
-  const bet = liveMatches[selectedBet.matchId];
-  const teamName = selectedBet.team === "A" ? bet.teamA : bet.teamB;
-  const odds = selectedBet.team === "A" ? bet.oddsA : bet.oddsB;
-
-  try {
-    // 🟢 এখানে await ব্যবহার করা হয়েছে
-   const res = await fetch('/bet', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    matchId: selectedBet.matchId,
-    team: selectedBet.team,
-    amount,
-    odds  // ✅ নতুন যোগ করা
-  })
-});
-
-    const data = await res.json(); // রেসপন্স JSON হিসেবে ধরো
-    console.log("✅  data Server Response:", data);
-    
-    amount.value = "";
-
-    alert(`✅ Bet Placed!\n\nMatch: ${bet.teamA} vs ${bet.teamB}\nTeam: ${teamName}\nOdds: ${odds}\nAmount: ${amount}`);
-
-    closeModal();
-  } catch (err) {
-    console.error("❌ Error placing bet:", err);
-    alert("Failed to place bet. Please try again!");
-  }
-}
-</script>
 </body>
 </html>

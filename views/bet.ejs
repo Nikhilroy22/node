@@ -201,6 +201,7 @@
     }
 
     if (parseFloat(el.innerText) !== newOdds) {
+      selectedBet.odds = newOdds;
       el.innerText = newOdds;
       el.classList.add("blink");
       setTimeout(() => el.classList.remove("blink"), 1000);
