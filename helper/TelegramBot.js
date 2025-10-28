@@ -4,7 +4,8 @@ const path = require('path');
 
 module.exports = (app) => {
   const BOT_TOKEN = "8279159750:AAF8aHh3P2BdpvUu9P76o34wilwTcTSgzTs";
-
+// ✅ User state রাখার জন্য
+  const userState = {};
   // ✅ Webhook mode (polling বন্ধ)
   const bot = new TelegramBot(BOT_TOKEN, { polling: false });
 
@@ -32,6 +33,50 @@ module.exports = (app) => {
     await bot.sendDocument(chatId, filePath);
     fs.unlinkSync(filePath);
   });
+  
+  // ✅ /number command → next step: ask for number
+  bot.onText(/\/number/, (msg) => {
+    const chatId = msg.chat.id;
+    userState[chatId] = "WAITING_FOR_NUMBER"; // State save
+    bot.sendMessage(chatId, "📩 অনুগ্রহ করে আপনার মোবাইল নাম্বার লিখুন:");
+  });
+
+  // ✅ সাধারণ মেসেজ হ্যান্ডলার
+  bot.on('message', async (msg) => {
+    const chatId = msg.chat.id;
+    const text = msg.text.trim();
+
+    // যদি user /number কমান্ডের পরে number পাঠায়
+    if (userState[chatId] === "WAITING_FOR_NUMBER" && !text.startsWith("/")) {
+      userState[chatId] = null; // state clear
+
+      bot.sendMessage(chatId, `🔍 নম্বর যাচাই করা হচ্ছে: ${text}`);
+
+      try {
+        // 👉 এখানে API call করা যায় (উদাহরণস্বরূপ static data)
+        const info = {
+          country: "Bangladesh",
+          carrier: "Grameenphone Ltd.",
+          line_type: "mobile"
+        };
+
+        const reply = `
+📱 **Number Info**
+━━━━━━━━━━━━━━━
+📞 নম্বর: ${text}
+🌍 দেশ: ${info.country}
+🏢 অপারেটর: ${info.carrier}
+📶 টাইপ: ${info.line_type}
+        `;
+
+        bot.sendMessage(chatId, reply, { parse_mode: "Markdown" });
+      } catch (err) {
+        bot.sendMessage(chatId, "❌ তথ্য আনতে ব্যর্থ, আবার চেষ্টা করুন।");
+        console.error(err);
+      }
+    }
+  });
+
 
   // ✅ Webhook সেট করা (HTTPS URL)
   const webhookURL = "https://ngag-bd.onrender.com/telegram-webhook";
