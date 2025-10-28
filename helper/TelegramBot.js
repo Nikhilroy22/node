@@ -54,6 +54,20 @@ bot.setMyCommands([
   bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
     const text = msg.text.trim();
+    bot.sendMessage(chatId, "<b>Choose an option:</b>", {
+  parse_mode: 'HTML',
+  reply_markup: {
+    inline_keyboard: [
+      [
+        { text: '📥 Download Backup', callback_data: 'backup' },
+        { text: '👥 User List', callback_data: 'users' }
+      ],
+      [
+        { text: 'ℹ️ About', url: 'https://yourwebsite.com' }
+      ]
+    ]
+  }
+});
 
 bot.sendMessage(chatId, `manu kala: ${text}`);
     // যদি user /number কমান্ডের পরে number পাঠায়
