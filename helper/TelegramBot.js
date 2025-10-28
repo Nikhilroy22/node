@@ -8,6 +8,15 @@ module.exports = (app) => {
   const userState = {};
   // ✅ Webhook mode (polling বন্ধ)
   const bot = new TelegramBot(BOT_TOKEN, { polling: false });
+  
+  // 📌 নিচে দেখানোর জন্য command সেট করা
+bot.setMyCommands([
+  { command: '/start', description: 'Start the bot' },
+  { command: '/help', description: 'Get help menu' },
+  { command: '/backup', description: 'Download database backup' },
+  { command: '/users', description: 'Show total users' },
+  { command: '/about', description: 'About this bot' }
+]);
 
   // ✅ Telegram Webhook route
   app.post('/telegram-webhook', (req, res) => {
