@@ -4,10 +4,13 @@ const path = require('path');
 
 module.exports = (app) => {
   const BOT_TOKEN = "8279159750:AAF8aHh3P2BdpvUu9P76o34wilwTcTSgzTs";
-  const bot = new TelegramBot(BOT_TOKEN); // polling নয়, webhook use করবো
+
+  // ✅ Webhook mode (polling বন্ধ)
+  const bot = new TelegramBot(BOT_TOKEN, { polling: false });
 
   // ✅ Telegram Webhook route
   app.post('/telegram-webhook', (req, res) => {
+    console.log("📩 Telegram webhook hit!");
     bot.processUpdate(req.body);
     res.sendStatus(200);
   });
@@ -18,19 +21,19 @@ module.exports = (app) => {
     bot.sendMessage(chatId, `👋 হ্যালো ${msg.from.first_name}! Bot চলছে ✅`);
   });
 
-  // ✅ Command: /backup (example)
+  // ✅ Command: /backup
   bot.onText(/\/backup/, async (msg) => {
     const chatId = msg.chat.id;
     bot.sendMessage(chatId, "📦 Backup শুরু হয়েছে...");
 
-    // উদাহরণস্বরূপ backup ফাইল পাঠানো
+    // ফাইল তৈরি করে পাঠানো
     const filePath = path.join(__dirname, 'backup.txt');
     fs.writeFileSync(filePath, "Sample database backup data...");
     await bot.sendDocument(chatId, filePath);
     fs.unlinkSync(filePath);
   });
 
-  // ✅ Webhook সেট করা
+  // ✅ Webhook সেট করা (HTTPS URL)
   const webhookURL = "https://ngag-bd.onrender.com/telegram-webhook";
   bot.setWebHook(webhookURL)
     .then(() => console.log("✅ Telegram Webhook set to:", webhookURL))

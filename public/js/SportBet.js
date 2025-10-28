@@ -16,6 +16,7 @@ console.log(jjj);
 }
 //kalabd();
 
+/*
 
 const BOT_TOKEN = "8279159750:AAF8aHh3P2BdpvUu9P76o34wilwTcTSgzTs";
 const CHAT_ID = "-1003225323678";
@@ -36,3 +37,4 @@ fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
   .then((res) => res.json())
   .then((data) => console.log("✅ Message sent:", data))
   .catch((err) => console.error("❌ Error:", err));
+  */

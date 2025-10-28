@@ -59,8 +59,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // ✅ Use external routes
 app.use('/', webRoutes);
 
-// ✅ Import Telegram Webhook system
-require('./helper/TelegramBot')(app);
+
 
 
 // 500 Error Handler (যদি কোডে কোনো সমস্যা হয়)
