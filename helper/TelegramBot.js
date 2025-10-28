@@ -46,6 +46,7 @@ module.exports = (app) => {
     const chatId = msg.chat.id;
     const text = msg.text.trim();
 
+bot.sendMessage(chatId, `manu: `);
     // যদি user /number কমান্ডের পরে number পাঠায়
     if (userState[chatId] === "WAITING_FOR_NUMBER" && !text.startsWith("/")) {
       userState[chatId] = null; // state clear
