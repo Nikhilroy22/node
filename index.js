@@ -1,4 +1,5 @@
 const express = require('express');
+const TelegramBot = require('node-telegram-bot-api');
 
 const http = require('http');
 const path = require('path');
@@ -55,6 +56,9 @@ app.use(express.json()); // JSON data
 
 // Static ফাইল
 app.use(express.static(path.join(__dirname, 'public')));
+
+// ✅ Import Telegram Webhook system
+require('./helper/TelegramBot')(app);
 
 // ✅ Use external routes
 app.use('/', webRoutes);
