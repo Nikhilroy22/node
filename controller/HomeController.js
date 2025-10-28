@@ -18,7 +18,7 @@ exports.HomePage =
  const data = users.find(u => u.id === req.session.user.id);
  
 // console.log(tk);
-  
+  res.locals.kk = "TK";
   
   res.render('index', { title: 'HOME PAGE',
   data, showSplash: true});

@@ -15,3 +15,24 @@ const jjj = await fdata.json();
 console.log(jjj);
 }
 //kalabd();
+
+
+const BOT_TOKEN = "8279159750:AAF8aHh3P2BdpvUu9P76o34wilwTcTSgzTs";
+const CHAT_ID = "-1003225323678";
+
+// পাঠানোর message
+const message = "Hello! This is a test message from Node.js devloper";
+
+fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    chat_id: CHAT_ID,
+    text: message,
+  }),
+})
+  .then((res) => res.json())
+  .then((data) => console.log("✅ Message sent:", data))
+  .catch((err) => console.error("❌ Error:", err));

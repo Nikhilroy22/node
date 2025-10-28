@@ -8,7 +8,17 @@ const { getUsers, createUser } = require('../model/db');
 */
 // GET /login
 exports.showLogin = (req, res) => {
-  res.render('login');
+  
+  let showSplash = true;
+
+  // যদি session-এ skipSplash থাকে → false
+  if (req.session.skipSplash) {
+    showSplash = false;
+    // একবার show করার পর flag মুছে দাও
+    delete req.session.skipSplash;
+  }
+  
+  res.render('login', {showSplash});
 };
 
 // POST /login
@@ -37,6 +47,9 @@ exports.loginUser = async (req, res) => {
   if (Object.keys(errors).length > 0) {
     req.flash('errorss', errors);
     req.flash('oldInput', req.body);
+    // ✅ Splash skip করার জন্য session flag
+  req.session.skipSplash = true;
+
     return res.redirect('/login');
   }
 
