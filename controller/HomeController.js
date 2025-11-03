@@ -5,9 +5,15 @@ exports.HomePage =
   async (req, res) => {
     const users = await getUsers();
     
-  if (!req.session.user) {
-    return res.redirect('/login');
+    
+    const jjj = req.headers.accept;
+
+ let data = null;
+    
+  if (req.session.user) {
+    data = users.find(u => u.id === req.session.user.id);
   }
+  
  /*   const user = await getUserById(req.session.user.id);
   
   const newtk = user.Amount + 500;
@@ -15,12 +21,18 @@ exports.HomePage =
  await updateAmount(user.id, newtk);
  */
  
- const data = users.find(u => u.id === req.session.user.id);
+ 
+ 
+
  
 // console.log(tk);
   res.locals.kk = "TK";
   
-  res.render('index', { title: 'HOME PAGE',
-  data, showSplash: true});
+  if(jjj === "application/json"){
+  //const kkk = data : "";
+  return res.json(data);
+  }
+  //console.log(data)
+  res.render('index', { title: 'HOME PAGE', data, showSplash: true});
 }
   

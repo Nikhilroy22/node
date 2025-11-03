@@ -7,13 +7,23 @@
 </style>
 
 <div class="home-container">
-  
-<h1>Wellcome, <%= data.username %></h1>
-<h1><%= kk %>, <%= data.Amount %></h1>
+  <% if (session.user) { %>
+  <h1>  <%= data.username %></h1>
+   <% } %>
 
 <p>আপনি সফলভাবে লগইন করেছেন।</p>
 
+  <% if (session.user) { %>
 <a href="/logout">Logout</a>
+   <% }else{ %>
+  <h1><a href="/login">Login</a></h1>
+   
+   
+   <% } %>
 
+  <% if (session.user) { %>
 <%- include("partials/bottom-nav", { path: "/" }) %>
+  
+   <% } %>
+
 <%- include('footer') %>

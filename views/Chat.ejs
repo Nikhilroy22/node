@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>header</title>
+  <script src="/js/eruda.js"></script>
+  <script>
+    eruda.init();
+  </script>
+   <script src="/socket.io/socket.io.js"></script>
+<style>#notifCount {
+  background: red;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 12px;
+}</style>
+</head>
+<body>
+  <button id="notifBtn">Notifications <span id="notifCount">0</span></button>
+<ul id="notifList"></ul>
+  
+  <h1><%= session.user.id %></h1>
+  
+  <input type="text" id="sendid" placeholder="Type send id..." />
+  <input type="text" id="message" placeholder="Type message..." />
+<button id="sendBtn">Send</button>
+  
+  
+  
+ <h1 id="activeid"></h1>
+
+  
+
+  
+  <script>
+    
+   
+    const socket = io();
+    const userId = "<%= session.user.id %>";
+  
+    
+    let count = 0;
+const notifCount = document.getElementById("notifCount");
+const activeid = document.getElementById("activeid");
+const notifList = document.getElementById("notifList");
+
+const sendBtn = document.getElementById('sendBtn');
+ sendBtn.addEventListener('click', () => {
+    
+    const message = document.getElementById('message').value;
+    const sendid = document.getElementById('sendid').value;
+    console.log(sendid);
+    
+    socket.emit('private_message', { fromUser: userId, sendid, message });
+  });
+  
+  
+  socket.on('private_message', data => {
+    count++;
+  notifCount.textContent = count;
+
+  // Add notification to list
+  const li = document.createElement("li");
+  li.textContent = data.message;
+  notifList.prepend(li);
+    
+    console.log('New message:', data);
+    //alert(`New message from User ${data.fromUser}: ${data.message}`);
+    
+     
+  
+    
+  });
+  
+  socket.on('active', data => {
+    activeid.innerHTML = "";
+    const ttt = document.createElement("li");
+    ttt.textContent = data.name;
+    activeid.appendChild(ttt)
+    console.log(data);
+  });
+  </script>
+  
+</body>
+</html>

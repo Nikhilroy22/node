@@ -64,6 +64,13 @@ router.get('/logout', (req, res) => {
   });
 });
 
+router.get("/chat", (req, res) =>{
+if (!req.session.user) {
+
+  return res.redirect('/login');
+  }
+  res.render("Chat");
+});
 
 
 // 404 fallback (মনে রাখবেন: এটাকে সব শেষে রাখতে হবে)

@@ -6,7 +6,10 @@ const path = require('path');
 const JSONFileStore = require('./helper/jsonFileStore'); // যদি আলাদা ফাইল করো
 
 const { Server } = require('socket.io');
+//crash
 const socketHandler = require('./socket/socketHandler'); // import
+// Private Chat socket 
+const PrivateChat = require('./socket/PrivateChat');
 
 const fs = require("fs");
 
@@ -29,7 +32,7 @@ const sessionMiddleware = session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-    httpOnly: false
+    httpOnly: true
   }
 })
 app.use(sessionMiddleware);
@@ -41,6 +44,7 @@ app.use((req, res, next) => {
   const flashErrors = req.flash('errorss');
   res.locals.errors = flashErrors.length > 0 ? flashErrors[0] : {};
   res.locals.oldInput = req.flash('oldInput')[0] || {};
+  res.locals.session = req.session || {};
   //ccc = "Janu";
   next();
 });
@@ -58,7 +62,7 @@ app.use(express.json()); // JSON data
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ✅ Import Telegram Webhook system
-require('./helper/TelegramBot')(app);
+//require('./helper/TelegramBot')(app);
 
 // ✅ Use external routes
 app.use('/', webRoutes);
@@ -76,8 +80,11 @@ app.use('/', webRoutes);
 // Socket.IO handler আলাদা ফাইল থেকে কল
 //socketHandler(io, sessionMiddleware);
 
+// Private Chat Socket.io
+PrivateChat(io, sessionMiddleware);
+
 //Server Start
 server.listen(3000, () => {
   console.log('Server  http://localhost:3000');
-  console.log(process.versions);
+  //console.log(process.versions);
 });
