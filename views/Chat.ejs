@@ -83,30 +83,7 @@
       font-size: 14px;
     }
 
-    .message-input {
-      display: flex;
-      gap: 8px;
-      margin-top: 15px;
-    }
-
-    .message-input input {
-      flex: 1;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      outline: none;
-      font-size: 14px;
-    }
-
-    #sendBtn {
-      background: #0084ff;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      padding: 10px 16px;
-      cursor: pointer;
-      font-weight: bold;
-    }
+   
 
     #notifList {
       margin-top: 15px;
@@ -149,13 +126,7 @@
         <ul id="activeList"></ul>
       </div>
 
-      <div>
-        <input type="text" id="sendid" placeholder="প্রাপক আইডি লিখুন..." />
-        <input type="text" id="message" placeholder="আপনার মেসেজ লিখুন..." />
-        <button id="sendBtn">পাঠান</button>
-      </div>
-
-      <ul id="notifList"></ul>
+      
     </div>
   </main>
 
@@ -164,22 +135,13 @@
     const userId = "<%= session.user.id %>";
 
     const notifCount = document.getElementById("notifCount");
-    const notifList = document.getElementById("notifList");
+    
     const activeList = document.getElementById("activeList");
     const sendBtn = document.getElementById("sendBtn");
 
     let count = 0;
 
-    // মেসেজ পাঠানো
-    sendBtn.addEventListener("click", () => {
-      const message = document.getElementById("message").value.trim();
-      const sendid = document.getElementById("sendid").value.trim();
-
-      if (!message || !sendid) return alert("আইডি ও মেসেজ দিন!");
-      socket.emit("private_message", { fromUser: userId, sendid, message });
-
-      document.getElementById("message").value = "";
-    });
+   
 
     // নতুন মেসেজ আসলে
     socket.on("private_message", data => {
