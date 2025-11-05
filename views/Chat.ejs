@@ -3,85 +3,213 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>header</title>
+  <title>চ্যাট অ্যাপ</title>
   <script src="/js/eruda.js"></script>
-  <script>
-    eruda.init();
-  </script>
-   <script src="/socket.io/socket.io.js"></script>
-<style>#notifCount {
-  background: red;
-  color: white;
-  border-radius: 50%;
-  padding: 2px 6px;
-  font-size: 12px;
-}</style>
+  <script>eruda.init();</script>
+  <script src="/socket.io/socket.io.js"></script>
+
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: #f4f6f9;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background: #0084ff;
+      color: white;
+      padding: 10px 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+    }
+
+    #notifBtn {
+      background: #fff;
+      color: #0084ff;
+      border: none;
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    #notifCount {
+      background: red;
+      color: white;
+      border-radius: 50%;
+      padding: 3px 7px;
+      font-size: 12px;
+    }
+
+    main {
+      padding: 15px;
+    }
+
+    .chat-box {
+      background: #fff;
+      border-radius: 10px;
+      padding: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .active-users {
+      margin-bottom: 20px;
+    }
+
+    .active-users h3 {
+      margin: 0 0 10px 0;
+      color: #333;
+    }
+
+    .active-users ul {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .active-users li {
+      background: #0084ff;
+      color: white;
+      border-radius: 20px;
+      padding: 6px 12px;
+      font-size: 14px;
+    }
+
+    .message-input {
+      display: flex;
+      gap: 8px;
+      margin-top: 15px;
+    }
+
+    .message-input input {
+      flex: 1;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      outline: none;
+      font-size: 14px;
+    }
+
+    #sendBtn {
+      background: #0084ff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 16px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    #notifList {
+      margin-top: 15px;
+      list-style: none;
+      padding: 0;
+    }
+
+    #notifList li {
+      background: #e9f3ff;
+      padding: 8px 10px;
+      border-radius: 8px;
+      margin-bottom: 5px;
+      color: #333;
+    }
+
+    @media (max-width: 600px) {
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+      .active-users ul {
+        flex-direction: column;
+      }
+    }
+  </style>
 </head>
 <body>
-  <button id="notifBtn">Notifications <span id="notifCount">0</span></button>
-<ul id="notifList"></ul>
-  
-  <h1><%= session.user.id %></h1>
-  
-  <input type="text" id="sendid" placeholder="Type send id..." />
-  <input type="text" id="message" placeholder="Type message..." />
-<button id="sendBtn">Send</button>
-  
-  
-  
- <h1 id="activeid"></h1>
+  <header>
+    <div>চ্যাট সিস্টেম</div>
+    <button id="notifBtn">
+      নোটিফিকেশন <span id="notifCount">0</span>
+    </button>
+  </header>
 
-  
+  <main>
+    <div class="chat-box">
+      <div class="active-users">
+        <h3>🟢 বর্তমানে অনলাইনে:</h3>
+        <ul id="activeList"></ul>
+      </div>
 
-  
+      <div>
+        <input type="text" id="sendid" placeholder="প্রাপক আইডি লিখুন..." />
+        <input type="text" id="message" placeholder="আপনার মেসেজ লিখুন..." />
+        <button id="sendBtn">পাঠান</button>
+      </div>
+
+      <ul id="notifList"></ul>
+    </div>
+  </main>
+
   <script>
-    
-   
     const socket = io();
     const userId = "<%= session.user.id %>";
-  
-    
+
+    const notifCount = document.getElementById("notifCount");
+    const notifList = document.getElementById("notifList");
+    const activeList = document.getElementById("activeList");
+    const sendBtn = document.getElementById("sendBtn");
+
     let count = 0;
-const notifCount = document.getElementById("notifCount");
-const activeid = document.getElementById("activeid");
-const notifList = document.getElementById("notifList");
 
-const sendBtn = document.getElementById('sendBtn');
- sendBtn.addEventListener('click', () => {
-    
-    const message = document.getElementById('message').value;
-    const sendid = document.getElementById('sendid').value;
-    console.log(sendid);
-    
-    socket.emit('private_message', { fromUser: userId, sendid, message });
-  });
-  
-  
-  socket.on('private_message', data => {
-    count++;
-  notifCount.textContent = count;
+    // মেসেজ পাঠানো
+    sendBtn.addEventListener("click", () => {
+      const message = document.getElementById("message").value.trim();
+      const sendid = document.getElementById("sendid").value.trim();
 
-  // Add notification to list
-  const li = document.createElement("li");
-  li.textContent = data.message;
-  notifList.prepend(li);
-    
-    console.log('New message:', data);
-    //alert(`New message from User ${data.fromUser}: ${data.message}`);
-    
-     
-  
-    
-  });
-  
-  socket.on('active', data => {
-    activeid.innerHTML = "";
-    const ttt = document.createElement("li");
-    ttt.textContent = data.name;
-    activeid.appendChild(ttt)
-    console.log(data);
-  });
+      if (!message || !sendid) return alert("আইডি ও মেসেজ দিন!");
+      socket.emit("private_message", { fromUser: userId, sendid, message });
+
+      document.getElementById("message").value = "";
+    });
+
+    // নতুন মেসেজ আসলে
+    socket.on("private_message", data => {
+      count++;
+      notifCount.textContent = count;
+
+      const li = document.createElement("li");
+      li.textContent = `From ${data.fromUser}: ${data.message}`;
+      notifList.prepend(li);
+    });
+
+    // Active user লিস্ট
+    socket.on("active_users", users => {
+      activeList.innerHTML = "";
+      users.forEach(u => {
+        const li = document.createElement("li");
+const a = document.createElement("a");
+
+a.textContent = u.username;
+a.href = `chat/${u.userid}`; // এখানে তোমার লিংক বসাও যেমন "/profile" বা `"/user/" + u.id`
+if (userId == u.userid) {
+  a.style.color = "red";
+  a.style.fontWeight = "bold";
+  a.textContent += " Nije";
+}
+
+li.appendChild(a);
+activeList.appendChild(li);
+      });
+    });
   </script>
-  
 </body>
 </html>

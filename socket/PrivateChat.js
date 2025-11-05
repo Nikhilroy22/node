@@ -1,87 +1,71 @@
-const { saveMessage, getPendingMessages, markDelivered} = require('../model/ChatDB');
-
+const { saveMessage, getPendingMessages, markDelivered } = require('../model/ChatDB');
 
 module.exports = async (io, sessionMiddleware) => {
-  
-  const onlineUsers = new Map();
-  let active = [];
-  
-  // Session 
+  const onlineUsers = new Map(); // userId => { socketId, username }
+
+  // Session middleware
   io.use((socket, next) => {
     sessionMiddleware(socket.request, {}, next);
   });
-  
-  //middleware
- io.use((socket, next) => {
+
+  // Check session
+  io.use((socket, next) => {
     const req = socket.request;
-    if (req.session.user) {
-      
-  console.log("yes session");
-      return next()
-      
+    if (req.session && req.session.user) {
+      console.log("yes session");
+      return next();
     }
-   
-  console.log("no session");
-  }); 
-  
-  
-  // Socket.io connection
+    console.log("no session");
+  });
+
+  // Connection
   io.on("connection", async (socket) => {
     const session = socket.request.session;
     const userId = session.user.id;
     const username = session.user.username;
-    //console.log("session", username);
-    //console.log(onlineUsers)
-    //setonline
-    onlineUsers.set(String(userId), socket.id);
-    active = [];
-    active.push({name: username});
-   // active
-   
-   io.emit("active", active)
-    
+
+    // Online user set
+    onlineUsers.set(String(userId), { socketId: socket.id, username, userid:  userId});
+
+    // Active user list তৈরি
+    const activeUsers = Array.from(onlineUsers.values()).map(u => ({
+      username: u.username, userid: u.userid
+    }));
+
+    // সবাইকে active list পাঠানো হবে
+    io.emit("active_users", activeUsers);
+
     // Send pending offline messages
-  const pending = await getPendingMessages(userId);
-  pending.forEach(msg => {
-    socket.emit('private_message', msg);
-    markDelivered(msg.id);
-  });
-    
-    
-    
+    const pending = await getPendingMessages(userId);
+    pending.forEach(msg => {
+      socket.emit('private_message', msg);
+      markDelivered(msg.id);
+    });
+
+    // Private message handle
     socket.on('private_message', async ({ fromUser, sendid, message }) => {
-      const jj = await getPendingMessages(sendid);
-      console.log(" msdd", jj);
-    // Save message
-  const delivered = onlineUsers.has(String(sendid)) ? 1 : 0;
+      const delivered = onlineUsers.has(String(sendid)) ? 1 : 0;
 
-   await saveMessage(userId, sendid, message, delivered);  
+      await saveMessage(userId, sendid, message, delivered);
 
+      // Send to receiver if online
+      const receiver = onlineUsers.get(String(sendid));
+      if (receiver) {
+        io.to(receiver.socketId).emit('private_message', { fromUser, message });
+      }
+    });
 
-    // Send to receiver if online
-    const socketId = onlineUsers.get(String(sendid));
-    
-    
-    if (socketId) {
-      io.to(socketId).emit('private_message', { fromUser, message });
-      
-    }
-  });
-    
-    
+    // Disconnect
     socket.on("disconnect", () => {
-    for (let [userId, sId] of onlineUsers) {
-      if (sId === socket.id) onlineUsers.delete(userId);
-    }
-    console.log("user delete", );
-  }); 
-    
-    
-  })
-  
-  
+      onlineUsers.delete(String(userId));
+      console.log(`${username} disconnected`);
 
+      // Disconnect হলে নতুন active list পাঠানো হবে
+      const activeUsers = Array.from(onlineUsers.values()).map(u => ({
+        username: u.username
+      }));
 
-
-  
-}
+      io.emit("active_users", activeUsers);
+    });
+  });
+};

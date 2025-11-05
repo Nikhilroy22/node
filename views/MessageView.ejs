@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>মোবাইল চ্যাট UI</title>
+ <script src="/js/eruda.js"></script>
+  <script>eruda.init();</script>
+  <script src="/socket.io/socket.io.js"></script>
+<style>
+  body {
+    font-family: 'SolaimanLipi', Arial, sans-serif;
+    background-color: #f7f7f7;
+    margin: 0;
+    padding: 0;
+  }
+
+ .chat-container {
+  max-width: 480px;
+  margin: auto auto;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  /* padding-bottom: 60px; (optional, to avoid input overlap) */
+}
+
+  .chat-header {
+    background-color: #009688;
+    color: white;
+    padding: 12px 20px;
+    font-size: 18px;
+    text-align: center;
+    border-radius: 10px 10px 0 0;
+  }
+
+  .chat-messages {
+  flex: 1;
+  padding: 15px 20px;
+  margin-bottom: 30px;
+  overflow-y: auto;
+  border-bottom: 1px solid #ddd;
+}
+
+  .message {
+    margin-bottom: 20px;
+    max-width: 80%;
+    line-height: 1.4;
+    font-size: 16px;
+    word-wrap: break-word;
+    border-radius: 20px;
+    padding: 10px 15px;
+    clear: both;
+  }
+
+  .message.user {
+    background-color: #e0f7fa;
+    float: right;
+    text-align: right;
+  }
+
+  .message.bot {
+    background-color: #c8e6c9;
+    float: left;
+    text-align: left;
+  }
+
+  .chat-input-container {
+    
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  padding: 10px 15px;
+  background-color: white;
+  border-top: 1px solid #ddd;
+  display: flex;
+  box-sizing: border-box;
+  z-index: 1000;
+}
+
+  .chat-input {
+    flex: 1;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 25px;
+    outline: none;
+  }
+
+  .chat-send-btn {
+    background-color: #009688;
+    color: white;
+    border: none;
+    padding: 0 20px;
+    margin-left: 10px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+
+  .chat-send-btn:disabled {
+    background-color: #80cbc4;
+    cursor: default;
+  }
+</style>
+</head>
+<body>
+
+<div class="chat-container">
+  <div class="chat-header"><%= chatWith.username %></div>
+  
+  
+  <div id="chatMessages" class="chat-messages">
+  <% messages.forEach(msg => { %>
+    <div class="message <%= msg.from_user === me.id ? 'user' : 'bot' %>">
+      <%= msg.message %>
+    </div>
+  <% }) %>
+  </div>
+  
+  
+  <div class="chat-input-container">
+    <input id="chatInput" type="text" placeholder="এখানে লিখুন..." class="chat-input" />
+    <button id="sendBtn" class="chat-send-btn" disabled>পাঠান</button>
+  </div>
+</div>
+
+<script>
+  const socket = io();
+    const userId = "<%= session.user.id %>";
+    const jakep = "<%= chatWith.id %>";
+  console.log(userId)
+  
+  const chatMessages = document.getElementById('chatMessages');
+  const chatInput = document.getElementById('chatInput');
+  const sendBtn = document.getElementById('sendBtn');
+  
+chatMessages.scrollTop = chatMessages.scrollHeight;
+  // Send button enabled only if input has text
+  chatInput.addEventListener('input', () => {
+    sendBtn.disabled = chatInput.value.trim().length === 0;
+  });
+
+  // Function to create message element
+  function createMessageElement(text, sender) {
+    const msgDiv = document.createElement('div');
+    msgDiv.classList.add('message', sender);
+    msgDiv.textContent = text;
+    return msgDiv;
+  }
+
+  // Add message to chat window
+  function addMessage(text, sender) {
+    const messageElement = createMessageElement(text, sender);
+    chatMessages.appendChild(messageElement);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  // On send button click
+  sendBtn.addEventListener('click', () => {
+    const userText = chatInput.value.trim();
+    if (userText === '') return;
+
+    // Add user message
+    socket.emit("private_message", {
+  fromUser: userId,
+  sendid: jakep,       // যাকে পাঠাতে চাও
+  message: userText  // userText
+});
+    addMessage(userText, 'user');
+    chatInput.value = '';
+    sendBtn.disabled = true;
+
+    // Simulate bot reply after 1 second
+    
+  });
+
+  // Optional: send on enter key
+  chatInput.addEventListener('keydown', e => {
+    if(e.key === 'Enter' && !sendBtn.disabled) {
+      sendBtn.click();
+    }
+  });
+  socket.on("private_message", data => {
+     
+      addMessage(data.message, 'bot');
+    });
+</script>
+
+</body>
+</html>

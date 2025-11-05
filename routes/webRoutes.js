@@ -6,9 +6,12 @@ const router = express.Router();
 const authController = require('../controller/LoginController');
 const SignUpController = require('../controller/SignupController')
 const Home = require('../controller/HomeController');
-const authMiddleware = require('../middleware/authMiddleware');
 const BetController = require('../controller/BetController');
 const BetApiController = require('../controller/BetApiController');
+const MessageView = require('../controller/MsgViewController');
+//Middleware
+const authMiddleware = require('../middleware/authMiddleware');
+
 
 // Bet ROUTE
 
@@ -71,7 +74,7 @@ if (!req.session.user) {
   }
   res.render("Chat");
 });
-
+router.get("/chat/:id", MessageView.chatview);
 
 // 404 fallback (মনে রাখবেন: এটাকে সব শেষে রাখতে হবে)
 router.use((req, res) => {
