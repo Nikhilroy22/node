@@ -1,5 +1,8 @@
 const { getUsers, updateAmount, getUserById } = require('../model/db');
 
+const { exec } = require("child_process");
+const util = require("util");
+const execPromise = util.promisify(exec);
 
 exports.HomePage = 
   async (req, res) => {
@@ -32,7 +35,26 @@ exports.HomePage =
   //const kkk = data : "";
   return res.json(data);
   }
-  //console.log(data)
-  res.render('index', { title: 'HOME PAGE', data, showSplash: true});
+  // exec কে await করে আউটপুট নিই
+  try {
+    const { stdout, stderr } = await execPromise("node -v");
+    console.log("Output:", stdout);
+
+    // render এ পাঠাই
+    res.render("index", {
+      title: "HOME PAGE",
+      data,
+      nodeVersion: stdout.trim(),  // view এ ব্যবহার করবে
+      showSplash: true
+    });
+  } catch (err) {
+    console.error("Exec error:", err);
+    res.render("index", {
+      title: "HOME PAGE",
+      data,
+      nodeVersion: "Error",
+      showSplash: true
+    });
+  }
 }
   

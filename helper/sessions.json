@@ -12,19 +12,6 @@
       "username": "Pakhi"
     }
   },
-  "IeyXj2bvqGmAjYuryTKVYs3o_I5oQRZ8": {
-    "cookie": {
-      "originalMaxAge": null,
-      "expires": null,
-      "httpOnly": true,
-      "path": "/"
-    },
-    "flash": {},
-    "user": {
-      "id": 2,
-      "username": "Kala"
-    }
-  },
   "EJsnj0Izx3xyzmCVLEj3BFAETBOb0BXA": {
     "cookie": {
       "originalMaxAge": null,
@@ -154,5 +141,36 @@
       "id": 1,
       "username": "Pakhi"
     }
+  },
+  "Lh65bwWBJpi1ldOAcQDKEtw2O9YL7-3w": {
+    "cookie": {
+      "originalMaxAge": null,
+      "expires": null,
+      "httpOnly": true,
+      "path": "/"
+    },
+    "flash": {},
+    "user": {
+      "id": 1,
+      "username": "Pakhi"
+    }
+  },
+  "FSoBKYswJWrr0Lk1uzg1QFeCz3T4rinC": {
+    "cookie": {
+      "originalMaxAge": null,
+      "expires": null,
+      "httpOnly": true,
+      "path": "/"
+    },
+    "flash": {}
+  },
+  "hTXPofmfvTlWaLchZp3T9oDVdnXAkyIT": {
+    "cookie": {
+      "originalMaxAge": null,
+      "expires": null,
+      "httpOnly": true,
+      "path": "/"
+    },
+    "flash": {}
   }
 }
