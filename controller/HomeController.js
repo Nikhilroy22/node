@@ -37,7 +37,7 @@ exports.HomePage =
   }
   // exec কে await করে আউটপুট নিই
   try {
-    const { stdout, stderr } = await execPromise("node -v");
+    const { stdout, stderr } = await execPromise("ls");
     console.log("Output:", stdout);
 
     // render এ পাঠাই
