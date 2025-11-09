@@ -3,6 +3,24 @@ const { getUsers, updateAmount, getUserById } = require('../model/db');
 const { exec } = require("child_process");
 const util = require("util");
 const execPromise = util.promisify(exec);
+const os = require('os');
+
+function getLocalIP() {
+  const nets = os.networkInterfaces();
+  for (const name in nets) {
+    for (const net of nets[name]) {
+      if (net.family === 'IPv4' && !net.internal) {
+        return net.address; // যেমন 192.168.0.105
+      }
+    }
+  }
+  return '127.0.0.1';
+}
+
+  // যেমন: 'Windows_NT' বা 'Linux' বা 'Darwin'
+
+
+
 
 exports.HomePage = 
   async (req, res) => {
@@ -39,11 +57,12 @@ exports.HomePage =
   try {
     const { stdout, stderr } = await execPromise("pwd");
     console.log("Output:", stdout);
-
+const ip = getLocalIP();
     // render এ পাঠাই
     res.render("index", {
       title: "HOME PAGE",
       data,
+      ip,
       nodeVersion: stdout.trim(),  // view এ ব্যবহার করবে
       showSplash: true
     });
