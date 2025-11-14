@@ -18,77 +18,80 @@ console.log(hiddenInput.value)
 
 
 async function viewodds() {
-  
+
     const matchscore = document.getElementById("matchscore");
- // matchscore.innerHTML = "";
-  
-  const res = await fetch(`/resview/${hiddenInput.value}`);
-  const data = await res.json();
-  const setss = data.Value.SC.PS[data.Value.SC.PS.length - 1];
-  console.log(setss.Value);
-  matchscore.innerHTML = "";
-  matchscore.className = "matchscore";
-  const matchheader = document.createElement("div");
-  matchheader.className = "match-header";
-  matchheader.innerHTML = `<span class="title">${data.Value.SN == "Badminton" ? "🎾" : "no"} ${data.Value.L}</span>
-      <span class="status live">LIVE</span>`;
-      
-  matchscore.appendChild(matchheader)
-  
-  const teams = document.createElement("div");
-  teams.className = "teams";
-  teams.innerHTML = `<div class="team">
-        <span class="name">${data.Value.O1}</span>
-        <span class="serve">🎾</span>
-        <span class="score">${data.Value.SC.FS.S1 ? data.Value.SC.FS.S1 : "0"}</span>
-        <span class="points">${setss.Value.S1}</span>
-      </div>
 
-      <div class="vs">VS</div>
+    const res = await fetch(`/resview/${hiddenInput.value}`);
+    const data = await res.json();
 
-      <div class="team">
-        <span class="name">${data.Value.O2}</span>
-        <span class="serve off">🎾</span>
-        <span class="score">${data.Value.SC.FS.S2 ? data.Value.SC.FS.S2 : "0"}</span>
-        <span class="points">${setss.Value.S2}</span>
-      </div>`;
-  matchscore.appendChild(teams);
-  
-  
-  
+    const PS = data?.Value?.SC?.PS || [];
+    const FS = data?.Value?.SC?.FS || {};
+
+    // Latest set
+    const lastSet = PS.length > 0 ? PS[PS.length - 1].Value : { S1: 0, S2: 0, NF: "-" };
+
+    matchscore.innerHTML = "";
+    matchscore.className = "matchscore";
+
+    /* HEADER */
+    const matchheader = document.createElement("div");
+    matchheader.className = "match-header";
+    matchheader.innerHTML = `
+        <span class="title">${data?.Value?.SN === "Badminton" ? "🎾" : ""} ${data?.Value?.L || ""}</span>
+        <span class="status live">LIVE</span>`;
+    matchscore.appendChild(matchheader);
+
+    /* TEAMS */
+    const teams = document.createElement("div");
+    teams.className = "teams";
+    teams.innerHTML = `
+        <div class="team">
+            <span class="name">${data?.Value?.O1 || "-"}</span>
+            <span class="serve">🎾</span>
+            <span class="score">${FS.S1 ?? 0}</span>
+            <span class="points">${lastSet.S1 ?? 0}</span>
+        </div>
+
+        <div class="vs">VS</div>
+
+        <div class="team">
+            <span class="name">${data?.Value?.O2 || "-"}</span>
+            <span class="serve off">🎾</span>
+            <span class="score">${FS.S2 ?? 0}</span>
+            <span class="points">${lastSet.S2 ?? 0}</span>
+        </div>`;
+    matchscore.appendChild(teams);
+
+
+    /* SET TABLE */
     const settable = document.createElement("div");
-settable.className = "set-table";
+    settable.className = "set-table";
 
-/* Header Row */
-const headerRow = document.createElement("div");
-headerRow.className = "row header";
-headerRow.innerHTML = `
-    <span>Player</span>
-`;
-settable.appendChild(headerRow);
+    const headerRow = document.createElement("div");
+    headerRow.className = "row header";
+    headerRow.innerHTML = `<span>Player</span>`;
+    settable.appendChild(headerRow);
 
-/* Player 1 Row */
-const row1 = document.createElement("div");
-row1.className = "row";
-row1.innerHTML = `<span>${data.Value.O1}</span>`;
-settable.appendChild(row1);
+    const row1 = document.createElement("div");
+    row1.className = "row";
+    row1.innerHTML = `<span>${data?.Value?.O1 || "-"}</span>`;
+    settable.appendChild(row1);
 
-/* Player 2 Row */
-const row2 = document.createElement("div");
-row2.className = "row";
-row2.innerHTML = `<span>${data.Value.O2}</span>`;
-settable.appendChild(row2);
+    const row2 = document.createElement("div");
+    row2.className = "row";
+    row2.innerHTML = `<span>${data?.Value?.O2 || "-"}</span>`;
+    settable.appendChild(row2);
 
-/* Loop — প্রতিটা সেট অ্যাড হবে */
-data.Value.SC.PS?.forEach(set => {
-    headerRow.innerHTML += `<span>${set.Value.NF}</span>`;
-    row1.innerHTML += `<span>${set.Value.S1}</span>`;
-    row2.innerHTML += `<span>${set.Value.S2}</span>`;
-});
+    // Add column for each set
+    PS.forEach(s => {
+        headerRow.innerHTML += `<span>${s?.Value?.NF || "-"}</span>`;
+        row1.innerHTML += `<span>${s?.Value?.S1 ?? 0}</span>`;
+        row2.innerHTML += `<span>${s?.Value?.S2 ?? 0}</span>`;
+    });
 
-matchscore.appendChild(settable);
-  
-setTimeout(viewodds, 5000);
+    matchscore.appendChild(settable);
+
+    setTimeout(viewodds, 5000);
 }
 
 

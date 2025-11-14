@@ -1,5 +1,7 @@
  /* Tabs */
-  .tabs{display:flex;gap:8px;
+  .tabs{
+  display:flex;
+  gap:8px;
   margin-top:0px;
   background: #1b2a12;
   overflow:auto;
@@ -20,7 +22,7 @@
    .match-wrapper {
   display: flex;
   justify-content: center;
-/*  padding: 35px 15px;*/
+  padding: 8px 0px;
 }
 .matchscore {
   width: 100%;
