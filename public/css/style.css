@@ -3,6 +3,9 @@
 @import url("bottom-nav.css");
 @import url("Splash.css");
 
+* {
+  box-sizing: border-box;
+}
 
 :root{
     --bg:#0f3d18;
