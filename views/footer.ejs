@@ -1,56 +1,9 @@
 
-<script src="/js/eruda.js"></script>
-  <script>
-    eruda.init(); // Console চালু হবে
-  </script>
+
   <!-- socket.io.js server থেকে লোড হচ্ছে -->
 <script src="/js/SportBet.js"></script>
 
 
 
-<div class="bottom-tab" id="tabs"></div>
-<script>
-  const tabData = [
-    { id: "home", name: "Home", content: `<h1>এটি হোম পেজ। এখানে মূল তথ্য দেখানো হবে</h1>` },
-    { id: "profile", name: "Profile", content: `<h1>এটি প্রোফাইল পেজ। এখানে ব্যবহারকারীর তথ্য দেখানো হবে</h1>` },
-    { id: "settings", name: "Setting", content: `<h1>এটি সেটিংস পেজ। এখানে সেটিংস পরিবর্তন করা যাবে</h1>` }
-  ];
-
-  const tabsContainer = document.getElementById('tabs');
-  const contentDiv = document.getElementById('content');
-  
-  const app = document.getElementById('app');
-
-  // ট্যাব তৈরি করা
-  tabData.forEach((tab, index) => {
-    const tabDiv = document.createElement('div');
-    tabDiv.classList.add('tab');
-    tabDiv.textContent = tab.name;
-    tabDiv.addEventListener('click', () => changeTab(tab.id));
-    tabsContainer.appendChild(tabDiv);
-  });
-  changeTab("home");
-  
-  function changeTab(tabId, fromHash = false) {
-    // সব ট্যাব inactive
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-
-    // কোন ট্যাবটি?
-    const activeTab = tabData.find(t => t.id === tabId) || tabData[0];
-
-    // UI আপডেট
-    const index = tabData.indexOf(activeTab);
-    document.querySelectorAll('.tab')[index].classList.add('active');
-    app.innerHTML = activeTab.content;
-
-   
-   
-  }
-  // hash পরিবর্তন হলে (যেমন back/forward চাপলে)
-  window.addEventListener('hashchange', () => {
-    const hash = location.hash.replace("", "");
-    changeTab(hash, true);
-  });
-</script>
 </body>
 </html>

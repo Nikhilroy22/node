@@ -1,0 +1,58 @@
+<style>
+    /* Markets grid */
+  .market{
+    margin-top:16px;padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.02);
+    background:linear-gradient(180deg, rgba(255,255,255,0.005), rgba(255,255,255,0.01));
+  }
+  .market-title{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--accent1);margin-bottom:12px}
+  .odds-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+  }
+  .odds-grid.two{grid-template-columns:repeat(2,1fr)}
+  .odds-grid.four{grid-template-columns:repeat(4,1fr)}
+  .odd{
+    background:linear-gradient(180deg,rgba(0,0,0,0.08), transparent);
+    padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.02);
+    cursor:pointer;transition:all .22s; text-align:center;
+  }
+  .odd:hover{transform:translateY(-6px);box-shadow:0 10px 30px rgba(2,8,23,0.5)}
+  .odd .lbl{font-size:13px;color:var(--muted);margin-bottom:8px}
+  .odd .oddv{font-weight:800;font-size:20px;color:var(--accent2)}
+  .odd.selected{background:linear-gradient(90deg,var(--accent1), #0ea7ff);color:#021226}
+  .odd.selected .lbl{color:rgba(2,18,38,0.7)}
+  .handicap-row{display:grid;grid-template-columns:160px 1fr 1fr;gap:10px;align-items:center}
+  .handicap-label{color:var(--muted);font-size:13px}
+    
+  
+</style>
+
+
+<div class="market card" id="marketsRoot">
+        <div class="market-title">⚽ Match Result</div>
+        <div class="odds-grid" id="market1">
+          <div class="odd" data-label="Man United Win" data-odd="2.45" onclick="toggleSelection(this)">
+            <div class="lbl">Manchester United</div>
+            <div class="oddv">2.45</div>
+          </div>
+          <div class="odd" data-label="Draw" data-odd="3.20" onclick="toggleSelection(this)">
+            <div class="lbl">Draw</div>
+            <div class="oddv">3.20</div>
+          </div>
+          <div class="odd" data-label="Liverpool Win" data-odd="2.95" onclick="toggleSelection(this)">
+            <div class="lbl">W2</div>
+            <div class="oddv">2.95</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="market card">
+        <div class="market-title">🎯 Total Goals</div>
+        <div class="odds-grid two" id="market2">
+          <div class="odd" data-label="Over 2.5" data-odd="1.75" onclick="toggleSelection(this)"><div class="lbl">Over 2.5</div><div class="oddv">1.75</div></div>
+          <div class="odd" data-label="Under 2.5" data-odd="2.10" onclick="toggleSelection(this)"><div class="lbl">Under 2.5</div><div class="oddv">2.10</div></div>
+          <div class="odd" data-label="Over 3.5" data-odd="2.85" onclick="toggleSelection(this)"><div class="lbl">Over 3.5</div><div class="oddv">2.85</div></div>
+          <div class="odd" data-label="Under 3.5" data-odd="1.45" onclick="toggleSelection(this)"><div class="lbl">Under 3.5</div><div class="oddv">1.45</div></div>
+        </div>
+      </div>

@@ -2,178 +2,150 @@
  
  
   <div class="match-wrapper">
-  <div class="matchscore">
+  <div class="matchscore" id="matchscore">
 
-    <div class="match-header">
-      <span class="title">🎾 Tennis Match</span>
-      <span class="status live">LIVE</span>
-    </div>
+  
 
-    <!-- Players + Serve + Points -->
-    <div class="teams">
-      <div class="team">
-        <span class="name">Nikhil Roy</span>
-        <span class="serve">🎾</span>
-        <span class="score">6</span>
-        <span class="points">15</span>
-      </div>
-
-      <div class="vs">VS</div>
-
-      <div class="team">
-        <span class="name">Anup Roy</span>
-        <span class="serve off">🎾</span>
-        <span class="score">4</span>
-        <span class="points">30</span>
-      </div>
-    </div>
-
-    <!-- Set Table -->
-    <div class="set-table">
-      <div class="row header">
-        <span>Player</span>
-        <span>1st Set</span>
-        <span>2nd Set</span>
-      </div>
-
-      <div class="row">
-        <span>Nikhil</span>
-        <span>6</span>
-        <span>2</span>
-      </div>
-
-      <div class="row">
-        <span>Anup</span>
-        <span>4</span>
-        <span>1</span>
-      </div>
-    </div>
 
   </div>
 </div>
   
   
-<!--  <h1>Match ID: <%= matchid %></h1>
-  
   <input type="hidden" id="hiddenId" value="<%= matchid %>" />
-<button id="showIdBtn">Show ID</button>
   
-  <h1 id="timer"></h1>
--->
-
 <!-- Tabs -->
-      <div class="tabs" id="tabs">
-        <div class="tab active">Main Markets</div>
-        <div class="tab">Goals</div>
-        <div class="tab">Handicap</div>
-        <span class="tab">Both Teams to Score</span>
-        <div class="tab">Corners</div>
-        <div class="tab">Cards</div>
-        <div class="tab">Half Time/Full Time</div>
-        <div class="tab">Player Props</div>
+      <div class="tabs" id="betoddstabs">
+       
       </div>
       
-      
-<div class="market card" id="marketsRoot">
-        <div class="market-title">⚽ Match Result</div>
-        <div class="odds-grid" id="market1">
-          <div class="odd" data-label="Man United Win" data-odd="2.45" onclick="toggleSelection(this)">
-            <div class="lbl">Manchester United</div>
-            <div class="oddv">2.45</div>
-          </div>
-          <div class="odd" data-label="Draw" data-odd="3.20" onclick="toggleSelection(this)">
-            <div class="lbl">Draw</div>
-            <div class="oddv">3.20</div>
-          </div>
-          <div class="odd" data-label="Liverpool Win" data-odd="2.95" onclick="toggleSelection(this)">
-            <div class="lbl">W2</div>
-            <div class="oddv">2.95</div>
-          </div>
-        </div>
-      </div>
-      
-      <div class="market card">
-        <div class="market-title">🎯 Total Goals</div>
-        <div class="odds-grid two" id="market2">
-          <div class="odd" data-label="Over 2.5" data-odd="1.75" onclick="toggleSelection(this)"><div class="lbl">Over 2.5</div><div class="oddv">1.75</div></div>
-          <div class="odd" data-label="Under 2.5" data-odd="2.10" onclick="toggleSelection(this)"><div class="lbl">Under 2.5</div><div class="oddv">2.10</div></div>
-          <div class="odd" data-label="Over 3.5" data-odd="2.85" onclick="toggleSelection(this)"><div class="lbl">Over 3.5</div><div class="oddv">2.85</div></div>
-          <div class="odd" data-label="Under 3.5" data-odd="1.45" onclick="toggleSelection(this)"><div class="lbl">Under 3.5</div><div class="oddv">1.45</div></div>
-        </div>
-      </div>
-
-
-  
-<script src="/js/eruda.js"></script>
-  <script>
-    eruda.init(); // Console চালু হবে
-  </script>
-  <script>
-    
+    <script>
     const hiddenInput = document.getElementById("hiddenId");
-const btn = document.getElementById("showIdBtn");
+    
+console.log(hiddenInput.value)
 
-btn.addEventListener("click", () => {
-  alert(hiddenInput.value);
-});
-
-
-let gameSeconds;
-let lastUpdate;
 
 async function viewodds() {
+  
+    const matchscore = document.getElementById("matchscore");
+ // matchscore.innerHTML = "";
+  
   const res = await fetch(`/resview/${hiddenInput.value}`);
   const data = await res.json();
-  console.log(data.Value.SC.SLS);
+  const setss = data.Value.SC.PS[data.Value.SC.PS.length - 1];
+  console.log(setss.Value);
+  matchscore.innerHTML = "";
+  const matchheader = document.createElement("div");
+  matchheader.className = "match-header";
+  matchheader.innerHTML = `<span class="title">🎾 ${data.Value.L}</span>
+      <span class="status live">LIVE</span>`;
+      
+  matchscore.appendChild(matchheader)
+  
+  const teams = document.createElement("div");
+  teams.className = "teams";
+  teams.innerHTML = `<div class="team">
+        <span class="name">${data.Value.O1}</span>
+        <span class="serve">🎾</span>
+        <span class="score">${data.Value.SC.FS.S1 ? data.Value.SC.FS.S1 : "0"}</span>
+        <span class="points">${setss.Value.S1}</span>
+      </div>
 
-  // ttt set
-  let ttt = data.Value.SC.SLS; // অথবা ttt = 66; যদি ডেমো
-  if (ttt === "Event in progress"){
-    document.getElementById("timer").textContent =
-      `Event in progress`;
-    
-    return;
-  }
-  gameSeconds = parseInt(ttt) * 60; // Timer শুরু মান
-  lastUpdate = performance.now();
+      <div class="vs">VS</div>
 
-  // Timer start
-  requestAnimationFrame(updateTimer);
+      <div class="team">
+        <span class="name">${data.Value.O2}</span>
+        <span class="serve off">🎾</span>
+        <span class="score">${data.Value.SC.FS.S2 ? data.Value.SC.FS.S2 : "0"}</span>
+        <span class="points">${setss.Value.S2}</span>
+      </div>`;
+  matchscore.appendChild(teams);
+  
+  
+  
+    const settable = document.createElement("div");
+  settable.className = "set-table";
+  
+  data.Value.SC.PS?.forEach(k => {
+  settable.innerHTML += `<div class="row header">
+        <span>Player</span>
+        <span>${k.Value.NF}</span>
+        <span>${k.Value.NF}</span>
+        
+      </div>
+
+      <div class="row">
+        <span>Nikhil</span>
+        <span>${k.Value.S1}</span>
+        <span>${k.Value.S1}</span>
+        
+      </div>
+
+      <div class="row">
+        <span>Anup</span>
+        <span>${k.Value.S2}</span>
+        <span>${k.Value.S2}</span>
+        
+      </div>
+    </div>`;
+  matchscore.appendChild(settable);
+  });
+  
+setTimeout(viewodds, 5000);
 }
 
-function updateTimer(now) {
-  const delta = now - lastUpdate;
-
-  if (delta >= 1000) {
-    gameSeconds++;
-    lastUpdate = now;
-
-    const minutes = Math.floor(gameSeconds / 60);
-    const seconds = gameSeconds % 60;
-    document.getElementById("timer").textContent =
-      `${minutes} min ${seconds} sec`;
-  }
-
-  requestAnimationFrame(updateTimer);
-}
 
 // Viewodds call
 viewodds();
-// key-value সংরক্ষণ
-localStorage.setItem("name", "Nikhil");
-localStorage.setItem("age", "25");
-// key-value সংরক্ষণ
-sessionStorage.setItem("username", "Nikhil");
-sessionStorage.setItem("score", "50");
 
 
 
+  </script>  
 
+
+
+  
+
+  <script>
+ /*  const tabData = [
+    { id: "home", name: "Home", content: `<h1>এটি হোম পেজ। এখানে মূল তথ্য দেখানো হবে</h1>` },
+    { id: "profile", name: "Profile", content: `<h1>এটি প্রোফাইল পেজ। এখানে ব্যবহারকারীর তথ্য দেখানো হবে</h1>` },
+    { id: "settings", name: "Setting", content: `<h1>এটি সেটিংস পেজ। এখানে সেটিংস পরিবর্তন করা যাবে</h1>` },
+    { id: "settings", name: "Setting", content: `<h1>এটি সেটিংস পেজ। এখানে সেটিংস পরিবর্তন করা যাবে</h1>` },
+    { id: "settings", name: "Setting", content: `<h1>এটি সেটিংস পেজ। এখানে সেটিংস পরিবর্তন করা যাবে</h1>` }
+  ];
+    
+    const tabsContainer = document.getElementById('betoddstabs');
+    
+    // ট্যাব তৈরি করা
+  tabData.forEach((tab, index) => {
+    const tabDiv = document.createElement('div');
+    tabDiv.classList.add('tab');
+    tabDiv.textContent = tab.name;
+    tabDiv.addEventListener('click', () => changeTab(tab.id));
+    tabsContainer.appendChild(tabDiv);
+  });
+  changeTab("home");
+  
+  function changeTab(tabId, fromHash = false) {
+    // সব ট্যাব inactive
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+
+    // কোন ট্যাবটি?
+    const activeTab = tabData.find(t => t.id === tabId) || tabData[0];
+
+    // UI আপডেট
+    const index = tabData.indexOf(activeTab);
+    document.querySelectorAll('.tab')[index].classList.add('active');
+    //app.innerHTML = activeTab.content;
+
+   
+   
+  } */
   </script>
+  
  
 
 
-</body>
-</html>
+<%- include('footer') %>
   
   

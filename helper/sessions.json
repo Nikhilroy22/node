@@ -226,5 +226,27 @@
       "path": "/"
     },
     "flash": {}
+  },
+  "4TX5IF2gOvnAu9WzqpcSb984HkxXAbHd": {
+    "cookie": {
+      "originalMaxAge": null,
+      "expires": null,
+      "httpOnly": true,
+      "path": "/"
+    },
+    "flash": {},
+    "user": {
+      "id": 1,
+      "username": "Pakhi"
+    }
+  },
+  "rb7D3PQAfiwYTgvvXZSQNQ-617HmWsfQ": {
+    "cookie": {
+      "originalMaxAge": null,
+      "expires": null,
+      "httpOnly": true,
+      "path": "/"
+    },
+    "flash": {}
   }
 }
