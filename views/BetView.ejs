@@ -1,10 +1,4 @@
-<!DOCTYPE html>
-<html lang="bn">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>header</title>
-  
+<%- include('header') %>
   <style>
    /* Tabs */
   .tabs{display:flex;gap:8px;margin-top:16px;overflow:auto;padding-bottom:6px}
@@ -42,8 +36,6 @@
     
     
   </style>
-</head>
-<body>
   <h1>Match ID: <%= matchid %></h1>
   
   <input type="hidden" id="hiddenId" value="<%= matchid %>" />
@@ -76,7 +68,7 @@
             <div class="oddv">3.20</div>
           </div>
           <div class="odd" data-label="Liverpool Win" data-odd="2.95" onclick="toggleSelection(this)">
-            <div class="lbl">Liverpool FC</div>
+            <div class="lbl">W2</div>
             <div class="oddv">2.95</div>
           </div>
         </div>
