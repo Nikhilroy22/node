@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   const togglePassword = document.getElementById('togglePassword');
   const passwordInput = document.getElementById('password');
+  const nav = document.getElementById('hamb');
 
   if (togglePassword && passwordInput) { // check existence
     togglePassword.addEventListener('click', function() {
@@ -9,4 +10,15 @@ document.addEventListener("DOMContentLoaded", () => {
       this.textContent = type === 'password' ? '👁️' : '🔒';
     });
   }
+  
+  if(!nav) return;
+  
+  nav.addEventListener('click', function() {
+    
+    console.log("nav")
+    
+  })
+  
 });
+
+

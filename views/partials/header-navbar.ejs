@@ -6,8 +6,13 @@
     </div>
 
     <div class="actions">
+      <% if (session.user) { %>
+<a class="btn login" href="/logout">LogOut</a>
+  
+   <% } else{%>
       <a class="btn login" href="/login">Login</a>
       <a class="btn register" href="/signup">Register</a>
+   <% } %>
     </div>
   </div>
 </div>
