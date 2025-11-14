@@ -5,6 +5,7 @@
 @import url("Splash.css");
 @import url("Toastbet.css");
 @import url("Match.css");
+@import url("BottomTab.css");
 
 * {
   box-sizing: border-box;

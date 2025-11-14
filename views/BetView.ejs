@@ -34,8 +34,162 @@
   .handicap-row{display:grid;grid-template-columns:160px 1fr 1fr;gap:10px;align-items:center}
   .handicap-label{color:var(--muted);font-size:13px}
     
-    
+   .match-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 35px 15px;
+}
+
+.matchscore {
+  width: 100%;
+  max-width: 420px;
+  background: linear-gradient(135deg, #0d4a1a, #11823b);
+  border-radius: 12px;
+  padding: 15px;
+  color: #fff;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+  border: 1px solid rgba(255,255,255,0.25);
+}
+
+/* Header */
+.match-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.title { font-size: 20px; font-weight: bold; }
+.status.live {
+  padding: 4px 12px;
+  background: #ff0000cc;
+  border-radius: 20px;
+  font-size: 12px;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+/* Players Area */
+.teams {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 18px 0;
+}
+
+.team {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.team .name {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.team .serve {
+  font-size: 18px;
+  margin: 5px 0 0;
+  opacity: 1;
+}
+.team .serve.off {
+  opacity: 0.2;
+}
+
+.team .score {
+  font-size: 32px;
+  margin-top: 6px;
+  font-weight: bold;
+}
+
+.team .points {
+  font-size: 16px;
+  margin-top: 5px;
+  background: #ffffff33;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.vs {
+  font-size: 20px;
+  font-weight: bold;
+  opacity: 0.8;
+}
+
+/* Set Table */
+.set-table {
+  margin-top: 15px;
+  background: rgba(255,255,255,0.18);
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.set-table .row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+
+.set-table .row.header {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.set-table .row:last-child {
+  border-bottom: none;
+}
   </style>
+  <div class="match-wrapper">
+  <div class="matchscore">
+
+    <div class="match-header">
+      <span class="title">🎾 Tennis Match</span>
+      <span class="status live">LIVE</span>
+    </div>
+
+    <!-- Players + Serve + Points -->
+    <div class="teams">
+      <div class="team">
+        <span class="name">Nikhil Roy</span>
+        <span class="serve">🎾</span>
+        <span class="score">6</span>
+        <span class="points">15</span>
+      </div>
+
+      <div class="vs">VS</div>
+
+      <div class="team">
+        <span class="name">Anup Roy</span>
+        <span class="serve off">🎾</span>
+        <span class="score">4</span>
+        <span class="points">30</span>
+      </div>
+    </div>
+
+    <!-- Set Table -->
+    <div class="set-table">
+      <div class="row header">
+        <span>Player</span>
+        <span>1st Set</span>
+        <span>2nd Set</span>
+      </div>
+
+      <div class="row">
+        <span>Nikhil</span>
+        <span>6</span>
+        <span>2</span>
+      </div>
+
+      <div class="row">
+        <span>Anup</span>
+        <span>4</span>
+        <span>1</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+  
   <h1>Match ID: <%= matchid %></h1>
   
   <input type="hidden" id="hiddenId" value="<%= matchid %>" />

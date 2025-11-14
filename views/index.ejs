@@ -1,11 +1,9 @@
 
 
 <%- include('header', {showSplash}) %>
-<style>
-  
-  
-</style>
+<div id="app"></div>
 
+<!--
 <div class="home-container">
   <% if (session.user) { %>
   <h1>  <%= data.username %></h1>
@@ -24,8 +22,10 @@
    <% } %>
 
   <% if (session.user) { %>
-<%- include("partials/bottom-nav", { path: "/" }) %>
+  
+<%- include("partials/bottom-nav", { path: "/" }) %> 
   
    <% } %>
+-->
 
 <%- include('footer') %>
