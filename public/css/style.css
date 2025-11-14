@@ -14,6 +14,7 @@
     --white: #ffffff;
     --red: #ff4d4f;
     font-family: "Segoe UI", Roboto, "Noto Sans Bengali", sans-serif;
+    
   }
   html,body{
     height:100%;
@@ -22,6 +23,7 @@
     color:var(--white);
     -webkit-font-smoothing:antialiased;
     -moz-osx-font-smoothing:grayscale;
+    
   }
         
         
