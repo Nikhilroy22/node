@@ -9,9 +9,7 @@
   <input type="hidden" id="hiddenId" value="<%= matchid %>" />
   
 <!-- Tabs -->
-      <div class="tabs" id="betoddstabs">
-       
-      </div>
+      <div class="tabs" id="betoddstabs"></div>
       
     <script>
     const hiddenInput = document.getElementById("hiddenId");
@@ -32,7 +30,7 @@ async function viewodds() {
   matchscore.className = "matchscore";
   const matchheader = document.createElement("div");
   matchheader.className = "match-header";
-  matchheader.innerHTML = `<span class="title">🎾 ${data.Value.L}</span>
+  matchheader.innerHTML = `<span class="title">${data.Value.SN == "Badminton" ? "🎾" : "no"} ${data.Value.L}</span>
       <span class="status live">LIVE</span>`;
       
   matchscore.appendChild(matchheader)
@@ -59,32 +57,36 @@ async function viewodds() {
   
   
     const settable = document.createElement("div");
-  settable.className = "set-table";
-  
-  data.Value.SC.PS?.forEach(k => {
-  settable.innerHTML += `<div class="row header">
-        <span>Player</span>
-        <span>${k.Value.NF}</span>
-        <span>${k.Value.NF}</span>
-        
-      </div>
+settable.className = "set-table";
 
-      <div class="row">
-        <span>Nikhil</span>
-        <span>${k.Value.S1}</span>
-        <span>${k.Value.S1}</span>
-        
-      </div>
+/* Header Row */
+const headerRow = document.createElement("div");
+headerRow.className = "row header";
+headerRow.innerHTML = `
+    <span>Player</span>
+`;
+settable.appendChild(headerRow);
 
-      <div class="row">
-        <span>Anup</span>
-        <span>${k.Value.S2}</span>
-        <span>${k.Value.S2}</span>
-        
-      </div>
-    </div>`;
-  matchscore.appendChild(settable);
-  });
+/* Player 1 Row */
+const row1 = document.createElement("div");
+row1.className = "row";
+row1.innerHTML = `<span>${data.Value.O1}</span>`;
+settable.appendChild(row1);
+
+/* Player 2 Row */
+const row2 = document.createElement("div");
+row2.className = "row";
+row2.innerHTML = `<span>${data.Value.O2}</span>`;
+settable.appendChild(row2);
+
+/* Loop — প্রতিটা সেট অ্যাড হবে */
+data.Value.SC.PS?.forEach(set => {
+    headerRow.innerHTML += `<span>${set.Value.NF}</span>`;
+    row1.innerHTML += `<span>${set.Value.S1}</span>`;
+    row2.innerHTML += `<span>${set.Value.S2}</span>`;
+});
+
+matchscore.appendChild(settable);
   
 setTimeout(viewodds, 5000);
 }
@@ -102,8 +104,8 @@ viewodds();
   
 
   <script>
- /*  const tabData = [
-    { id: "home", name: "Home", content: `<h1>এটি হোম পেজ। এখানে মূল তথ্য দেখানো হবে</h1>` },
+   const tabData = [
+    { id: "home", name: "Homeregularmatch", content: `<h1>এটি হোম পেজ। এখানে মূল তথ্য দেখানো হবে</h1>` },
     { id: "profile", name: "Profile", content: `<h1>এটি প্রোফাইল পেজ। এখানে ব্যবহারকারীর তথ্য দেখানো হবে</h1>` },
     { id: "settings", name: "Setting", content: `<h1>এটি সেটিংস পেজ। এখানে সেটিংস পরিবর্তন করা যাবে</h1>` },
     { id: "settings", name: "Setting", content: `<h1>এটি সেটিংস পেজ। এখানে সেটিংস পরিবর্তন করা যাবে</h1>` },
@@ -136,7 +138,7 @@ viewodds();
 
    
    
-  } */
+  } 
   </script>
   
  
