@@ -1,104 +1,259 @@
-<!DOCTYPE html>
+<!-- Save as betting-ui.html and open in browser -->
+<!doctype html>
 <html lang="bn">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dynamic Bottom Tab with URL</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Betting UI Example - Bangla</title>
 <style>
-  body {
-    margin: 0;
-    font-family: sans-serif;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    padding-bottom: 60px; /* নিচের ট্যাব ঢেকে না ফেলে */
+  :root{
+    --bg:#0f3d18;
+    --panel:#1d7a2f;
+    --panel-dark:#135a1d;
+    --accent:#2db24a;
+    --chip:#07401a;
+    --muted:#9fdba0;
+    --white: #ffffff;
+    --red: #ff4d4f;
+    font-family: "Segoe UI", Roboto, "Noto Sans Bengali", sans-serif;
   }
-  .content {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 24px;
-    padding: 20px;
-    text-align: center;
-    background: #f5f5f5;
+
+  html,body{
+    height:100%;
+    margin:0;
+    background:linear-gradient(180deg,var(--bg), #073615 120%);
+    color:var(--white);
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
   }
-  .bottom-tab {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    display: flex;
-    justify-content: space-around;
-    background-color: #333;
-    color: white;
-    box-shadow: 0 -2px 5px rgba(0,0,0,0.2);
+
+  /* Top bar */
+  .topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:.5rem;
+    padding:12px;
+    background:linear-gradient(90deg,#0b3b14,#154d21);
+    border-bottom:4px solid rgba(0,0,0,0.25);
   }
-  .tab {
-    padding: 15px 20px;
-    cursor: pointer;
-    text-align: center;
-    flex: 1;
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:.6rem;
+    font-weight:700;
+    font-size:1.1rem;
   }
-  .tab.active {
-    background-color: #555;
+  .hamb{
+    width:28px;height:22px;display:inline-block;
+    background:
+      linear-gradient(var(--white) 2px, transparent 2px) center/100% 4px no-repeat,
+      linear-gradient(var(--white) 2px, transparent 2px) center/100% 50% no-repeat,
+      linear-gradient(var(--white) 2px, transparent 2px) center/100% 92% no-repeat;
+    opacity:.9;
+    border-radius:3px;
+  }
+  .actions{display:flex;gap:.5rem}
+  .btn{
+    padding:8px 12px;border-radius:18px;border:0;font-weight:600;
+    background:var(--accent); color:#03320b; cursor:pointer;
+    box-shadow: 0 2px 0 rgba(0,0,0,0.2) inset;
+  }
+  .btn.secondary{background:#3e88d3;color:#fff;border-radius:16px;padding:8px 10px}
+
+  /* tabs */
+  .tabs{display:flex;gap:.5rem;padding:12px;align-items:center;}
+  .tab{
+    background:linear-gradient(180deg, #2a8f43,#1f7a34);
+    padding:8px 12px;border-radius:8px;font-weight:700;cursor:pointer;
+  }
+  .tab.inactive{opacity:.65;background:linear-gradient(180deg,#155226,#0f3d18)}
+
+  /* container */
+  .container{padding:12px;max-width:720px;margin:0 auto;}
+
+  /* Match card */
+  .match{
+    background:linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
+    border-radius:10px;
+    margin-bottom:12px;
+    overflow:hidden;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+    border:1px solid rgba(255,255,255,0.03);
+  }
+  .match-head{
+    display:flex;align-items:center;gap:10px;padding:12px;background:linear-gradient(90deg,#19622f,#123f1f);
+  }
+  .team-icon{
+    width:44px;height:44px;border-radius:50%;background:#fff9;border:3px solid rgba(255,255,255,0.06);
+    display:flex;align-items:center;justify-content:center;font-weight:900;color:#063815;
+  }
+  .match-title{flex:1;font-weight:800}
+  .match-time{font-size:.85rem;opacity:.9}
+
+  /* sections (accordion) */
+  .section{
+    border-top:1px solid rgba(255,255,255,0.03);
+  }
+  .section-head{
+    display:flex;align-items:center;justify-content:space-between;padding:10px 12px;cursor:pointer;
+  }
+  .section-left{display:flex;gap:.6rem;align-items:center;font-weight:700}
+  .live-dot{width:10px;height:10px;background:var(--red);border-radius:50%;box-shadow:0 0 6px rgba(255,0,0,0.5)}
+
+  .section-body{
+    display:none; /* hidden by default, toggled by JS */
+    padding:12px;
+    background:linear-gradient(180deg, rgba(0,0,0,0.02), rgba(255,255,255,0.01));
+  }
+
+  /* rows of options */
+  .row{display:flex;gap:10px;align-items:center;margin-bottom:8px;}
+  .label{flex:1;font-weight:600}
+  .chips{display:flex;gap:8px}
+  .chip{
+    min-width:64px;padding:8px 10px;border-radius:18px;background:var(--chip);display:inline-flex;align-items:center;justify-content:center;
+    font-weight:700;border:2px solid rgba(255,255,255,0.03);cursor:pointer;
+  }
+  .chip .odd{background:rgba(0,0,0,0.12);padding:4px 8px;border-radius:12px;margin-left:8px;font-weight:800;color:var(--white)}
+  .chip:hover{transform:translateY(-3px);transition:all .15s ease;box-shadow:0 6px 18px rgba(0,0,0,0.4)}
+
+  /* small responsive tweaks */
+  @media (max-width:480px){
+    .chip{min-width:56px;padding:7px 8px;font-size:.95rem}
+    .team-icon{width:40px;height:40px}
+    .match-head{padding:10px}
   }
 </style>
 </head>
 <body>
+  <div class="topbar">
+    <div class="brand"><span class="hamb" aria-hidden></span><div>MAN99</div></div>
+    <div class="actions">
+      <button class="btn" id="loginBtn">Login</button>
+      <button class="btn secondary" id="regBtn">Register</button>
+    </div>
+  </div>
 
-<div class="content" id="content">লোড হচ্ছে...</div>
-<div class="bottom-tab" id="tabs"></div>
+  <div class="tabs container">
+    <div class="tab">Sports</div>
+    <div class="tab inactive">Live</div>
+    <div class="tab inactive">Upcoming</div>
+  </div>
+
+  <main class="container" id="matches">
+    <!-- Match card template: can duplicate -->
+    <article class="match">
+      <div class="match-head">
+        <div class="team-icon">⚽</div>
+        <div class="match-title">Saudi Arabia vs Cote d Ivoire — <span style="font-weight:600">International Friendly</span></div>
+        <div class="match-time">14 Nov • 10:30 PM</div>
+      </div>
+
+      <!-- Section: Full Time Result -->
+      <div class="section">
+        <div class="section-head" data-toggle>
+          <div class="section-left"><span class="live-dot"></span>&nbsp; Full Time Result</div>
+          <div>▾</div>
+        </div>
+        <div class="section-body">
+          <div class="row">
+            <div class="label">Saudi Arabia</div>
+            <div class="chips">
+              <div class="chip">3.30<span class="odd"></span></div>
+            </div>
+            <div class="chips">
+              <div class="chip">Draw <span class="odd">3.00</span></div>
+            </div>
+            <div class="chips">
+              <div class="chip">Cote d Ivoire <span class="odd">1.80</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section: Half Time -->
+      <div class="section">
+        <div class="section-head" data-toggle>
+          <div class="section-left"><span class="live-dot"></span>&nbsp; Half Time Result</div>
+          <div>▾</div>
+        </div>
+        <div class="section-body">
+          <div class="row">
+            <div class="label">Saudi Arabia</div>
+            <div class="chips"><div class="chip">3.50</div></div>
+            <div class="chips"><div class="chip">Draw <span class="odd">2.00</span></div></div>
+            <div class="chips"><div class="chip">Cote d Ivoire <span class="odd">2.30</span></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section: Both Teams To Score -->
+      <div class="section">
+        <div class="section-head" data-toggle>
+          <div class="section-left"><span class="live-dot"></span>&nbsp; Both Teams To Score</div>
+          <div>▾</div>
+        </div>
+        <div class="section-body">
+          <div class="row">
+            <div class="label">Yes</div>
+            <div class="chips"><div class="chip">1.90</div></div>
+            <div class="label">No</div>
+            <div class="chips"><div class="chip">1.72</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section: Over/Under -->
+      <div class="section">
+        <div class="section-head" data-toggle>
+          <div class="section-left">★ &nbsp; Total Goals</div>
+          <div>▾</div>
+        </div>
+        <div class="section-body">
+          <div class="row">
+            <div class="label">Over 2.5</div>
+            <div class="chips"><div class="chip">2.20</div></div>
+            <div class="label">Under 2.5</div>
+            <div class="chips"><div class="chip">1.60</div></div>
+          </div>
+        </div>
+      </div>
+
+    </article>
+
+    <!-- You can copy the .match article to add more cards -->
+  </main>
 
 <script>
-  const tabData = [
-    { id: "home", name: "হোম", content: "এটি হোম পেজ। এখানে মূল তথ্য দেখানো হবে।" },
-    { id: "profile", name: "প্রোফাইল", content: "এটি প্রোফাইল পেজ। এখানে ব্যবহারকারীর তথ্য দেখানো হবে।" },
-    { id: "settings", name: "সেটিংস", content: "এটি সেটিংস পেজ। এখানে সেটিংস পরিবর্তন করা যাবে।" }
-  ];
-
-  const tabsContainer = document.getElementById('tabs');
-  const contentDiv = document.getElementById('content');
-
-  // ট্যাব তৈরি করা
-  tabData.forEach((tab, index) => {
-    const tabDiv = document.createElement('div');
-    tabDiv.classList.add('tab');
-    tabDiv.textContent = tab.name;
-    tabDiv.addEventListener('click', () => changeTab(tab.id));
-    tabsContainer.appendChild(tabDiv);
+  // ছোট JS: অ্যাকর্ডিয়ন টগল ও ক্লিক হ্যান্ডলার
+  document.querySelectorAll('[data-toggle]').forEach(head=>{
+    head.addEventListener('click', ()=>{
+      const body = head.nextElementSibling;
+      const isOpen = body.style.display === 'block';
+      // close any open sibling sections inside same match
+      const parentMatch = head.closest('.match');
+      parentMatch.querySelectorAll('.section-body').forEach(b=> b.style.display='none');
+      if(!isOpen){
+        body.style.display = 'block';
+      } else {
+        body.style.display = 'none';
+      }
+    });
   });
 
-  function changeTab(tabId, fromHash = false) {
-    // সব ট্যাব inactive
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-
-    // কোন ট্যাবটি?
-    const activeTab = tabData.find(t => t.id === tabId) || tabData[0];
-
-    // UI আপডেট
-    const index = tabData.indexOf(activeTab);
-    document.querySelectorAll('.tab')[index].classList.add('active');
-    contentDiv.textContent = activeTab.content;
-
-    // URL hash আপডেট (শুধু যদি hash থেকে না আসে)
-    if (!fromHash) {
-      history.pushState(null, "", "#" + activeTab.id);
-    }
-  }
-
-  // পেজ লোড হলে hash দেখে ট্যাব সেট করা
-  window.addEventListener('load', () => {
-    const hash = location.hash.replace("#", "");
-    changeTab(hash || "home", true);
+  // chips click - demo selection (toggles active style)
+  document.addEventListener('click', e=>{
+    const chip = e.target.closest('.chip');
+    if(!chip) return;
+    // simple visual selection
+    document.querySelectorAll('.chip').forEach(c=> c.style.outline = '');
+    chip.style.outline = '3px solid rgba(255,255,255,0.12)';
   });
 
-  // hash পরিবর্তন হলে (যেমন back/forward চাপলে)
-  window.addEventListener('hashchange', () => {
-    const hash = location.hash.replace("#", "");
-    changeTab(hash, true);
-  });
+  // demo login/register
+  document.getElementById('loginBtn').addEventListener('click', ()=> alert('Login dialog (demo)'));
+  document.getElementById('regBtn').addEventListener('click', ()=> alert('Register dialog (demo)'));
 </script>
-
 </body>
 </html>
