@@ -52,7 +52,7 @@ exports.HomePage =
     res.render("index", {
       title: "HOME PAGE",
       data,
-      ip,
+      
       nodeVersion: stdout.trim(),  // view এ ব্যবহার করবে
       showSplash: true
     });

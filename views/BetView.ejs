@@ -2,12 +2,7 @@
  
  
   <div class="match-wrapper">
-  <div class="matchscore" id="matchscore">
-
-  
-
-
-  </div>
+  <div id="matchscore">Loading ...</div>
 </div>
   
   
@@ -34,6 +29,7 @@ async function viewodds() {
   const setss = data.Value.SC.PS[data.Value.SC.PS.length - 1];
   console.log(setss.Value);
   matchscore.innerHTML = "";
+  matchscore.className = "matchscore";
   const matchheader = document.createElement("div");
   matchheader.className = "match-header";
   matchheader.innerHTML = `<span class="title">🎾 ${data.Value.L}</span>
