@@ -24,7 +24,7 @@
    .match-wrapper {
   display: flex;
   justify-content: center;
-  padding: 8px 0px;
+  padding: 8px 10px;
   background: black;
 }
 .matchscore {
@@ -227,3 +227,17 @@ font-weight: bold;
 .vs { font-weight:bold; font-size:20px; }
 .newset { display:flex; gap:10px; justify-content:center; margin-top:10px; }
 .set-box { padding:5px 10px; border:1px solid #ccc; border-radius:5px; }
+
+
+/*Lock button*/
+.odd-btn:disabled {
+  
+  cursor: not-allowed;
+  opacity: 0.9;
+}
+
+/* Lock Icon Show When Disabled */
+.odd-btn:disabled::after {
+  content: "🔓";
+  font-size: 18px;
+}

@@ -157,7 +157,7 @@ async function viewodds(){
 
                     html+=`<div class="odd-box ${flashClass}">
                         <span class="odd-name">${o.P??''}</span>
-                        <button class="odd-btn" onclick="openBetModal('${o.P}',${o.C})">${o.C}</button>
+                        <button class="odd-btn" onclick="openBetModal('${o.P}',${o.C})" ${o.B ? "disabled" : ""}>${o.C}</button>
                     </div>`;
                 });
                 html+=`</div>`;
