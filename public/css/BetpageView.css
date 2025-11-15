@@ -158,3 +158,53 @@ font-weight: bold;
   0% { color: red; }
   100% { color: inherit; }
 }
+
+
+/*odd regular*/
+.odds-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.market-group {
+  border: 1px solid #444;
+  border-radius: 6px;
+  padding: 10px;
+  background: #151515;
+}
+
+.market-title {
+  font-size: 13px;
+  color: #9cc4ff;
+  margin-bottom: 5px;
+}
+
+.odd-row {
+  display: flex;
+  gap: 10px;
+}
+
+.odd-box {
+  background: #222;
+  border-radius: 6px;
+  padding: 6px;
+  text-align: center;
+  min-width: 70px;
+}
+
+.odd-name {
+  display: block;
+  color: #b1b1b1;
+  font-size: 12px;
+}
+
+.odd-btn {
+  margin-top: 4px;
+  width: 100%;
+  padding: 6px;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+}
