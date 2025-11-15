@@ -3,7 +3,6 @@
   display:flex;
   gap:8px;
   margin-top:0px;
-  background: red;
   overflow:auto;
   padding:0px 6px;
     
@@ -85,7 +84,7 @@ font-weight: bold;
   opacity: 1;
 }
 .team .serve.off {
-  opacity: 0.2;
+  opacity: 0.1;
 }
 
 .team .score {
@@ -141,22 +140,6 @@ font-weight: bold;
   font-weight: bold;
 }
 
-
-/* ফ্ল্যাশ হাইলাইট */
-.flash {
-  animation: 
-    flash-color 2s ease 0s,
-    nj 9s ease 2s;
-}
-
-@keyframes flash-color {
-  0% { background-color: yellow; }
-  100% { background-color: transparent; }
-}
-@keyframes nj {
-  0% { color: red; }
-  100% { color: inherit; }
-}
 
 
 /*odd regular*/
