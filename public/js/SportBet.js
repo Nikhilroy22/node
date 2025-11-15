@@ -1,42 +1,24 @@
 
 const bb = document.body;
+const sidenavmodal = document.getElementById("sidenav");
+const showsidenavmodal = document.getElementById("hamb");
+const closesidenav = document.getElementById("closenav");
 
-async function ftt(){
-  try{
-const res = await fetch("/",{
-    method: "GET",
-    headers: {
-      
-      "Accept": "application/json"
-    }
-  })
-const data = await res.json();
-data.kalal = "janu";
-console.log(data)
-  if(data != null){
-  alert(data.Amount);
-}
-
-}catch(err){
-  
-  console.log(err);
-  
-  
-}
-}
-// ftt();
-
-function greet(name) {
-  if (typeof name !== "string") {
-    throw new TypeError("argument 'name' must be a string");
+showsidenavmodal.onclick = (e) => { 
+ // console.log("show");
+  if(e.target===showsidenavmodal){
+  sidenavmodal.style.display = "block";
+    
   }
-  console.log("Hello " + name);
-}
+  }
 
-//greet("Nikhil"); // ✅ ঠিক আছে
-//greet(123);      // ❌ TypeError: argument 'name' must be a string
+window.onclick = (e) => { 
+  if(e.target===sidenavmodal){
+  sidenavmodal.style.display = "none";}
+  }
+closesidenav.onclick = (e) => { 
+  if(e.target===closesidenav){
+  sidenavmodal.style.display = "none";}
+  }
 
-let i = 0;
-i++
-
-console.log(i)
+//console.log(sidenavmodal);

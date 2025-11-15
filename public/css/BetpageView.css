@@ -190,3 +190,40 @@ font-weight: bold;
   font-weight: bold;
   cursor: pointer;
 }
+
+
+
+
+
+
+/*SURU Score flash */
+.flash { animation: flashScore 1.5s ease; }
+@keyframes flashScore { 0% { background: yellow; transform: scale(1.15); } 100% { background: transparent; transform: scale(1); } }
+
+/* Odds flash increase / decrease */
+.odds-increase { animation: oddsIncrease 1s ease; background: #c8e6c9; color: green; }
+.odds-decrease { animation: oddsDecrease 1s ease; background: #ffcdd2; color: red; }
+@keyframes oddsIncrease { 0% { transform: scale(1.1); } 100% { transform: scale(1); background: transparent; color: inherit; } }
+@keyframes oddsDecrease { 0% { transform: scale(1.1); } 100% { transform: scale(1); background: transparent; color: inherit; } }
+
+/* Modal */
+.modal { display: none; position: fixed; z-index: 1000; left:0; top:0; width:100%; height:100%; background: rgba(0,0,0,0.5); justify-content:center; align-items:center; }
+.modal-content { background:#fff; padding:20px; border-radius:8px; width:300px; text-align:center; position: relative; }
+.close-btn { position:absolute; top:10px; right:15px; cursor:pointer; font-size:20px; }
+.odd-btn { cursor:pointer; }
+
+.tabs { display:flex; gap:10px; margin:10px 0; }
+.tab { padding:5px 15px; border:1px solid #ccc; border-radius:5px; cursor:pointer; }
+.tab.active { background:#007bff; color:white; }
+
+
+
+.odds-wrapper { margin-top:10px; }
+.odd-row { display:flex; gap:10px; margin-bottom:5px; }
+.odd-box { padding:5px; border:1px solid #ddd; border-radius:5px; display:flex; flex-direction:column; align-items:center; }
+
+.teams { display:flex; justify-content:center; align-items:center; gap:20px; margin:10px 0; }
+.team { display:flex; flex-direction:column; align-items:center; }
+.vs { font-weight:bold; font-size:20px; }
+.newset { display:flex; gap:10px; justify-content:center; margin-top:10px; }
+.set-box { padding:5px 10px; border:1px solid #ccc; border-radius:5px; }

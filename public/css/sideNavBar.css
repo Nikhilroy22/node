@@ -14,11 +14,30 @@
   }
  .navbar-main .navbar{
    width: 250px;
-    background: #2e7d32;
+    background: #073615;
     color: white;
     height: 100vh;
-    padding: 20px;
+    padding: 7px 8px;
     box-sizing: border-box;
    
    
  }
+ .navbar-main .sidenav-header{
+   display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+   
+ }
+.navbar-main .titlelogo { 
+font-size: 35px; 
+font-weight: bold; 
+  
+}
+.navbar-main .closenav {
+  
+  color: #ff0000cc;
+  
+  font-size: 30px; 
+  text-transform: uppercase;
+  font-weight: bold;
+}
