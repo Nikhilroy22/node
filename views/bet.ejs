@@ -6,9 +6,9 @@
   <div id="matches">Loading...</div>
 
   <!-- Bet Slip Modal -->
-  <div class="modal" id="betModal">
-    <div class="modal-content">
-      <span class="close" onclick="closeModal()">&times;</span>
+  <div class="placebetmodal" id="betModal">
+    <div class="placebetmodal-content">
+      <span class="placebetclose" onclick="closeModal()">&times;</span>
       <h3 id="matchTitle"></h3>
       <p>Option: <b id="teamName"></b></p>
       <p>Odds: <span id="teamOdds"></span></p>
@@ -23,10 +23,7 @@
     </div>
   </div>
 
-  <script src="/js/eruda.js"></script>
-  <script>
-    eruda.init(); // Console চালু হবে
-  </script>
+  
   <script>
   let liveMatches = {};
   let selectedBet = null;
