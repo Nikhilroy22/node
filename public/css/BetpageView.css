@@ -27,7 +27,7 @@
 .matchscore {
   width: 100%;
   max-width: 420px;
-  background: linear-gradient(135deg, #55553b, #2d2465);
+  background: linear-gradient(135deg, #586559, #335440);
   padding: 15px;
   color: #fff;
  /* box-shadow: 0 8px 25px rgba(0,0,0,0.25);
@@ -105,25 +105,51 @@ font-weight: bold;
 }
 
 /* Set Table */
-.set-table {
-  margin-top: 15px;
-  background: rgba(255,255,255,0.18);
-  padding: 10px;
-  border-radius: 8px;
+.newset {
+  display: flex;
+  gap: 12px;                /* Box gap */
+  margin-top: 12px;
+  flex-wrap: wrap;          /* ছোট স্ক্রিনে নিচে নেবে */
+  justify-content: center;
 }
 
-.set-table .row {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  padding: 6px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.2);
+.set-box {
+ /* background: linear-gradient(120deg, #0d4a1a, #0f7a34);*/
+  padding: 8px 14px;
+  /*border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.15);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.25);*/
+  color: #fff;
+  min-width: 60px;
+  text-align: center;
 }
 
-.set-table .row.header {
+.set-name {
+  display: block;
+  font-size: 12px;
+  opacity: 0.9;
+  margin-bottom: 4px;
+}
+
+.set-score {
+  display: block;
+  font-size: 16px;
   font-weight: bold;
-  font-size: 14px;
 }
 
-.set-table .row:last-child {
-  border-bottom: none;
+
+/* ফ্ল্যাশ হাইলাইট */
+.flash {
+  animation: 
+    flash-color 2s ease 0s,
+    nj 9s ease 2s;
+}
+
+@keyframes flash-color {
+  0% { background-color: yellow; }
+  100% { background-color: transparent; }
+}
+@keyframes nj {
+  0% { color: red; }
+  100% { color: inherit; }
 }

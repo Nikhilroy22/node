@@ -17,8 +17,9 @@
 console.log(hiddenInput.value)
 
 
-async function viewodds() {
+let prevS1 = 0, prevS2 = 0, prevPoints1 = 0, prevPoints2 = 0, fst = true; // পূর্বের মান সংরক্ষণ
 
+async function viewodds() {
     const matchscore = document.getElementById("matchscore");
 
     const res = await fetch(`/resview/${hiddenInput.value}`);
@@ -26,9 +27,15 @@ async function viewodds() {
 
     const PS = data?.Value?.SC?.PS || [];
     const FS = data?.Value?.SC?.FS || {};
-
-    // Latest set
     const lastSet = PS.length > 0 ? PS[PS.length - 1].Value : { S1: 0, S2: 0, NF: "-" };
+    if(fst){
+      // পূর্বের মান আপডেট
+    prevS1 = FS.S1 ?? 0;
+    prevS2 = FS.S2 ?? 0;
+    prevPoints1 = data?.Value?.SC.SS?.S1 ?? lastSet.S1 ?? 0;
+    prevPoints2 = data?.Value?.SC?.SS?.S2 ?? lastSet.S2 ?? 0;
+    fst = false;
+    }
 
     matchscore.innerHTML = "";
     matchscore.className = "matchscore";
@@ -37,7 +44,7 @@ async function viewodds() {
     const matchheader = document.createElement("div");
     matchheader.className = "match-header";
     matchheader.innerHTML = `
-        <span class="title">${data?.Value?.SN === "Badminton" ? "🎾" : ""} ${data?.Value?.L || ""}</span>
+        <span class="title">${data?.Value?.SN === "Badminton" ? "🏸" : data?.Value?.SN === "Tennis" ? "🎾" : data?.Value?.SN === "Football" ? "⚽️" : data?.Value?.SN === "Cricket" ? "🏏" : ""} ${data?.Value?.L || ""}</span>
         <span class="status live">LIVE</span>`;
     matchscore.appendChild(matchheader);
 
@@ -47,53 +54,67 @@ async function viewodds() {
     teams.innerHTML = `
         <div class="team">
             <span class="name">${data?.Value?.O1 || "-"}</span>
-            <span class="serve">🎾</span>
-            <span class="score">${FS.S1 ?? 0}</span>
-            <span class="points">${lastSet.S1 ?? 0}</span>
+            <span class="serve ${data?.Value?.SC.P == "1" ? "" : "off"}">🎾</span>
+            <span class="score" id="score1">${FS.S1 ?? 0}</span>
+            <span class="points" id="points1">${data?.Value?.SC.SS?.S1 ?? lastSet.S1 ?? 0}</span>
         </div>
 
         <div class="vs">VS</div>
 
         <div class="team">
             <span class="name">${data?.Value?.O2 || "-"}</span>
-            <span class="serve off">🎾</span>
-            <span class="score">${FS.S2 ?? 0}</span>
-            <span class="points">${lastSet.S2 ?? 0}</span>
+            <span class="serve ${data?.Value?.SC.P == "2" ? "" : "off"}">🎾</span>
+            <span class="score" id="score2">${FS.S2 ?? 0}</span>
+            <span class="points" id="points2">${data?.Value?.SC?.SS?.S2 ?? lastSet.S2 ?? 0}</span>
         </div>`;
     matchscore.appendChild(teams);
 
+    /* ফ্ল্যাশ চেক */
+    const score1El = document.getElementById("score1");
+    const score2El = document.getElementById("score2");
+    const points1El = document.getElementById("points1");
+    const points2El = document.getElementById("points2");
+
+    if ((FS.S1 ?? 0) !== prevS1) {
+        score1El.classList.add("flash");
+        //setTimeout(() => score1El.classList.remove("flash"), 2000);
+    }
+    if ((FS.S2 ?? 0) !== prevS2) {
+        score2El.classList.add("flash");
+        //setTimeout(() => score2El.classList.remove("flash"), 2000);
+    }
+    if ((data?.Value?.SC.SS?.S1 ?? lastSet.S1 ?? 0) !== prevPoints1) {
+        points1El.classList.add("flash");
+        //setTimeout(() => points1El.classList.remove("flash"), 2000);
+    }
+    if ((data?.Value?.SC?.SS?.S2 ?? lastSet.S2 ?? 0) !== prevPoints2) {
+        points2El.classList.add("flash");
+        //setTimeout(() => points2El.classList.remove("flash"), 2000);
+    }
+
+    // পূর্বের মান আপডেট
+    prevS1 = FS.S1 ?? 0;
+    prevS2 = FS.S2 ?? 0;
+    prevPoints1 = data?.Value?.SC.SS?.S1 ?? lastSet.S1 ?? 0;
+    prevPoints2 = data?.Value?.SC?.SS?.S2 ?? lastSet.S2 ?? 0;
 
     /* SET TABLE */
-    const settable = document.createElement("div");
-    settable.className = "set-table";
+    const ttst = document.createElement("div");
+    ttst.className = "newset";
 
-    const headerRow = document.createElement("div");
-    headerRow.className = "row header";
-    headerRow.innerHTML = `<span>Player</span>`;
-    settable.appendChild(headerRow);
-
-    const row1 = document.createElement("div");
-    row1.className = "row";
-    row1.innerHTML = `<span>${data?.Value?.O1 || "-"}</span>`;
-    settable.appendChild(row1);
-
-    const row2 = document.createElement("div");
-    row2.className = "row";
-    row2.innerHTML = `<span>${data?.Value?.O2 || "-"}</span>`;
-    settable.appendChild(row2);
-
-    // Add column for each set
     PS.forEach(s => {
-        headerRow.innerHTML += `<span>${s?.Value?.NF || "-"}</span>`;
-        row1.innerHTML += `<span>${s?.Value?.S1 ?? 0}</span>`;
-        row2.innerHTML += `<span>${s?.Value?.S2 ?? 0}</span>`;
+        ttst.innerHTML += `
+            <div class="set-box">
+                <span class="set-name">${s?.Value?.NF || "-"}</span>
+                <span class="set-score">${s?.Value?.S1 ?? 0} : ${s?.Value?.S2 ?? 0}</span>
+            </div>
+        `;
     });
 
-    matchscore.appendChild(settable);
+    matchscore.appendChild(ttst);
 
     setTimeout(viewodds, 5000);
 }
-
 
 // Viewodds call
 viewodds();

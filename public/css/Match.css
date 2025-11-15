@@ -1,11 +1,11 @@
-.match { background:#2e7d32; padding:10px; margin:10px 10px; border-radius:8px; }
+.match { background: linear-gradient(135deg, #21211d, #214224); padding:10px; margin:10px 10px; border-radius:8px; }
 
     .team { display:flex; justify-content:space-between; margin:5px 0; flex-wrap:wrap; gap:5px; }
     
-    .btn { background:#1b2a12; color:#fff; border:none; border-radius:5px; padding:5px 10px;  }
-    .oddd{
+   .match .btn { background:#1b2a12; color:#fff; border:none; border-radius:5px; padding:5px 10px;  }
+  .match  .oddd{
       
-      background:#2e7d32;
+      background:linear-gradient(135deg, #9f9f42, #214224);
       border-radius:10px
       padding:5px 10px;
     }
