@@ -10,6 +10,7 @@
   
 <!-- Tabs -->
       <div class="tabs" id="betoddstabs"></div>
+      <div id="tabdata"></div>
       
     <script>
     const hiddenInput = document.getElementById("hiddenId");
@@ -129,14 +130,14 @@ viewodds();
 
   <script>
    const tabData = [
-    { id: "home", name: "Homeregularmatch", content: `<h1>এটি হোম পেজ। এখানে মূল তথ্য দেখানো হবে</h1>` },
-    { id: "profile", name: "Profile", content: `<h1>এটি প্রোফাইল পেজ। এখানে ব্যবহারকারীর তথ্য দেখানো হবে</h1>` },
-    { id: "settings", name: "Setting", content: `<h1>এটি সেটিংস পেজ। এখানে সেটিংস পরিবর্তন করা যাবে</h1>` },
-    { id: "settings", name: "Setting", content: `<h1>এটি সেটিংস পেজ। এখানে সেটিংস পরিবর্তন করা যাবে</h1>` },
-    { id: "settings", name: "Setting", content: `<h1>এটি সেটিংস পেজ। এখানে সেটিংস পরিবর্তন করা যাবে</h1>` }
+    { id: "home", name: "Regular time", content: 'r' },
+    { id: "1st", name: "1st set", content: '1' },
+    { id: "2set", name: "2st set", content: '2' },
+   
   ];
     
     const tabsContainer = document.getElementById('betoddstabs');
+    const app = document.getElementById('tabdata');
     
     // ট্যাব তৈরি করা
   tabData.forEach((tab, index) => {
@@ -158,7 +159,7 @@ viewodds();
     // UI আপডেট
     const index = tabData.indexOf(activeTab);
     document.querySelectorAll('.tab')[index].classList.add('active');
-    //app.innerHTML = activeTab.content;
+    app.innerHTML = activeTab.content;
 
    
    

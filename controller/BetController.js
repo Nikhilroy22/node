@@ -71,7 +71,7 @@ exports.bethome = (req, res) => {
 // Bet json API
 exports.betapi = async(req, res) =>{
   
-  const url = "https://1xbet86.com/LiveFeed/Get1x2_VZip?sports=4&count=50&lng=en&gr=54&mode=4&country=19&getEmpty=true";
+  const url = "https://1xbet86.com/LiveFeed/Get1x2_VZip?sports=16&count=50&lng=en&gr=54&mode=4&country=19&getEmpty=true";
 
 const fdata = await fetch(url, {
     method: "GET",
