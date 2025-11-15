@@ -3,7 +3,7 @@
   display:flex;
   gap:8px;
   margin-top:0px;
-  
+  background: red;
   overflow:auto;
   padding:0px 6px;
     
@@ -18,9 +18,7 @@
     text-align: center;
     
   }
-  .tab.active {
-    background-color: #555;
-  }
+  
   
   
 /* Match Live */
@@ -28,6 +26,7 @@
   display: flex;
   justify-content: center;
   padding: 8px 0px;
+  background: black;
 }
 .matchscore {
   width: 100%;

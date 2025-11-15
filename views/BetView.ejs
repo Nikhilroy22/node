@@ -1,7 +1,7 @@
 <%- include('header') %>
 
 <div class="match-wrapper">
-  <div id="matchscore">Loading ...</div>
+  <div id="matchscore" class="mmatchscore">Loading ...</div>
 </div>
 
 <input type="hidden" id="hiddenId" value="<%= matchid %>" />
@@ -41,6 +41,8 @@
 .tabs { display:flex; gap:10px; margin:10px 0; }
 .tab { padding:5px 15px; border:1px solid #ccc; border-radius:5px; cursor:pointer; }
 .tab.active { background:#007bff; color:white; }
+
+
 
 .odds-wrapper { margin-top:10px; }
 .odd-row { display:flex; gap:10px; margin-bottom:5px; }
