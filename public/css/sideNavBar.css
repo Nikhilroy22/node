@@ -1,7 +1,6 @@
 .navbar-main {
    display: none;  
   position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
   overflow: hidden;
   top: 0;
   bottom: 0;
@@ -10,6 +9,7 @@
    /* Enable scroll if needed */
   background-color: rgb(0,0,0); /* Fallback color */
   background-color: rgba(0,0,0,0.8); /* Black w/ opacity */
+  z-index: 1000;
     
   }
  .navbar-main .navbar{
@@ -17,7 +17,7 @@
     background: #073615;
     color: white;
     height: 100vh;
-    padding: 7px 8px;
+    padding: 0px 8px;
     box-sizing: border-box;
    
    
@@ -29,15 +29,16 @@
    
  }
 .navbar-main .titlelogo { 
-font-size: 35px; 
+font-size: 35px;
+opacity:.65;
 font-weight: bold; 
   
 }
 .navbar-main .closenav {
   
-  color: #ff0000cc;
+  color: black;
   
-  font-size: 30px; 
+  font-size: 50px; 
   text-transform: uppercase;
-  font-weight: bold;
+  
 }

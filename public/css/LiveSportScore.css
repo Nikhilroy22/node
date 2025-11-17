@@ -1,0 +1,129 @@
+/* Match Live */
+   .match-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 8px 10px;
+  background: black;
+}
+.matchscore {
+  width: 100%;
+  max-width: 420px;
+  background: linear-gradient(135deg, #586559, #335440);
+  padding: 15px;
+  color: #fff;
+ /* box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.25);
+*/
+}
+
+/* Header */
+.match-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  gap:15px;
+}
+.title { 
+/*font-size: 20px; */
+font-weight: bold; 
+  
+}
+.status.live {
+  padding: 4px 12px;
+  background: #ff0000cc;
+  border-radius: 20px;
+  font-size: 12px;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+/* Players Area */
+.teams {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 18px 0;
+}
+
+.team {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.team .name {
+ /* font-size: 18px;
+  font-weight: 600; */
+}
+
+.team .serve {
+  font-size: 18px;
+  margin: 5px 0 0;
+  opacity: 1;
+  display: inline-block;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+.team .serve.off {
+  opacity: 0;
+}
+
+.team .score {
+  font-size: 32px;
+  margin-top: 6px;
+  font-weight: bold;
+}
+
+.team .points {
+  font-size: 16px;
+  margin-top: 5px;
+  background: #ffffff33;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.vs {
+  font-size: 20px;
+  font-weight: bold;
+  
+}
+
+/* Set Table */
+.newset {
+  display: flex;
+  gap: 12px;                /* Box gap */
+  margin-top: 12px;
+  flex-wrap: wrap;          /* ছোট স্ক্রিনে নিচে নেবে */
+  justify-content: center;
+}
+
+.set-box {
+ /* background: linear-gradient(120deg, #0d4a1a, #0f7a34);*/
+  padding: 8px 14px;
+  /*border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.15);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.25);*/
+  color: #fff;
+  min-width: 60px;
+  text-align: center;
+}
+.set-box { padding:5px 10px; border:1px solid #ccc; border-radius:5px; }
+
+.set-name {
+  display: block;
+  font-size: 12px;
+  opacity: 0.9;
+  margin-bottom: 4px;
+}
+
+.set-score {
+  display: block;
+  font-size: 16px;
+  font-weight: bold;
+}

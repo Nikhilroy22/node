@@ -8,7 +8,7 @@
 
 <!-- Tabs -->
 <div class="tabs" id="betoddstabs"></div>
-<div class="tabdata" id="tabdata"></div>
+<div class="tabdagta" id="tabdata">jj</div>
 
 <!-- Place Bet Modal -->
 <div id="placeBetModal" class="modal">
@@ -64,6 +64,7 @@ function changeTab(tabId){
     const index = tabData.indexOf(activeTab);
     document.querySelectorAll('.tab')[index].classList.add('active');
     app.innerHTML = activeTab.content;
+    console.log(tabId);
     viewodds();
 }
 
@@ -173,6 +174,7 @@ async function viewodds(){
     else if(activeTabText==="1st set") tabBox.innerHTML = renderOdds(1);
     else if(activeTabText==="2st set") tabBox.innerHTML = renderOdds(2);
 
+console.log(renderOdds());
     //setTimeout(viewodds,5000);
 }
 
@@ -192,12 +194,14 @@ confirmBetBtn.onclick = ()=>{
 }
 
 // Initialize
-// Initialize
+// Initializex
 changeTab("home");
 //viewodds();
 
 // auto refresh every 5s
-setInterval(viewodds, 5000);
+//setInterval(viewodds, 5000);
+
+console.log(prevOdds);
 </script>
 
 <%- include('footer') %>

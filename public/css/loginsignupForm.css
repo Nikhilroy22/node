@@ -9,7 +9,7 @@
 .login-wrapper .login-card {
   width:100%;
   max-width:420px;
-  background:rgba(255,255,255,0.12);
+  background:linear-gradient(180deg,#155226,#0f3d18);
   backdrop-filter:blur(12px);
   border-radius:16px;
   padding:35px 28px;
