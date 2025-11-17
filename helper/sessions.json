@@ -189,7 +189,11 @@
       "httpOnly": true,
       "path": "/"
     },
-    "flash": {}
+    "flash": {},
+    "user": {
+      "id": 3,
+      "username": "Thhh"
+    }
   },
   "B-W73xX8zGZs36jhBX0zhOjC5doMZKWB": {
     "cookie": {
@@ -453,5 +457,14 @@
       "id": 1,
       "username": "Pakhi"
     }
+  },
+  "oEOMzvssG4RCd31ETVNP-Wgf6sU7ZjSD": {
+    "cookie": {
+      "originalMaxAge": null,
+      "expires": null,
+      "httpOnly": true,
+      "path": "/"
+    },
+    "flash": {}
   }
 }
