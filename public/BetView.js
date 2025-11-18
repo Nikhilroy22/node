@@ -2,7 +2,7 @@ const hiddenInput = document.getElementById("hiddenId");
 let prevS1 = 0, prevS2 = 0, prevPoints1 = 0, prevPoints2 = 0;
 let fst = true;
 let prevOdds = {};
-let currentTabId = "home";
+
 
 // Modal
 const modal = document.getElementById("placeBetModal");
@@ -14,33 +14,6 @@ const confirmBetBtn = document.getElementById("confirmBet");
 closeModalBtn.onclick = () => modal.style.display = "none";
 window.onclick = e => { if(e.target===modal) modal.style.display = "none"; }
 
-// Tabs setup
-const tabData = [
- { id: "home", name: "Regular time", content: '' },
- { id: "1st", name: "1st set", content: '' },
- { id: "2set", name: "2st set", content: '' },
-];
-const tabsContainer = document.getElementById('betoddstabs');
-const app = document.getElementById('tabdata');
-
-tabData.forEach(tab=>{
-    const tabDiv = document.createElement('div');
-    tabDiv.classList.add('tab');
-    tabDiv.textContent = tab.name;
-    tabDiv.addEventListener('click', ()=>changeTab(tab.id));
-    tabsContainer.appendChild(tabDiv);
-});
-
-function changeTab(tabId){
-    currentTabId = tabId;
-    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-    const activeTab = tabData.find(t=>t.id===tabId) || tabData[0];
-    const index = tabData.indexOf(activeTab);
-    document.querySelectorAll('.tab')[index].classList.add('active');
-    app.innerHTML = activeTab.content;
-    console.log(tabId);
-    viewodds();
-}
 
 // Flash for scores
 function flash(el){ 
@@ -114,14 +87,14 @@ async function viewodds(){
     matchscore.appendChild(ttst);
 
     // Odds
-    const tabBox = document.getElementById("tabdata");
+    const tabBox = document.getElementById("oddsdata");
     const GE = data?.Value?.GE || [];
     function renderOdds(targetGS=null){
         if(GE.length===0) return "<p>No odds available</p>";
         let html=`<div class="odds-wrapper">`;
         GE.forEach(group=>{
             if(targetGS && group.GS!==targetGS) return;
-            html+=`<div class="market-group"><div class="market-title">Market G:${group.G}, GS:${group.GS}</div>`;
+            html+=`<div class="market-group"><div class="market-title">${group.G === 1? "1X2" : group.G === 17? "Total Over/Under" :`Market G:${group.G}, GS:${group.GS}`}</div>`;
             group.E.forEach((row,rIndex)=>{
                 html+=`<div class="odd-row">`;
                 row.forEach((o,cIndex)=>{
@@ -134,7 +107,8 @@ async function viewodds(){
                     prevOdds[key] = o.C;
 
                     html+=`<div class="odd-box ${flashClass}">
-                        <span class="odd-name">${o.P??''}</span>
+                        <span class="odd-name">${o.T ===1 ? 'W1' : o.T === 3 ? "W2" : o.T === 2? "X" : o.T === 9 ? `Total over ${o.P}` 
+                   : o.T === 10 ? `Total under ${o.P}` :o.P??''}</span>
                         <button class="odd-btn" onclick="openBetModal('${o.P}',${o.C})" ${o.B ? "disabled" : ""}>${o.C}</button>
                     </div>`;
                 });
@@ -145,14 +119,8 @@ async function viewodds(){
         html+=`</div>`;
         return html;
     }
-
-    const activeTabText = document.querySelector(".tab.active")?.innerText;
-    if(activeTabText==="Regular time") tabBox.innerHTML = renderOdds();
-    else if(activeTabText==="1st set") tabBox.innerHTML = renderOdds(1);
-    else if(activeTabText==="2st set") tabBox.innerHTML = renderOdds(2);
-
-
-    //setTimeout(viewodds,5000);
+oddsdata.innerHTML = renderOdds();
+setTimeout(viewodds, 4000);
 }
 
 // Place Bet modal
@@ -169,12 +137,4 @@ confirmBetBtn.onclick = ()=>{
     alert(`Bet Placed: ${betInfoEl.innerText}, Stake: ${stake}`);
     modal.style.display = "none";
 }
-
-// Initialize
-// Initializex
-changeTab("home");
-//viewodds();
-
-// auto refresh every 5s
-setInterval(viewodds, 4000);
-
+ viewodds();

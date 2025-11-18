@@ -127,3 +127,8 @@ font-weight: bold;
   font-size: 16px;
   font-weight: bold;
 }
+
+
+/*SURU Score flash */
+.flash { animation: flashScore 1.5s ease; }
+@keyframes flashScore { 0% { background: green; transform: scale(1.15); } 100% { background: transparent; transform: scale(1); } }

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scrollable Tabbar</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+  background: #f5f5f5;
+}
+
+/* Tab container */
+.tabbar {
+  display: flex;
+  overflow-x: auto;      /* Scrollable */
+  -webkit-overflow-scrolling: touch; /* Smooth scroll on iOS */
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  padding: 0 10px;
+  scrollbar-width: none; /* Firefox hide scrollbar */
+}
+.tabbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari hide scrollbar */
+}
+
+/* Individual tabs */
+.tab {
+  flex: 0 0 auto; /* Prevent shrinking */
+  padding: 12px 24px;
+  margin: 8px 6px;
+  background: #e0e0e0;
+  border-radius: 20px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.tab.active {
+  background: #ff6b6b;
+  color: #fff;
+}
+
+/* Optional hover effect */
+.tab:hover {
+  background: #ff8a8a;
+  color: #fff;
+}
+
+/* Content area */
+.content {
+  margin-top: 20px;
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  min-height: 100px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+</style>
+</head>
+<body>
+
+<h2>Scrollable Tabbar Example</h2>
+
+<div class="tabbar" id="tabbar">
+  <div class="tab active" data-content="Home Content">Home</div>
+  <div class="tab" data-content="Profile Content">Profile</div>
+  <div class="tab" data-content="Messages Content">Messages</div>
+  <div class="tab" data-content="Settings Content">Settings</div>
+  <div class="tab" data-content="Notifications Content">Notifications</div>
+  <div class="tab" data-content="Help Content">Help</div>
+  <div class="tab" data-content="About Content">About</div>
+  <div class="tab" data-content="Contact Content">Contact</div>
+</div>
+
+<div class="content" id="content-area">
+  Home Content
+</div>
+
+<script>
+// Simple tab switch
+const tabs = document.querySelectorAll('.tab');
+const content = document.getElementById('content-area');
+
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    tabs.forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    content.textContent = tab.dataset.content;
+  });
+});
+</script>
+
+</body>
+</html>
