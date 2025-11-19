@@ -13,7 +13,105 @@
     opacity:.65;
   color: #fff;
   background:linear-gradient(180deg,#155226,#0f3d18)}
+  
+  
+  
+  </style>
+  <style>
+   /* ---------- Floating Column ---------- */
+  .floating-col{
+    position:fixed;
+    right:12px;
+    top:50%;
+    transform:translateY(-50%);
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    z-index:1200;
+    align-items:flex-end;
+    pointer-events:none; /* allow internal control */
+  }
+
+  .float-item{
+    position:relative;
+    pointer-events:auto;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(0,0,0,0.15));
+    padding:8px 10px;
+    border-radius:30px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+    min-width:54px;
+    transition: transform .18s ease, opacity .18s ease;
+  }
+
+  .float-item:hover{ transform: translateX(-6px); }
+
+  .fi-icon{
+    width:44px;
+    height:44px;
+    border-radius:50%;
+    display:grid;
+    place-items:center;
+    background:var(--card);
+    box-shadow: inset 0 -4px 10px rgba(0,0,0,0.4);
+    font-size:20px;
+  }
+
+  .fi-label{
+    font-size:13px;
+    padding-right:8px;
+  }
+
+  /* close small x */
+  .fi-close{
+    position:absolute;
+    top:-8px;
+    left:-8px;
+    width:22px;
+    height:22px;
+    background:#111;
+    color:#fff;
+    border-radius:50%;
+    display:grid;
+    place-items:center;
+    font-weight:700;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    cursor:pointer;
+    font-size:13px;
+  }
 </style>
+<!-- Floating Buttons -->
+<div class="floating-col" id="floatingCol">
+
+  <!-- Lucky Wheel Item -->
+  <div class="float-item" id="wheelItem" title="লাকি হুইল ঘোরাও">
+    <div class="fi-icon" id="openWheel" aria-hidden="true">🎡</div>
+    
+    <div class="fi-close" data-target="wheelItem">&times</div>
+  </div>
+
+  <!-- Facebook Item -->
+  <div class="float-item" id="fbItem" title="ফেসবুকে যাও">
+    <div class="fi-icon" id="openFB" aria-hidden="true">f</div>
+    <div class="fi-label">ফেসবুক</div>
+    <div class="fi-close" data-target="fbItem">×</div>
+  </div>
+
+</div>
+<script>
+/* close buttons on float items */
+document.querySelectorAll('.fi-close').forEach(btn=>{
+  btn.addEventListener('click', (e)=>{
+    const targetId = btn.getAttribute('data-target');
+    const el = document.getElementById(targetId);
+    if(el) el.remove(); // remove from DOM
+  });
+});
+</script>
+
+
 <div class="tabsindex">
     <div class="tabindex">Live</div>
     <a class="tabindex inactiveindex" href="/bet">Sports</a>
@@ -43,6 +141,8 @@
 <%- include("partials/bottom-nav", { path: "/" }) %> 
   
    <% } %>
+
+
 
 
 <%- include('footer') %>

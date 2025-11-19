@@ -1,235 +1,357 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="bn">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Full Screen Deposit Modal</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Floating FB & Lucky Wheel</title>
 <style>
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #121212;
-    color: #fff;
-}
+  :root{
+    --accent:#1a8f4b;
+    --bg:#083820;
+    --card:#0f3f2a;
+    --glass: rgba(255,255,255,0.04);
+  }
+  body{
+    margin:0;
+    font-family: "Segoe UI", Roboto, Arial, sans-serif;
+    background: var(--bg);
+    color:#e9f7ef;
+    min-height:100vh;
+  }
 
-/* Button */
-.btn {
-    background-color: #4caf50;
-    border: none;
-    padding: 12px 20px;
-    color: #fff;
-    border-radius: 6px;
-    cursor: pointer;
-    margin: 20px;
-    font-size: 16px;
-}
+  /* ---------- Floating Column ---------- */
+  .floating-col{
+    position:fixed;
+    right:12px;
+    top:50%;
+    transform:translateY(-50%);
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    z-index:1200;
+    align-items:flex-end;
+    pointer-events:none; /* allow internal control */
+  }
 
-/* Full-screen Modal */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow-y: auto;
-    background-color: rgba(0,0,0,0.9);
-}
+  .float-item{
+    position:relative;
+    pointer-events:auto;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(0,0,0,0.15));
+    padding:8px 10px;
+    border-radius:30px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+    min-width:54px;
+    transition: transform .18s ease, opacity .18s ease;
+  }
 
-/* Full-screen content */
-.modal-content {
-    background-color: #1e1e1e;
-    width: 100%;
-    height: 100%;
-    padding: 20px;
-    box-sizing: border-box;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-}
+  .float-item:hover{ transform: translateX(-6px); }
 
-/* Modal header */
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #333;
-    padding-bottom: 10px;
-}
+  .fi-icon{
+    width:44px;
+    height:44px;
+    border-radius:50%;
+    display:grid;
+    place-items:center;
+    background:var(--card);
+    box-shadow: inset 0 -4px 10px rgba(0,0,0,0.4);
+    font-size:20px;
+  }
 
-.modal-header h2 {
-    margin: 0;
-    font-size: 20px;
-}
+  .fi-label{
+    font-size:13px;
+    padding-right:8px;
+  }
 
-.close {
-    font-size: 28px;
-    cursor: pointer;
-    color: #f44336;
-}
+  /* close small x */
+  .fi-close{
+    position:absolute;
+    top:-8px;
+    right:-8px;
+    width:22px;
+    height:22px;
+    background:#111;
+    color:#fff;
+    border-radius:50%;
+    display:grid;
+    place-items:center;
+    font-weight:700;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    cursor:pointer;
+    font-size:13px;
+  }
 
-/* Modal body */
-.modal-body {
-    margin-top: 20px;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
+  /* ---------- Wheel Modal ---------- */
+  .modal {
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:2000;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+  }
+  .modal.show { display:flex; }
 
-.modal-body label {
-    margin: 10px 0 5px;
-    font-size: 14px;
-}
+  .wheel-card{
+    width:350px;
+    max-width:95%;
+    background: linear-gradient(180deg,#062b17,#0f3f2a);
+    border-radius:14px;
+    padding:18px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+    text-align:center;
+    color:#e6f6ea;
+    position:relative;
+  }
+  .modal-close {
+    position:absolute;
+    top:10px;
+    right:10px;
+    background:#0b1b15;
+    border-radius:8px;
+    width:34px;height:34px;
+    display:grid;place-items:center;
+    cursor:pointer;
+    font-weight:700;
+  }
+  .wheel-wrap{
+    width:260px;
+    height:260px;
+    margin:10px auto;
+    position:relative;
+  }
 
-.modal-body input, .modal-body select {
-    width: 100%;
-    padding: 12px;
-    border-radius: 6px;
-    border: none;
-    margin-bottom: 15px;
-    font-size: 14px;
-}
+  /* Wheel circle */
+  .wheel{
+    width:100%;
+    height:100%;
+    border-radius:50%;
+    overflow:hidden;
+    border:6px solid rgba(255,255,255,0.04);
+    box-shadow: inset 0 6px 30px rgba(0,0,0,0.5);
+    transition: transform 4s cubic-bezier(.18,.92,.3,1);
+  }
 
-.submit-btn {
-    width: 100%;
-    padding: 14px;
-    background-color: #4caf50;
-    border: none;
-    border-radius: 6px;
-    font-size: 16px;
-    cursor: pointer;
-    margin-top: auto;
-}
+  /* wedge segments using conic-gradient */
+  .wheel .disc{
+    width:100%;
+    height:100%;
+    border-radius:50%;
+    background:
+      conic-gradient(
+        #1c7a43 0deg 45deg,
+        #1a5f35 45deg 90deg,
+        #1c7a43 90deg 135deg,
+        #1a5f35 135deg 180deg,
+        #1c7a43 180deg 225deg,
+        #1a5f35 225deg 270deg,
+        #1c7a43 270deg 315deg,
+        #1a5f35 315deg 360deg
+      );
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+  }
 
-.agent-number {
-    background: #2a2a2a;
-    padding: 10px;
-    border-radius: 6px;
-    font-size: 14px;
-    margin-bottom: 15px;
-    display: none;
-}
+  /* pointer */
+  .pointer{
+    position:absolute;
+    top:-16px;
+    left:50%;
+    transform:translateX(-50%);
+    width:0;height:0;
+    border-left:10px solid transparent;
+    border-right:10px solid transparent;
+    border-bottom:18px solid #ffd54d;
+    filter:drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+  }
 
-.notice-bar {
-    display: none;
-    background-color: #ff9800;
-    color: #000;
-    padding: 10px;
-    border-radius: 6px;
-    font-size: 14px;
-    margin-bottom: 15px;
-    text-align: center;
-}
+  .spin-btn{
+    margin-top:10px;
+    padding:10px 16px;
+    background:linear-gradient(180deg,#57c67a,#2f9a4f);
+    border:none;
+    border-radius:10px;
+    color:#062b17;
+    font-weight:700;
+    cursor:pointer;
+  }
+
+  .prize {
+    margin-top:12px;
+    font-size:16px;
+    min-height:22px;
+  }
+
+  /* small responsive */
+  @media (max-width:420px){
+    .float-item{ padding:6px 8px }
+    .fi-icon{ width:42px;height:42px;font-size:18px }
+  }
 </style>
 </head>
 <body>
 
-<button class="btn" onclick="openModal()">Deposit</button>
+<!-- Floating Buttons -->
+<div class="floating-col" id="floatingCol">
 
-<div id="transactionModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>Deposit</h2>
-            <span class="close" onclick="closeModal()">&times;</span>
+  <!-- Lucky Wheel Item -->
+  <div class="float-item" id="wheelItem" title="লাকি হুইল ঘোরাও">
+    <div class="fi-icon" id="openWheel" aria-hidden="true">🎡</div>
+    <div class="fi-label">হুইল</div>
+    <div class="fi-close" data-target="wheelItem">&times</div>
+  </div>
+
+  <!-- Facebook Item -->
+  <div class="float-item" id="fbItem" title="ফেসবুকে যাও">
+    <div class="fi-icon" id="openFB" aria-hidden="true">f</div>
+    <div class="fi-label">ফেসবুক</div>
+    <div class="fi-close" data-target="fbItem">×</div>
+  </div>
+
+</div>
+
+<!-- Wheel Modal -->
+<div class="modal" id="wheelModal" aria-hidden="true">
+  <div class="wheel-card" role="dialog" aria-modal="true" aria-labelledby="wheelTitle">
+    <div class="modal-close" id="closeModal">×</div>
+    <h3 id="wheelTitle">লাকি হুইল</h3>
+    <div class="wheel-wrap">
+      <div class="pointer" aria-hidden="true"></div>
+      <div class="wheel" id="wheel">
+        <div class="disc" id="disc">
+          <!-- optional: numbers or icons placed absolutely -->
         </div>
-        <div class="modal-body">
-            <label for="method">পেমেন্ট মেথড</label>
-            <select id="method" onchange="showAgentNumber()">
-                <option value="">Select</option>
-                <option value="bkash">bKash</option>
-                <option value="nagad">Nagad</option>
-            </select>
-
-            <div class="agent-number" id="agentNumber">
-                Agent নাম্বার: <span id="agentNumText"></span>
-            </div>
-
-            <div class="notice-bar" id="noticeBar">
-                Cash Out করতে হলে agent number ব্যবহার করুন।
-            </div>
-
-            <label for="number">আপনার মোবাইল নাম্বার</label>
-            <input type="text" id="number" placeholder="01XXXXXXXXX">
-
-            <label for="amount">টাকা</label>
-            <input type="number" id="amount" placeholder="৳" min="1">
-
-            <button class="submit-btn" onclick="submitTransaction()">Confirm</button>
-        </div>
+      </div>
     </div>
+
+    <button class="spin-btn" id="spinBtn">SPIN</button>
+    <div class="prize" id="prizeText">চাকা ঘোরাতে SPIN চাপো</div>
+  </div>
 </div>
 
 <script>
-const modal = document.getElementById('transactionModal');
-const agentNumberDiv = document.getElementById('agentNumber');
-const agentNumText = document.getElementById('agentNumText');
-const noticeBar = document.getElementById('noticeBar');
+/* ------------- Behavior ------------- */
+const openWheel = document.getElementById('openWheel');
+const wheelModal = document.getElementById('wheelModal');
+const closeModal = document.getElementById('closeModal');
+const spinBtn = document.getElementById('spinBtn');
+const wheel = document.getElementById('wheel');
+const prizeText = document.getElementById('prizeText');
 
-// Agents info
-const agents = {
-    bkash: '017XXXXXXXX',
-    nagad: '018XXXXXXXX'
+// prizes mapping for 8 segments (0..7)
+const prizes = [
+  "১০০ কয়েন",
+  "৫০ কয়েন",
+  "Try Again",
+  "২০ কয়েন",
+  "মেগা পুরস্কার!",
+  "১০ কয়েন",
+  "৫০ কয়েন",
+  "২০ কয়েন"
+];
+
+/* open modal */
+openWheel.addEventListener('click', ()=> {
+  wheelModal.classList.add('show');
+  wheelModal.setAttribute('aria-hidden','false');
+  // push history state to close with back button
+  history.pushState({wheelOpen:true}, '', '');
+});
+
+/* close modal */
+function hideWheel(){
+  wheelModal.classList.remove('show');
+  wheelModal.setAttribute('aria-hidden','true');
+  prizeText.textContent = "চাকা ঘোরাতে SPIN চাপো";
+  // when closing remove the history entry only if state exists
+  try { if(history.state && history.state.wheelOpen) history.back(); } catch(e){}
+}
+closeModal.addEventListener('click', hideWheel);
+
+/* close buttons on float items */
+document.querySelectorAll('.fi-close').forEach(btn=>{
+  btn.addEventListener('click', (e)=>{
+    const targetId = btn.getAttribute('data-target');
+    const el = document.getElementById(targetId);
+    if(el) el.remove(); // remove from DOM
+  });
+});
+
+/* Clicking FB - open page (customize URL) */
+document.getElementById('openFB').addEventListener('click', ()=>{
+  // change to your page URL
+  const fbUrl = "https://m.facebook.com";
+  window.open(fbUrl, "_blank");
+});
+
+/* clicking outside modal closes */
+wheelModal.addEventListener('click', (ev)=>{
+  if(ev.target === wheelModal) hideWheel();
+});
+
+/* handle back button to close modal */
+window.addEventListener('popstate', (ev)=>{
+  // if modal visible -> close it
+  if(wheelModal.classList.contains('show')){
+    wheelModal.classList.remove('show');
+    wheelModal.setAttribute('aria-hidden','true');
+  }
+});
+
+/* ----- Spin logic ----- */
+let isSpinning = false;
+let currentDeg = 0;
+
+function spinWheel(){
+  if(isSpinning) return;
+  isSpinning = true;
+  spinBtn.disabled = true;
+  prizeText.textContent = "চাকা চলছে...";
+
+  // choose random segment index (0..7)
+  const segCount = prizes.length;
+  const randIndex = Math.floor(Math.random()*segCount);
+
+  // compute target degrees: each segment is 360/segCount wide.
+  const segmentDeg = 360 / segCount;
+  // we want pointer at top (0 deg) -> so rotate wheel so that chosen segment aligns with pointer.
+  // We'll spin many rounds + land on correct segment
+  const randomTurns = Math.floor(Math.random()*4) + 5; // 5..8 full turns
+  // target deg so that selected segment's middle is at 0deg after rotation
+  const targetDeg = randomTurns * 360 + (360 - (randIndex * segmentDeg) - (segmentDeg/2));
+
+  // apply transform
+  wheel.style.transition = 'transform 4s cubic-bezier(.18,.92,.3,1)';
+  wheel.style.transform = `rotate(${targetDeg}deg)`;
+
+  // handle end
+  wheel.addEventListener('transitionend', function handler(){
+    wheel.removeEventListener('transitionend', handler);
+    // normalize currentDeg
+    currentDeg = targetDeg % 360;
+    isSpinning = false;
+    spinBtn.disabled = false;
+
+    // show prize
+    const prize = prizes[randIndex] || "No Prize";
+    prizeText.textContent = `আপনি পেয়েছেন: ${prize}`;
+  }, {once:true});
 }
 
-// History stack for back button handling
-let modalOpen = false;
+spinBtn.addEventListener('click', spinWheel);
 
-function openModal(){
-    modal.style.display = 'block';
-    modalOpen = true;
-    // Push a state to browser history so back button works
-    history.pushState({modalOpen:true}, 'h',"nj");
-}
-
-function closeModal(){
-    modal.style.display = 'none';
-    document.getElementById('method').value = '';
-    document.getElementById('number').value = '';
-    document.getElementById('amount').value = '';
-    agentNumberDiv.style.display = 'none';
-    modalOpen = false;
-}
-
-// Show agent number when payment method selected
-function showAgentNumber(){
-    const method = document.getElementById('method').value;
-    if(agents[method]){
-        agentNumText.innerText = agents[method];
-        agentNumberDiv.style.display = 'block';
-    } else {
-        agentNumberDiv.style.display = 'none';
-    }
-}
-
-// Submit transaction
-function submitTransaction(){
-    const method = document.getElementById('method').value;
-    const number = document.getElementById('number').value;
-    const amount = document.getElementById('amount').value;
-
-    if(!method || !number || !amount){
-        alert('সকল তথ্য পূরণ করুন।');
-        return;
-    }
-
-    alert(`${method.toUpperCase()} - ${amount}৳ submitted to agent ${agents[method]}`);
-    closeModal();
-}
-
-// Close modal if clicking outside
-window.onclick = function(event){
-    if(event.target === modal){
-        closeModal();
-    }
-}
-
-// Handle browser back button to close modal
-window.addEventListener('popstate', function(event){
-    if(modalOpen){
-        closeModal();
-    }
+/* accessibility: ESC closes */
+window.addEventListener('keydown', (e)=>{
+  if(e.key === "Escape" && wheelModal.classList.contains('show')){
+    hideWheel();
+  }
 });
 </script>
 

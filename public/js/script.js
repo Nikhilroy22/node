@@ -16,3 +16,22 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
+
+async function frdata(){
+  try{
+  const res = await fetch("https://1xbet86.com/LiveFeed/Get1x2_VZip?count=50&lng=en_GB&gr=54&antisports=4&antisports=16&mode=4&country=19&getEmpty=true",  {
+    method: "GET",
+    headers: {
+      "User-Agent": "Mozilla/5.0",     // বা অন্য header প্রয়োজনে
+      "Accept": "application/json"
+    }
+  });
+  const data = res.json();
+  console.log(data);
+  }catch(e){
+  console.log(e);
+    
+    
+  }
+}
+frdata();

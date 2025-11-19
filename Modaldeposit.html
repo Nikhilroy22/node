@@ -1,28 +1,29 @@
-<!-- views/partials/bottom-nav.ejs -->
-<nav class="bottom-nav">
-  <a data-url="/login" href="/" class="<%= path === '/' ? 'active' : '' %>">
-    <i class="fa fa-home"></i>
-    <span>Home</span>
-  </a>
-
-  <a href="/games" class="<%= path === '/games' ? 'active' : '' %>">
-    <i class="fa fa-gamepad"></i>
-    <span>Games</span>
-  </a>
-
-  <a href="/wallet" class="<%= path === '/wallet' ? 'active' : '' %>">
-    <i class="fa fa-wallet"></i>
-    <span>Wallet</span>
-  </a>
-
-  <div onclick="openModal()">
-    <i class="fa fa-user"></i>
-    <span>Profile</span>
-  </div>
-</nav>
-
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Full Screen Deposit Modal</title>
 <style>
-  /* Modal */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #121212;
+    color: #fff;
+}
+
+.btn {
+    background-color: #4caf50;
+    border: none;
+    padding: 12px 20px;
+    color: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+    margin: 20px;
+    font-size: 16px;
+}
+
+/* Modal */
 .modal {
     display: none;
     position: fixed;
@@ -99,8 +100,11 @@
 .agent-number { background:#2a2a2a; }
 .notice-bar  { background:#ff9800; color:#000; }
 </style>
+</head>
+<body>
 
-<!-- modal full screen -->
+<button class="btn" onclick="openModal()">Deposit</button>
+
 <div id="transactionModal" class="modal">
     <div class="modal-content">
 
@@ -199,3 +203,6 @@ window.addEventListener("popstate", function (event) {
     }
 });
 </script>
+
+</body>
+</html>
