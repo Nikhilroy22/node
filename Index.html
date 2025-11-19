@@ -3,95 +3,233 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Scrollable Tabbar</title>
+<title>Full Screen Deposit Modal</title>
 <style>
 body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 20px;
-  background: #f5f5f5;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #121212;
+    color: #fff;
 }
 
-/* Tab container */
-.tabbar {
-  display: flex;
-  overflow-x: auto;      /* Scrollable */
-  -webkit-overflow-scrolling: touch; /* Smooth scroll on iOS */
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  padding: 0 10px;
-  scrollbar-width: none; /* Firefox hide scrollbar */
-}
-.tabbar::-webkit-scrollbar {
-  display: none; /* Chrome, Safari hide scrollbar */
+/* Button */
+.btn {
+    background-color: #4caf50;
+    border: none;
+    padding: 12px 20px;
+    color: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+    margin: 20px;
+    font-size: 16px;
 }
 
-/* Individual tabs */
-.tab {
-  flex: 0 0 auto; /* Prevent shrinking */
-  padding: 12px 24px;
-  margin: 8px 6px;
-  background: #e0e0e0;
-  border-radius: 20px;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.3s ease;
-  font-weight: 500;
+/* Full-screen Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    background-color: rgba(0,0,0,0.9);
 }
 
-.tab.active {
-  background: #ff6b6b;
-  color: #fff;
+/* Full-screen content */
+.modal-content {
+    background-color: #1e1e1e;
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
 }
 
-/* Optional hover effect */
-.tab:hover {
-  background: #ff8a8a;
-  color: #fff;
+/* Modal header */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #333;
+    padding-bottom: 10px;
 }
 
-/* Content area */
-.content {
-  margin-top: 20px;
-  padding: 20px;
-  background: #fff;
-  border-radius: 8px;
-  min-height: 100px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+.modal-header h2 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.close {
+    font-size: 28px;
+    cursor: pointer;
+    color: #f44336;
+}
+
+/* Modal body */
+.modal-body {
+    margin-top: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-body label {
+    margin: 10px 0 5px;
+    font-size: 14px;
+}
+
+.modal-body input, .modal-body select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 6px;
+    border: none;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 14px;
+    background-color: #4caf50;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: auto;
+}
+
+.agent-number {
+    background: #2a2a2a;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 14px;
+    margin-bottom: 15px;
+    display: none;
+}
+
+.notice-bar {
+    display: none;
+    background-color: #ff9800;
+    color: #000;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 14px;
+    margin-bottom: 15px;
+    text-align: center;
 }
 </style>
 </head>
 <body>
 
-<h2>Scrollable Tabbar Example</h2>
+<button class="btn" onclick="openModal()">Deposit</button>
 
-<div class="tabbar" id="tabbar">
-  <div class="tab active" data-content="Home Content">Home</div>
-  <div class="tab" data-content="Profile Content">Profile</div>
-  <div class="tab" data-content="Messages Content">Messages</div>
-  <div class="tab" data-content="Settings Content">Settings</div>
-  <div class="tab" data-content="Notifications Content">Notifications</div>
-  <div class="tab" data-content="Help Content">Help</div>
-  <div class="tab" data-content="About Content">About</div>
-  <div class="tab" data-content="Contact Content">Contact</div>
-</div>
+<div id="transactionModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Deposit</h2>
+            <span class="close" onclick="closeModal()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <label for="method">পেমেন্ট মেথড</label>
+            <select id="method" onchange="showAgentNumber()">
+                <option value="">Select</option>
+                <option value="bkash">bKash</option>
+                <option value="nagad">Nagad</option>
+            </select>
 
-<div class="content" id="content-area">
-  Home Content
+            <div class="agent-number" id="agentNumber">
+                Agent নাম্বার: <span id="agentNumText"></span>
+            </div>
+
+            <div class="notice-bar" id="noticeBar">
+                Cash Out করতে হলে agent number ব্যবহার করুন।
+            </div>
+
+            <label for="number">আপনার মোবাইল নাম্বার</label>
+            <input type="text" id="number" placeholder="01XXXXXXXXX">
+
+            <label for="amount">টাকা</label>
+            <input type="number" id="amount" placeholder="৳" min="1">
+
+            <button class="submit-btn" onclick="submitTransaction()">Confirm</button>
+        </div>
+    </div>
 </div>
 
 <script>
-// Simple tab switch
-const tabs = document.querySelectorAll('.tab');
-const content = document.getElementById('content-area');
+const modal = document.getElementById('transactionModal');
+const agentNumberDiv = document.getElementById('agentNumber');
+const agentNumText = document.getElementById('agentNumText');
+const noticeBar = document.getElementById('noticeBar');
 
-tabs.forEach(tab => {
-  tab.addEventListener('click', () => {
-    tabs.forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    content.textContent = tab.dataset.content;
-  });
+// Agents info
+const agents = {
+    bkash: '017XXXXXXXX',
+    nagad: '018XXXXXXXX'
+}
+
+// History stack for back button handling
+let modalOpen = false;
+
+function openModal(){
+    modal.style.display = 'block';
+    modalOpen = true;
+    // Push a state to browser history so back button works
+    history.pushState({modalOpen:true}, 'h',"nj");
+}
+
+function closeModal(){
+    modal.style.display = 'none';
+    document.getElementById('method').value = '';
+    document.getElementById('number').value = '';
+    document.getElementById('amount').value = '';
+    agentNumberDiv.style.display = 'none';
+    modalOpen = false;
+}
+
+// Show agent number when payment method selected
+function showAgentNumber(){
+    const method = document.getElementById('method').value;
+    if(agents[method]){
+        agentNumText.innerText = agents[method];
+        agentNumberDiv.style.display = 'block';
+    } else {
+        agentNumberDiv.style.display = 'none';
+    }
+}
+
+// Submit transaction
+function submitTransaction(){
+    const method = document.getElementById('method').value;
+    const number = document.getElementById('number').value;
+    const amount = document.getElementById('amount').value;
+
+    if(!method || !number || !amount){
+        alert('সকল তথ্য পূরণ করুন।');
+        return;
+    }
+
+    alert(`${method.toUpperCase()} - ${amount}৳ submitted to agent ${agents[method]}`);
+    closeModal();
+}
+
+// Close modal if clicking outside
+window.onclick = function(event){
+    if(event.target === modal){
+        closeModal();
+    }
+}
+
+// Handle browser back button to close modal
+window.addEventListener('popstate', function(event){
+    if(modalOpen){
+        closeModal();
+    }
 });
 </script>
 
