@@ -18,6 +18,7 @@ const flash = require('connect-flash');
 const FileStore = require('session-file-store')(session);
 // ✅ Import External Route
 const webRoutes = require('./routes/webRoutes');
+const AdminRoutes = require('./routes/AdminRoutes');
 
 const app = express();
 const server = http.createServer(app);
@@ -66,6 +67,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // ✅ Use external routes
 app.use('/', webRoutes);
+app.use('/admin', AdminRoutes);
 
 
 
@@ -78,7 +80,7 @@ app.use('/', webRoutes);
 
 
 // Socket.IO handler আলাদা ফাইল থেকে কল
-//socketHandler(io, sessionMiddleware);
+socketHandler(io, sessionMiddleware);
 
 // Private Chat Socket.io
 PrivateChat(io, sessionMiddleware);
