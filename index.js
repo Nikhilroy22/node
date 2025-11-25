@@ -1,4 +1,6 @@
 const express = require('express');
+require('dotenv').config();
+
 const TelegramBot = require('node-telegram-bot-api');
 
 const http = require('http');
