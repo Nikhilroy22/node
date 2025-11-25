@@ -1,9 +1,11 @@
 const CACHE_NAME = 'my-pwa-cache-v1';
 const urlsToCache = [
   '/',
-  '/index.html',
-  '/style.css',
-  '/app.js',
+  '/login',
+  '/css/style.css',
+  '/js/script.js',
+  '/js/SportBet.js',
+  '/js/eruda.js',
   '/logo.png'
 ];
 
