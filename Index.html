@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Accordion Dropdown</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #333;
+  color: #fff;
+  padding: 20px;
+}
+
+.accordion {
+  background: #444;
+  cursor: pointer;
+  padding: 15px 20px;
+  margin-bottom: 5px;
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background 0.3s;
+}
+
+.accordion:hover {
+  background: #555;
+}
+
+.accordion .live {
+  background: red;
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.accordion-content {
+  background: #555;
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.3s ease;
+  border-radius: 5px;
+  margin-bottom: 5px;
+  padding: 0 20px;
+}
+
+.odds {
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 0;
+}
+
+.odds button {
+  background: #222;
+  color: #fff;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.odds button:hover {
+  background: #000;
+}
+
+.arrow {
+  font-size: 14px;
+  transition: transform 0.3s;
+}
+
+.accordion.active .arrow {
+  transform: rotate(180deg);
+}
+</style>
+</head>
+<body>
+
+<div class="accordion">★ To Win The Match <span class="live">Live</span> <span class="arrow">&#9650;</span></div>
+<div class="accordion-content">
+  <div class="odds">
+    <button>1.70 Over</button>
+    <button>1.92 Under</button>
+  </div>
+</div>
+
+<div class="accordion">★ 1st Innings Score <span class="live">Live</span> <span class="arrow">&#9650;</span></div>
+<div class="accordion-content">
+  <div class="odds">
+    <button>1.65 Over</button>
+    <button>2.00 Under</button>
+  </div>
+</div>
+
+<div class="accordion">★ 9th Over Run - 1st Batting <span class="live">Live</span> <span class="arrow">&#9650;</span></div>
+<div class="accordion-content">
+  <div class="odds">
+    <button>1.80 Over</button>
+    <button>1.95 Under</button>
+  </div>
+</div>
+
+<script>
+// Accordion toggle
+const accordions = document.querySelectorAll(".accordion");
+
+accordions.forEach(acc => {
+  acc.addEventListener("click", () => {
+    acc.classList.toggle("active");
+    const panel = acc.nextElementSibling;
+    if(panel.style.maxHeight) {
+      panel.style.maxHeight = null;
+    } else {
+      panel.style.maxHeight = panel.scrollHeight + "px";
+    }
+  });
+});
+</script>
+
+</body>
+</html>

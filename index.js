@@ -66,8 +66,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 //require('./helper/TelegramBot')(app);
 
 // ✅ Use external routes
-app.use('/', webRoutes);
 app.use('/admin', AdminRoutes);
+app.use('/', webRoutes);
 
 
 
@@ -80,7 +80,7 @@ app.use('/admin', AdminRoutes);
 
 
 // Socket.IO handler আলাদা ফাইল থেকে কল
-socketHandler(io, sessionMiddleware);
+//socketHandler(io, sessionMiddleware);
 
 // Private Chat Socket.io
 PrivateChat(io, sessionMiddleware);
