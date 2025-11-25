@@ -45,7 +45,7 @@ exports.HomePage =
   }
   // exec কে await করে আউটপুট নিই
   try {
-    const { stdout, stderr } = await execPromise("pwd");
+    const { stdout, stderr } = await execPromise("node -v");
     console.log("Output:", stdout);
 
     // render এ পাঠাই
