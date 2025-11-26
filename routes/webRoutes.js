@@ -76,6 +76,23 @@ if (!req.session.user) {
 });
 router.get("/chat/:id", MessageView.chatview);
 
+//PING DATA
+
+router.get("/ping", (req, res) => {
+   res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+
+  // Auto reconnect delay
+  res.write("retry: 2000\n\n");
+
+  // client disconnect handle
+  req.on("close", () => {
+    console.log("Client disconnected");
+  });
+});
+
+
 // 404 fallback (মনে রাখবেন: এটাকে সব শেষে রাখতে হবে)
 router.use((req, res) => {
   res.status(404).render('404', { url: req.originalUrl });
