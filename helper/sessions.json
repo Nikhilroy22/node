@@ -367,5 +367,14 @@
       "path": "/"
     },
     "flash": {}
+  },
+  "4Su4AfHt-Q5WTP0zu6lyNCqbFTD1TcwR": {
+    "cookie": {
+      "originalMaxAge": null,
+      "expires": null,
+      "httpOnly": true,
+      "path": "/"
+    },
+    "flash": {}
   }
 }
