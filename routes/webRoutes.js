@@ -112,6 +112,11 @@ router.get('/ping', (req, res) => {
   
 });
 
+// Express
+router.get("/ping2", (req, res) => {
+    res.sendStatus(200);
+});
+
 
 router.get('/sse', (req, res) => {
   res.render('demo');
