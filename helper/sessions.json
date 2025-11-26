@@ -1774,5 +1774,18 @@
       "path": "/"
     },
     "flash": {}
+  },
+  "o0QZLnWsZeYnQmtKEh_w98h8rUBHin2U": {
+    "cookie": {
+      "originalMaxAge": null,
+      "expires": null,
+      "httpOnly": true,
+      "path": "/"
+    },
+    "flash": {},
+    "user": {
+      "id": 1,
+      "username": "Pakhi"
+    }
   }
 }

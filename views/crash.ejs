@@ -1,12 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRASH - Professional Casino Game</title>
-    <link rel="stylesheet" href="Crash.css">
-</head>
-<body>
+<%- include('header') %>
+
+
     <div class="container">
         <!-- Header -->
         <div class="header">
@@ -142,14 +136,12 @@
         </div>
         
     </div>
-<script src="/js/eruda.js"></script>
-  <script>
-    eruda.init(); // Console চালু হবে
-  </script>
 
 
-    <script src="/socket.io/socket.io.js"></script>
+
+    
     <script src="Crash.js"></script>
     <script src="crashSound.js"></script>
-</body>
-</html>
+
+
+<%- include('footer') %>
