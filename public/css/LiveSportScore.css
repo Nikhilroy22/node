@@ -1,20 +1,20 @@
-/* Match Live */
-   .match-wrapper {
+/* ===== Match Live Scoped CSS ===== */
+.match-wrapper {
   display: flex;
   justify-content: center;
   padding: 8px 10px;
   background: black;
 }
+
 .match-wrapper .matchscore {
   width: 100%;
   max-width: 420px;
   background: linear-gradient(135deg, #586559, #335440);
   padding: 15px;
   color: #fff;
- /* box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+  /* box-shadow: 0 8px 25px rgba(0,0,0,0.25);
   border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.25);
-*/
+  border: 1px solid rgba(255,255,255,0.25); */
 }
 
 /* Header */
@@ -22,14 +22,14 @@
   display: flex;
   justify-content: space-between;
   margin-bottom: 12px;
-  gap:15px;
+  gap: 15px;
 }
-.match-wrapper .title { 
-/*font-size: 20px; */
-font-weight: bold; 
-  
+
+.match-wrapper .match-header .title {
+  font-weight: bold;
 }
-.match-wrapper .status.live {
+
+.match-wrapper .match-header .status.live {
   padding: 4px 12px;
   background: #ff0000cc;
   border-radius: 20px;
@@ -53,7 +53,7 @@ font-weight: bold;
 }
 
 .match-wrapper .team .name {
- /* font-size: 18px;
+  /* font-size: 18px;
   font-weight: 600; */
 }
 
@@ -62,14 +62,15 @@ font-weight: bold;
   margin: 5px 0 0;
   opacity: 1;
   display: inline-block;
-  animation: pulse 1s infinite;
+  animation: matchPulse 1s infinite;
 }
 
-@keyframes pulse {
+@keyframes matchPulse {
   0%   { transform: scale(1); }
   50%  { transform: scale(1.2); }
   100% { transform: scale(1); }
 }
+
 .match-wrapper .team .serve.off {
   opacity: 0;
 }
@@ -91,7 +92,6 @@ font-weight: bold;
 .match-wrapper .vs {
   font-size: 20px;
   font-weight: bold;
-  
 }
 
 /* Set Table */
@@ -99,21 +99,18 @@ font-weight: bold;
   display: flex;
   gap: 12px;                /* Box gap */
   margin-top: 12px;
-  flex-wrap: wrap;          /* ছোট স্ক্রিনে নিচে নেবে */
+  flex-wrap: wrap;           /* ছোট স্ক্রিনে নিচে নেবে */
   justify-content: center;
 }
 
 .match-wrapper .set-box {
- /* background: linear-gradient(120deg, #0d4a1a, #0f7a34);*/
-  padding: 8px 14px;
-  /*border-radius: 8px;
-  border: 1px solid rgba(255,255,255,0.15);
-  box-shadow: 0 3px 10px rgba(0,0,0,0.25);*/
+  padding: 5px 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
   color: #fff;
   min-width: 60px;
   text-align: center;
 }
-.match-wrapper .set-box { padding:5px 10px; border:1px solid #ccc; border-radius:5px; }
 
 .match-wrapper .set-name {
   display: block;
@@ -128,7 +125,12 @@ font-weight: bold;
   font-weight: bold;
 }
 
+/* Score flash */
+.match-wrapper .flash {
+  animation: matchFlashScore 1.5s ease;
+}
 
-/*SURU Score flash */
-.match-wrapper .flash { animation: flashScore 1.5s ease; }
-@keyframes flashScore { 0% { background: green; transform: scale(1.15); } 100% { background: transparent; transform: scale(1); } }
+@keyframes matchFlashScore {
+  0% { background: green; transform: scale(1.15); }
+  100% { background: transparent; transform: scale(1); }
+}

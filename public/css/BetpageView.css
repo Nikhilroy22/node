@@ -1,5 +1,4 @@
-
-/*odd regular*/
+/* ===== Odds Wrapper Scoped CSS ===== */
 .odds-wrapper {
   display: flex;
   flex-direction: column;
@@ -7,17 +6,17 @@
 }
 
 .odds-wrapper .market-group {
-  
+  /* Optional styles */
 }
 
 .odds-wrapper .market-title {
   font-size: 13px;
   color: #9cc4ff;
-  background:linear-gradient(180deg,#155226,#0f3d18);
-  padding:12px;
+  background: linear-gradient(180deg,#155226,#0f3d18);
+  padding: 12px;
   margin-bottom: 5px;
-  border:1px solid rgba(255,255,255,0.18);
-  box-shadow:0 8px 25px rgba(0,0,0,0.18);
+  border: 1px solid rgba(255,255,255,0.18);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.18);
 }
 
 .odds-wrapper .odd-row {
@@ -35,7 +34,7 @@
   margin: 12px 8px;
 }
 
-.odd-name {
+.odds-wrapper .odd-name {
   display: block;
   color: #b1b1b1;
   font-size: 12px;
@@ -51,31 +50,29 @@
   cursor: pointer;
 }
 
-
-
-
-
-
-
-
 /* Odds flash increase / decrease */
-.odds-wrapper .odds-increase { animation: oddsIncrease 1s ease; background: green; }
-.odds-wrapper .odds-decrease { animation: oddsDecrease 1s ease; background: red; }
-@keyframes oddsIncrease { 0% { transform: scale(1.1); } 100% { transform: scale(1); background: transparent; color: inherit; } }
-@keyframes oddsDecrease { 0% { transform: scale(1.1); } 100% { transform: scale(1); background: transparent; color: inherit; } }
+.odds-wrapper .odds-increase {
+  animation: oddsIncrease 1s ease;
+  background: green;
+}
 
-/* Modal */
-.placebetviewmodal { display: none; position: fixed; z-index: 1000; left:0; top:0; width:100%; height:100%; background: rgba(0,0,0,0.5); justify-content:center; align-items:center; }
-.placebetviewmodal .modal-content { background:#073615; padding:20px; border-radius:8px; width:300px; text-align:center; position: relative; }
-.placebetviewmodal .close-btn { position:absolute; top:10px; right:15px; cursor:pointer; font-size:30px; }
+.odds-wrapper .odds-decrease {
+  animation: oddsDecrease 1s ease;
+  background: red;
+}
 
+@keyframes oddsIncrease {
+  0% { transform: scale(1.1); }
+  100% { transform: scale(1); background: transparent; color: inherit; }
+}
 
+@keyframes oddsDecrease {
+  0% { transform: scale(1.1); }
+  100% { transform: scale(1); background: transparent; color: inherit; }
+}
 
-
-
-/*Lock button*/
+/* Lock button */
 .odds-wrapper .odd-btn:disabled {
-  
   cursor: not-allowed;
   opacity: 0.9;
 }
@@ -84,4 +81,36 @@
 .odds-wrapper .odd-btn:disabled::after {
   content: "🔓";
   font-size: 18px;
+}
+
+
+/* ===== Place Bet Modal Scoped CSS ===== */
+.placebetviewmodal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left:0;
+  top:0;
+  width:100%;
+  height:100%;
+  background: rgba(0,0,0,0.5);
+  justify-content:center;
+  align-items:center;
+}
+
+.placebetviewmodal .modal-content {
+  background:#073615;
+  padding:20px;
+  border-radius:8px;
+  width:300px;
+  text-align:center;
+  position: relative;
+}
+
+.placebetviewmodal .close-btn {
+  position:absolute;
+  top:10px;
+  right:15px;
+  cursor:pointer;
+  font-size:30px;
 }

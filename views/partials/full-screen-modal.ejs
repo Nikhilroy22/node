@@ -1,6 +1,7 @@
 
 <style>
   /* Modal */
+/* Modal Scoped CSS */
 .full-screen-modal {
     display: none;
     position: fixed;
@@ -23,7 +24,17 @@
     flex-direction: column;
 }
 
-/* ⭐ Back Button */
+.full-screen-modal .modal-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 10px;
+}
+
+.full-screen-modal .modal-header h2 {
+    margin: 0;
+}
+
 .full-screen-modal .back-btn {
     font-size: 24px;
     cursor: pointer;
@@ -31,17 +42,7 @@
     border-radius: 6px;
     background: #333;
 }
-.full-screen-modal .modal-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding-bottom: 10px;
-}
-.modal-header h2 {
-    margin: 0;
-}
 
-/* form */
 .full-screen-modal .modal-body {
     margin-top: 20px;
     flex: 1;
@@ -49,7 +50,8 @@
     flex-direction: column;
 }
 
-.modal-body input, .modal-body select {
+.full-screen-modal .modal-body input,
+.full-screen-modal .modal-body select {
     padding: 12px;
     border-radius: 6px;
     border: none;
@@ -68,14 +70,21 @@
 }
 
 .full-screen-modal .agent-number,
-.notice-bar {
+.full-screen-modal .notice-bar {
     padding: 10px;
     border-radius: 6px;
     margin-bottom: 15px;
     display: none;
 }
-.full-screen-modal .agent-number { background:#2a2a2a; }
-.full-screen-modal .notice-bar  { background:#ff9800; color:#000; }
+
+.full-screen-modal .agent-number {
+    background:#2a2a2a;
+}
+
+.full-screen-modal .notice-bar {
+    background:#ff9800;
+    color:#000;
+}
 </style>
 
 <!-- modal full screen -->
@@ -112,7 +121,7 @@
 </div>
 
 <script>
-const modal = document.getElementById('transactionModal');
+const modalvv = document.getElementById('transactionModal');
 let modalOpen = false;
 
 const agents = {
@@ -120,16 +129,16 @@ const agents = {
     nagad: '018XXXXXXXX'
 };
 
-function openModal(){
-    modal.style.display = 'block';
+function openModalvv(){
+    modalvv.style.display = 'block';
     modalOpen = true;
 
     // Push History state so that back button closes modal
     history.pushState({modal:true}, "", "");
 }
 
-function closeModal(){
-    modal.style.display = 'none';
+function closeModalvv(){
+    modalvv.style.display = 'none';
     modalOpen = false;
 }
 
@@ -167,13 +176,13 @@ function submitTransaction(){
 
 /* Close when clicking outside */
 window.onclick = function(e){
-    if(e.target === modal) goBack();
+    if(e.target === modalvv) goBack();
 };
 
 /* ⭐ Back Button Handling */
 window.addEventListener("popstate", function (event) {
     if(modalOpen){
-        closeModal(); // Close modal
+        closeModalvv(); // Close modal
     }
 });
 </script>
