@@ -9,5 +9,5 @@ function showToast(message, type = 'info') {
   // Auto remove after 5s
   setTimeout(() => {
     toast.remove();
-  }, 5000);
+  }, 4000); 
 }

@@ -15,7 +15,7 @@
 
       <div style="margin:10px 0;">
         <label for="betAmount">Bet Amount:</label><br>
-        <input type="number" id="betAmount" placeholder="Enter amount"
+        <input type="number" id="betAmount" placeholder="Enter amount" value="500"
           style="width:100%;padding:8px;margin-top:5px;border-radius:5px;border:1px solid #555;background:#111;color:#fff;" />
       </div>
 
@@ -115,7 +115,7 @@
   function closeModal() {
     document.getElementById("betModal").style.display = "none";
     selectedBet = null;
-    document.getElementById("betAmount").value = "";
+    document.getElementById("betAmount").value = "500";
   }
 
   // 🔁 Odds update (real-time)
