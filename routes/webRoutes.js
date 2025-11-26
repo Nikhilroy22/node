@@ -113,8 +113,16 @@ router.get('/ping', (req, res) => {
 });
 
 // Express
-router.get("/ping2", (req, res) => {
-    res.sendStatus(200);
+router.get("/netstream", (req, res) => {
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+
+    let timer = setInterval(() => {
+        res.write("data: ping\n\n");
+    }, 2000);
+
+    req.on("close", () => clearInterval(timer));
 });
 
 

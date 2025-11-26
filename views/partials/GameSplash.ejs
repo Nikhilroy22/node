@@ -32,19 +32,52 @@
 
 <div id="networkStatus" style="position:fixed;top:50px;right:10px;padding:8px 12px;border-radius:6px;background:#333;color:#fff;font-weight:bold;z-index:9999;">Checking...</div>
 <script>
+  
   const statusDiv = document.getElementById("networkStatus");
-  function updateNetworkStatus() {
-    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
 
-    if (!conn) return;
+let lastPing = 0;
+let pingTimer = null;
 
-    let speed = conn.downlink;     // Mbps
-    let type = conn.effectiveType; // '4g', '3g', '2g', 'slow-2g'
+function startSSE() {
+    const ev = new EventSource("/netstream");
 
-    if (type === "4g") show("Network: Good", "green");
-    else if (type === "3g") show("Network: Medium", "orange");
-    else if (type === "2g") show("Network: Slow", "red");
-    else show("No Internet / Very Slow", "#900");
+    ev.onmessage = () => {
+        const now = Date.now();
+
+        // First ping directly Online
+        if (lastPing === 0) {
+            lastPing = now;
+            return show("Online", "green");
+        }
+
+        const gap = now - lastPing; // time since last message
+        lastPing = now;
+
+        // Speed Classification
+        if (gap < 600) {
+            show("Fast", "green");
+        } else if (gap < 2000) {
+            show("Slow", "orange");
+        } else {
+            show("Very Slow", "red");
+        }
+
+        // Clear previous offline detector
+        if (pingTimer) clearTimeout(pingTimer);
+
+        // If no ping within 4s → offline
+        pingTimer = setTimeout(() => {
+            show("No Internet", "#900");
+            ev.close();
+            setTimeout(startSSE, 3000); // Auto reconnect
+        }, 4000);
+    };
+
+    ev.onerror = () => {
+        show("No Internet", "#900");
+        ev.close();
+        setTimeout(startSSE, 3000);
+    };
 }
 
 function show(text, color) {
@@ -52,11 +85,7 @@ function show(text, color) {
     statusDiv.style.background = color;
 }
 
-// Browser event → Network changed instantly
-navigator.connection.addEventListener("change", updateNetworkStatus);
-
-// Initial call
-updateNetworkStatus();
+startSSE();
 </script>
 
 
