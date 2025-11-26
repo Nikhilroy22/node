@@ -2,54 +2,52 @@
 const express = require('express');
 const router = express.Router();
 
-//Controller
+// Controllers
 const authController = require('../controller/LoginController');
-const SignUpController = require('../controller/SignupController')
+const SignUpController = require('../controller/SignupController');
 const Home = require('../controller/HomeController');
 const BetController = require('../controller/BetController');
 const BetApiController = require('../controller/BetApiController');
 const MessageView = require('../controller/MsgViewController');
-//Middleware
+
+// Middleware
 const authMiddleware = require('../middleware/authMiddleware');
 
-
-// Bet ROUTE
-
+/* =========================
+   Bet Routes
+========================= */
 router.get('/bet', BetController.bethome);
 router.post('/bet', BetController.placeBet);
 
-
-
-//Betb Api Get
+// Bet API Get by ID
 router.get('/bet/:id', BetApiController.ParamsBet);
 
-//Bet API RES
-router.get("/res", BetController.betapi);
-router.get("/resview/:matchid", BetApiController.betapiview);
+// Bet API Response
+router.get('/res', BetController.betapi);
+router.get('/resview/:matchid', BetApiController.betapiview);
 
-//Crash page
+/* =========================
+   Crash Page
+========================= */
 router.get('/crash', (req, res) => {
-  
-  res.render('crash', {user: req.session.user})
+  res.render('crash', { user: req.session.user });
 });
 
-// Home page
+/* =========================
+   Home Page
+========================= */
 router.get('/', Home.HomePage);
 
+/* =========================
+   Authentication Routes
+========================= */
+// Login
+router.get('/login', authMiddleware, authController.showLogin);
+router.post('/login', authMiddleware, authController.loginUser);
 
-
-// GET /login
-router.get('/login',authMiddleware, authController.showLogin);
-
-// POST /login
-router.post('/login',authMiddleware, authController.loginUser);
-
-// Get /Sign Up
+// Sign Up
 router.get('/signup', authMiddleware, SignUpController.SignUp);
-
-// Post /Sign Up
 router.post('/signup', authMiddleware, SignUpController.SignUpPost);
-
 
 // Logout
 router.get('/logout', (req, res) => {
@@ -59,44 +57,46 @@ router.get('/logout', (req, res) => {
       return res.status(500).send('সেশন মুছতে সমস্যা হয়েছে');
     }
 
-    // Cookie ও মুছে ফেলতে চাইলে:
+    // Clear cookie
     res.clearCookie('connect.sid');
 
-    // লগআউটের পর রিডাইরেক্ট করো
+    // Redirect to login
     res.redirect('/login');
   });
 });
 
-router.get("/chat", (req, res) =>{
-if (!req.session.user) {
-
-  return res.redirect('/login');
-  }
-  res.render("Chat");
+/* =========================
+   Chat Routes
+========================= */
+router.get('/chat', (req, res) => {
+  if (!req.session.user) return res.redirect('/login');
+  res.render('Chat');
 });
-router.get("/chat/:id", MessageView.chatview);
 
-//PING DATA
+router.get('/chat/:id', MessageView.chatview);
 
-router.get("/ping", (req, res) => {
-   res.setHeader("Content-Type", "text/event-stream");
-  res.setHeader("Cache-Control", "no-cache");
-  res.setHeader("Connection", "keep-alive");
+/* =========================
+   Ping / SSE Route
+========================= */
+router.get('/ping', (req, res) => {
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
 
   // Auto reconnect delay
-  res.write("retry: 2000\n\n");
+  res.write('retry: 2000\n\n');
 
-  // client disconnect handle
-  req.on("close", () => {
-    console.log("Client disconnected");
+  // Client disconnect handler
+  req.on('close', () => {
+    console.log('Client disconnected');
   });
 });
 
-
-// 404 fallback (মনে রাখবেন: এটাকে সব শেষে রাখতে হবে)
+/* =========================
+   404 Fallback (Keep Last)
+========================= */
 router.use((req, res) => {
   res.status(404).render('404', { url: req.originalUrl });
 });
-
 
 module.exports = router;

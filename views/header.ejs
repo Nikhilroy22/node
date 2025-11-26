@@ -3,53 +3,53 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>header</title>
+  <title>Header</title>
+  
+  <!-- Styles -->
   <link rel="stylesheet" href="/css/style.css" />
   <link rel="manifest" href="/manifest.json">
-  <% if (dev === "devv") { %>
-      
-        
-      
-    <% } %>
+
+  <% if (dev === "dev") { %>
+    <!-- Dev-specific scripts -->
     <script src="/js/eruda.js"></script>
-  <script>
-    eruda.init(); // Console চালু হবে
-  </script>
-  
-   <script src="/socket.io/socket.io.js"></script>
-  
+    <script>
+      eruda.init(); // Console চালু হবে
+    </script>
+  <% } %>
+
+  <!-- Socket.IO -->
+  <script src="/socket.io/socket.io.js"></script>
+
+  <!-- Main Script -->
   <script src="/js/script.js" defer></script>
 </head>
 <body>
-  
-   <!-- 🌊 Splash Screen -->
-   
-<% if (typeof showSplash !== 'undefined' && showSplash) { %>
-  <!-- Splash code -->
 
-  <div id="splash" class="splash-screen">
-    <div class="splash-content">
-      <img src="/img/logo.png" alt="Logo" class="logo" />
-      <h1 class="app-name">Man99</h1>
-      <div class="loader"></div>
+  <!-- 🌊 Splash Screen -->
+  <% if (typeof showSplash !== 'undefined' && showSplash) { %>
+    <div id="splash" class="splash-screen">
+      <div class="splash-content">
+        <img src="/img/logo.png" alt="Logo" class="logo" />
+        <h1 class="app-name">Man99</h1>
+        <div class="loader"></div>
+      </div>
     </div>
-  </div>
-  <script>
-    const wait = 3 * 1000;
-    const splash = document.getElementById("splash");
-   // const main = document.getElementById("main");
 
-    setTimeout(() => {
-      splash.classList.add("fade-out");
+    <script>
+      const wait = 3 * 1000; // 3 seconds
+      const splash = document.getElementById("splash");
+
       setTimeout(() => {
-        splash.style.display = "none";
-       // main.classList.remove("hidden");
-       // main.classList.add("fade-in");
-      }, 800);
+        splash.classList.add("fade-out");
+        setTimeout(() => {
+          splash.style.display = "none";
+        }, 800);
       }, wait);
-  </script>
-   <% } %>
-  
+    </script>
+  <% } %>
+
+  <!-- Include Partials -->
   <%- include('partials/header-navbar') %>
   <%- include('partials/sideNavBar') %>
   <%- include('partials/full-screen-modal') %>
+

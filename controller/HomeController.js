@@ -1,69 +1,56 @@
 const { getUsers, updateAmount, getUserById } = require('../model/db');
-
-const { exec } = require("child_process");
-const util = require("util");
+const { exec } = require('child_process');
+const util = require('util');
 const execPromise = util.promisify(exec);
 const os = require('os');
 
-
-
-  // যেমন: 'Windows_NT' বা 'Linux' বা 'Darwin'
-
-
-
-
-exports.HomePage = 
-  async (req, res) => {
-    const users = await getUsers();
-    
-    
-    const jjj = req.headers.accept;
-
- let data = null;
-    
-  if (req.session.user) {
-    data = users.find(u => u.id === req.session.user.id);
-  }
-  
- /*   const user = await getUserById(req.session.user.id);
-  
-  const newtk = user.Amount + 500;
-  
- await updateAmount(user.id, newtk);
- */
- 
- 
- 
-
- 
-// console.log(tk);
-  res.locals.kk = "TK";
-  
-  if(jjj === "application/json"){
-  //const kkk = data : "";
-  return res.json(data);
-  }
-  // exec কে await করে আউটপুট নিই
+exports.HomePage = async (req, res) => {
   try {
-    const { stdout, stderr } = await execPromise("node -p \"process.arch\"");
-    console.log("Output:", stdout);
+    // Get all users
+    const users = await getUsers();
 
-    // render এ পাঠাই
-    res.render("index", {
-      title: "HOME PAGE",
+    // Get Accept header
+    const acceptHeader = req.headers.accept;
+
+    // Find current logged-in user data
+    let data = null;
+    if (req.session.user) {
+      data = users.find(u => u.id === req.session.user.id);
+    }
+
+    // Example: update user amount (commented out)
+    /*
+    const user = await getUserById(req.session.user.id);
+    const newAmount = user.Amount + 500;
+    await updateAmount(user.id, newAmount);
+    */
+
+    // Set locals
+    res.locals.kk = 'TK';
+
+    // If JSON requested, return JSON
+    if (acceptHeader === 'application/json') {
+      return res.json(data);
+    }
+
+    // Execute shell command to get Node.js architecture
+    const { stdout } = await execPromise('node -p "process.arch"');
+    console.log('Output:', stdout.trim());
+
+    // Render the view
+    res.render('index', {
+      title: 'HOME PAGE',
       data,
-      
-      nodeVersion: stdout.trim(),  // view এ ব্যবহার করবে
+      nodeVersion: stdout.trim(),
       showSplash: true
     });
   } catch (err) {
-    console.error("Exec error:", err);
-    res.render("index", {
-      title: "HOME PAGE",
-      data,
-      nodeVersion: "Error",
+    console.error('Exec error:', err);
+    res.render('index', {
+      title: 'HOME PAGE',
+      data: null,
+      nodeVersion: 'Error',
       showSplash: true
     });
   }
-}
-  
+};
