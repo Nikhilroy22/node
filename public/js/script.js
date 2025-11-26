@@ -17,9 +17,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Network status
 const statusEl = document.getElementById('statusnet');
+if(statusEl){
 window.addEventListener('online', () =>{ statusEl.textContent = 'Online ✅'
 ;
   console.log("net");
 });
 
 window.addEventListener('offline', () => statusEl.textContent = 'Offline ❌');
+}
