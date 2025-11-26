@@ -72,7 +72,7 @@ app.use('/', webRoutes);
 /* =========================
    Socket.IO Handlers
 ========================= */
-// socketHandler(io, sessionMiddleware); // Crash socket (if needed)
+ socketHandler(io, sessionMiddleware); // Crash socket (if needed)
 PrivateChat(io, sessionMiddleware); // Private chat socket
 
 /* =========================
