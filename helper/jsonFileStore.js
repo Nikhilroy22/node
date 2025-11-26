@@ -18,9 +18,17 @@ class JSONFileStore extends session.Store {
   }
 
   async _readSessions() {
-    const data = await readFile(this.filePath, 'utf8');
-    return JSON.parse(data);
+  try {
+    const data = fs.readFileSync(this.filePath, 'utf-8');
+    return data ? JSON.parse(data) : {};
+  } catch (err) {
+    console.warn('Invalid JSON, resetting sessions file');
+    fs.writeFileSync(this.filePath, '{}');
+    return {};
   }
+}
+  
+  
 
   async _writeSessions(sessions) {
     await writeFile(this.filePath, JSON.stringify(sessions, null, 2), 'utf8');

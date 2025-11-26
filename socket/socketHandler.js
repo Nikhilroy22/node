@@ -4,9 +4,7 @@ const { gameState, startGame } = require('./crashGame');
 const { getUserById, updateAmount } = require('../model/db');
 
 module.exports = (io, sessionMiddleware) => {
-  io.use((socket, next) => {
-    sessionMiddleware(socket.request, {}, next);
-  });
+  
 
   io.use((socket, next) => {
     const req = socket.request;
@@ -148,7 +146,7 @@ if(socket.sessionid){
     socket.emit("taka", {tk: userb.Amount.toFixed(2)});
     }else{
       
-     socket.emit("taka", {tk: "Not Login"}); 
+     socket.emit("taka", {tk: "Demo"}); 
       
     }
     

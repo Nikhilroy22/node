@@ -1,6 +1,8 @@
 <%- include('header') %>
 
+<audio id="plane-crash" src="/sound/plane-crash.mp3" preload="auto"></audio>
 
+    
     <div class="container">
         <!-- Header -->
         <div class="header">
@@ -64,9 +66,7 @@
             
             
             <!-- Sound Control Section -->
-<div class="sound-control" style="margin-top:10px; text-align:center;">
-    <button id="soundToggleBtn" class="btn">🔇 Sound: OFF</button>
-</div>
+<button id="soundToggle">🔊</button>
 
  
 
@@ -140,8 +140,8 @@
 <!-- Toast Container -->
 <div id="toastContainer"></div>
     
-    <script src="Crash.js" defer></script>
     <script src="crashSound.js" defer></script>
+    <script src="Crash.js" defer></script>
 
 
 <%- include('footer') %>

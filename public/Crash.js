@@ -50,6 +50,9 @@ function initializeQuickBets() {
     });
 }
 //initializeQuickBets();
+
+
+
 // Update balance display
 function updateBalance() {
     elements.balance.textContent = '৳' + userBalance.toLocaleString();
@@ -116,7 +119,10 @@ socket.on('gameCrash', (data) => {
     gameRunning = false;
     hasPlacedBet = false;
     
-    playSound('sound/plane-crash.mp3');
+
+    AudioSys.play('plane-crash');
+//AudioSys.play('sound-win');
+//AudioSys.play('sound-crash');
     
     
     elements.multiplier.textContent = data.crashPoint.toFixed(2) + 'x';
@@ -168,7 +174,7 @@ socket.on('betSuccess', (data) => {
 
 //cashout success
 socket.on('cashOutSuccess', (data) => {
-  playSound('sound/cashout.mp3');
+  
   
     const winAmount = parseFloat(data.amount);
     userBalance += winAmount;

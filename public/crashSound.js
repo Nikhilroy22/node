@@ -1,63 +1,47 @@
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-let currentSource = null;
-let isPlaying = false;
-let audioBuffer = null; // cache the loaded audio
+// SoundManager class (Already professional version)
+class SoundManager {
+  constructor() {
+    this.sounds = {};
+    this.enabled = true; // 🔊 default: sounds on
+  }
 
-async function loadSound(url) {
-    if (audioBuffer) return audioBuffer; // একবার load করা হলে reuse করো
+  load(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    this.sounds[id] = el;
+  }
 
-    const resp = await fetch(url);
-    const arrayBuffer = await resp.arrayBuffer();
-    audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
-    return audioBuffer;
+  play(id, volume = 1.0) {
+    if (!this.enabled) return; // ✅ check sound ON/OFF
+    const sound = this.sounds[id];
+    if (!sound) return;
+    const clone = sound.cloneNode(true); // multiple play
+    clone.volume = volume;
+    clone.play().catch(e => console.log("Sound play error:", e));
+  }
+
+  toggle() {
+    this.enabled = !this.enabled;
+    console.log("Sound:", this.enabled ? "ON" : "OFF");
+  }
+
+  setEnabled(state) {
+    this.enabled = state;
+  }
 }
 
-async function toggleSound(url) {
-    if (isPlaying) {
-        // বন্ধ করো
-        if (currentSource) currentSource.stop();
-        currentSource = null;
-        isPlaying = false;
-        return;
-    }
+const AudioSys = new SoundManager();
 
-    // চালাও
-    const buffer = await loadSound(url);
-    const source = audioCtx.createBufferSource();
-    source.buffer = buffer;
-    source.loop = true; // continuous background music
-    source.connect(audioCtx.destination);
-    source.start();
+// Preload all sounds
+['plane-background', 'tick', 'crash', 'win', 'plane-crash'].forEach(id => AudioSys.load(id));
 
-    currentSource = source;
-    isPlaying = true;
+const soundBtn = document.getElementById("soundToggle");
 
-    source.onended = () => {
-        currentSource = null;
-        isPlaying = false;
-    };
-}
+soundBtn.addEventListener("click", () => {
+    AudioSys.toggle();
 
-// Toggle button
-const soundToggleBtn = document.getElementById("soundToggleBtn");
-soundToggleBtn.addEventListener("click", async () => {
-    await toggleSound('sound/background.mp3');
-    soundToggleBtn.textContent = isPlaying ? "🔊 Sound: ON" : "🔇 Sound: OFF";
+    // Update button icon
+    soundBtn.textContent = AudioSys.enabled ? "🔊" : "🔇";
 });
 
 
-
-async function playSound(url) {
-    try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const resp = await fetch(url);
-        const arrayBuffer = await resp.arrayBuffer();
-        const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
-        const source = ctx.createBufferSource();
-        source.buffer = audioBuffer;
-        source.connect(ctx.destination);
-        source.start(0);
-        source.onended = () => { try{ ctx.close(); } catch(e){} };
-        return new Promise(resolve => source.onended = () => { try{ctx.close();}catch(e){} resolve(); });
-    } catch(err) { console.warn('playSound failed', err); return Promise.resolve(); }
-}

@@ -4,9 +4,7 @@ module.exports = async (io, sessionMiddleware) => {
   const onlineUsers = new Map(); // userId => { socketId, username }
 
   // Session middleware
-  io.use((socket, next) => {
-    sessionMiddleware(socket.request, {}, next);
-  });
+ 
 
   // Check session
   io.use((socket, next) => {

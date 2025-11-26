@@ -72,8 +72,13 @@ app.use('/', webRoutes);
 /* =========================
    Socket.IO Handlers
 ========================= */
+io.use((socket, next) => {
+    sessionMiddleware(socket.request, {}, next);
+  });
+
+
  socketHandler(io, sessionMiddleware); // Crash socket (if needed)
-PrivateChat(io, sessionMiddleware); // Private chat socket
+//PrivateChat(io, sessionMiddleware); // Private chat socket
 
 /* =========================
    Start Server
