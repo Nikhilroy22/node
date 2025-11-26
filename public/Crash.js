@@ -146,16 +146,7 @@ socket.on('gameCrash', (data) => {
     
     
     
- /*   let countdown = 15;
-    const countdownInterval = setInterval(() => {
-        if (countdown > 0) {
-            elements.status.textContent = `Next game starts in ${countdown}s...`;
-            elements.status.style.color = 'var(--warning)';
-            countdown--;
-        } else {
-            clearInterval(countdownInterval);
-        }
-    }, 1000); */
+
     
     setTimeout(() => {
         elements.playersList.innerHTML = '<div class="player-item"><div class="player-info"><div class="player-avatar">?</div><span>No active players nj</span></div></div>';

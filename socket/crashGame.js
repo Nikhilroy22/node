@@ -35,7 +35,8 @@ function generateCrashPoint() {
         crashPoint = 10 + (Math.random() * 20);
     }
 
-    console.log(`🎯 Generated Crash Point: ${crashPoint}x`);
+   // console.log(`🎯 Generated Crash Point: ${crashPoint}x`);
+    console.log(chalk.blue.bold(`🎯 Generated Crash Point: ${crashPoint}x`));
     return crashPoint;
 }
 
