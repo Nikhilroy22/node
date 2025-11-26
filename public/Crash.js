@@ -433,7 +433,7 @@ function showToast(message, type = 'info') {
   // Auto remove after 5s
   setTimeout(() => {
     toast.remove();
-  }, 25000);
+  }, 1000);
 }
 
 
