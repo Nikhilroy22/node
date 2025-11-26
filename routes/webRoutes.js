@@ -79,7 +79,7 @@ router.get('/chat/:id', MessageView.chatview);
    Ping / SSE Route
 ========================= */
 router.get('/ping', (req, res) => {
-  res.setHeader('Content-Type', 'text/event-stream');
+ /* res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
 
@@ -89,7 +89,32 @@ router.get('/ping', (req, res) => {
   // Client disconnect handler
   req.on('close', () => {
     console.log('Client disconnected');
-  });
+  }); */
+  // SSE headers
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+
+    let progress = 0;
+    const interval = setInterval(() => {
+        progress += 5; // increment loading progress
+        if(progress > 100) progress = 100;
+        
+        // Send progress to client
+        res.write(`data: ${progress}\n\n`);
+
+        if(progress >= 100) {
+            clearInterval(interval);
+            res.end();
+        }
+    }, 200); // every 200ms
+  
+  
+});
+
+
+router.get('/sse', (req, res) => {
+  res.render('demo');
 });
 
 /* =========================

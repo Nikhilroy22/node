@@ -2,7 +2,7 @@
   background:  linear-gradient(180deg,#155226,#0f3d18); 
   padding:10px; 
   margin:10px 10px; 
-  border-radius:8px;
+  border-radius:3px;
   border:1px solid rgba(255,255,255,0.18);
   box-shadow:0 8px 25px rgba(0,0,0,0.18);
   
@@ -12,12 +12,14 @@
       display:flex; 
       justify-content:space-between; 
       margin:5px 0; 
-      flex-wrap:wrap; gap:5px;
+      flex-wrap:wrap; 
+      gap:5px;
+      
       }
     
    .match .btn { 
      background:#fff; 
-     
+     display: inline-block;
      border:none; 
      border-radius:5px; 
      padding:5px 10px;  
@@ -61,4 +63,31 @@
       font-size: 30px; 
   text-transform: uppercase;
   font-weight: bold;
+    }
+    
+    .teamm{
+      
+      position: relative;
+    overflow-x: auto;      /* horizontal scroll */
+    overflow-y: hidden;    /* hide vertical scroll */
+    white-space: nowrap;   /* keep tabs in one line */
+    padding: 8px 0px;     /* leave space for scroll buttons */
+    background: #0f3d18;
+    -webkit-overflow-scrolling: touch; /* smooth scroll on mobile */
+    
+    
+    }
+    
+    .btnn{
+      
+      display: inline-block;
+    padding: 10px 20px;
+    background: black;
+    color: #fff;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    flex-shrink: 0;        /* important so tab width doesn't shrink */
+    transition: transform 0.2s, opacity 0.2s;
+    gap: 10px;  
     }
