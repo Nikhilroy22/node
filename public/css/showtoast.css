@@ -8,7 +8,7 @@
   gap: 10px;
 }
 
-.toast {
+#toastContainer .toast {
   min-width: 220px;
   background: #222;
   color: #fff;
@@ -21,10 +21,10 @@
   font-family: 'Poppins', sans-serif;
 }
 
-.toast.success { border-left: 5px solid #22c55e; }   /* Green */
-.toast.error { border-left: 5px solid #ef4444; }     /* Red */
+#toastContainer .toast.success { border-left: 5px solid #22c55e; }   /* Green */
+#toastContainer .toast.error { border-left: 5px solid #ef4444; }     /* Red */
 .toast.info { border-left: 5px solid #3b82f6; }      /* Blue */
-.toast.warning { border-left: 5px solid #f59e0b; }   /* Yellow */
+#toastContainer .toast.warning { border-left: 5px solid #f59e0b; }   /* Yellow */
 
 @keyframes slideIn {
   to {
