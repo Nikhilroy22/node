@@ -14,6 +14,8 @@ const socketHandler = require('./socket/socketHandler'); // import
 const PrivateChat = require('./socket/PrivateChat');
 
 const fs = require("fs");
+const chalk = require('chalk');
+global.chalk = chalk;
 
 const session = require('express-session');
 const flash = require('connect-flash');

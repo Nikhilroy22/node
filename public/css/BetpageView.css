@@ -6,11 +6,11 @@
   gap: 10px;
 }
 
-.market-group {
+.odds-wrapper .market-group {
   
 }
 
-.market-title {
+.odds-wrapper .market-title {
   font-size: 13px;
   color: #9cc4ff;
   background:linear-gradient(180deg,#155226,#0f3d18);
@@ -20,13 +20,13 @@
   box-shadow:0 8px 25px rgba(0,0,0,0.18);
 }
 
-.odd-row {
+.odds-wrapper .odd-row {
   display: inline-block;
   gap: 10px;
   width: calc(50% - 12px);
 }
 
-.odd-box {
+.odds-wrapper .odd-box {
   background: #2b27ef;
   border-radius: 6px;
   padding: 6px;
@@ -41,7 +41,7 @@
   font-size: 12px;
 }
 
-.odd-btn {
+.odds-wrapper .odd-btn {
   margin-top: 4px;
   width: 100%;
   padding: 6px;
@@ -59,29 +59,29 @@
 
 
 /* Odds flash increase / decrease */
-.odds-increase { animation: oddsIncrease 1s ease; background: green; }
-.odds-decrease { animation: oddsDecrease 1s ease; background: red; }
+.odds-wrapper .odds-increase { animation: oddsIncrease 1s ease; background: green; }
+.odds-wrapper .odds-decrease { animation: oddsDecrease 1s ease; background: red; }
 @keyframes oddsIncrease { 0% { transform: scale(1.1); } 100% { transform: scale(1); background: transparent; color: inherit; } }
 @keyframes oddsDecrease { 0% { transform: scale(1.1); } 100% { transform: scale(1); background: transparent; color: inherit; } }
 
 /* Modal */
-.modal { display: none; position: fixed; z-index: 1000; left:0; top:0; width:100%; height:100%; background: rgba(0,0,0,0.5); justify-content:center; align-items:center; }
-.modal-content { background:#073615; padding:20px; border-radius:8px; width:300px; text-align:center; position: relative; }
-.close-btn { position:absolute; top:10px; right:15px; cursor:pointer; font-size:30px; }
+.placebetviewmodal { display: none; position: fixed; z-index: 1000; left:0; top:0; width:100%; height:100%; background: rgba(0,0,0,0.5); justify-content:center; align-items:center; }
+.placebetviewmodal .modal-content { background:#073615; padding:20px; border-radius:8px; width:300px; text-align:center; position: relative; }
+.placebetviewmodal .close-btn { position:absolute; top:10px; right:15px; cursor:pointer; font-size:30px; }
 
 
 
 
 
 /*Lock button*/
-.odd-btn:disabled {
+.odds-wrapper .odd-btn:disabled {
   
   cursor: not-allowed;
   opacity: 0.9;
 }
 
 /* Lock Icon Show When Disabled */
-.odd-btn:disabled::after {
+.odds-wrapper .odd-btn:disabled::after {
   content: "🔓";
   font-size: 18px;
 }

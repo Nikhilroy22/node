@@ -41,9 +41,11 @@
       height:100%; 
       background:rgba(0,0,0,0.7); 
       justify-content:center; 
-      align-items:center; }
+      align-items:center; 
+      z-index: 1000;
+    }
     
-    .placebetmodal-content { 
+    .placebetmodal .placebetmodal-content { 
       background:#073615; 
       padding:20px; 
       border-radius:10px; 
@@ -52,7 +54,7 @@
       
     }
     
-    .placebetclose { 
+    .placebetmodal .placebetclose { 
       float:right; 
       cursor:pointer; 
       color:red; 

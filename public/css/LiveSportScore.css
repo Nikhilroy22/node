@@ -5,7 +5,7 @@
   padding: 8px 10px;
   background: black;
 }
-.matchscore {
+.match-wrapper .matchscore {
   width: 100%;
   max-width: 420px;
   background: linear-gradient(135deg, #586559, #335440);
@@ -18,18 +18,18 @@
 }
 
 /* Header */
-.match-header {
+.match-wrapper .match-header {
   display: flex;
   justify-content: space-between;
   margin-bottom: 12px;
   gap:15px;
 }
-.title { 
+.match-wrapper .title { 
 /*font-size: 20px; */
 font-weight: bold; 
   
 }
-.status.live {
+.match-wrapper .status.live {
   padding: 4px 12px;
   background: #ff0000cc;
   border-radius: 20px;
@@ -39,25 +39,25 @@ font-weight: bold;
 }
 
 /* Players Area */
-.teams {
+.match-wrapper .teams {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin: 18px 0;
 }
 
-.team {
+.match-wrapper .team {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.team .name {
+.match-wrapper .team .name {
  /* font-size: 18px;
   font-weight: 600; */
 }
 
-.team .serve {
+.match-wrapper .team .serve {
   font-size: 18px;
   margin: 5px 0 0;
   opacity: 1;
@@ -70,17 +70,17 @@ font-weight: bold;
   50%  { transform: scale(1.2); }
   100% { transform: scale(1); }
 }
-.team .serve.off {
+.match-wrapper .team .serve.off {
   opacity: 0;
 }
 
-.team .score {
+.match-wrapper .team .score {
   font-size: 32px;
   margin-top: 6px;
   font-weight: bold;
 }
 
-.team .points {
+.match-wrapper .team .points {
   font-size: 16px;
   margin-top: 5px;
   background: #ffffff33;
@@ -88,14 +88,14 @@ font-weight: bold;
   border-radius: 6px;
 }
 
-.vs {
+.match-wrapper .vs {
   font-size: 20px;
   font-weight: bold;
   
 }
 
 /* Set Table */
-.newset {
+.match-wrapper .newset {
   display: flex;
   gap: 12px;                /* Box gap */
   margin-top: 12px;
@@ -103,7 +103,7 @@ font-weight: bold;
   justify-content: center;
 }
 
-.set-box {
+.match-wrapper .set-box {
  /* background: linear-gradient(120deg, #0d4a1a, #0f7a34);*/
   padding: 8px 14px;
   /*border-radius: 8px;
@@ -113,16 +113,16 @@ font-weight: bold;
   min-width: 60px;
   text-align: center;
 }
-.set-box { padding:5px 10px; border:1px solid #ccc; border-radius:5px; }
+.match-wrapper .set-box { padding:5px 10px; border:1px solid #ccc; border-radius:5px; }
 
-.set-name {
+.match-wrapper .set-name {
   display: block;
   font-size: 12px;
   opacity: 0.9;
   margin-bottom: 4px;
 }
 
-.set-score {
+.match-wrapper .set-score {
   display: block;
   font-size: 16px;
   font-weight: bold;
@@ -130,5 +130,5 @@ font-weight: bold;
 
 
 /*SURU Score flash */
-.flash { animation: flashScore 1.5s ease; }
+.match-wrapper .flash { animation: flashScore 1.5s ease; }
 @keyframes flashScore { 0% { background: green; transform: scale(1.15); } 100% { background: transparent; transform: scale(1); } }
