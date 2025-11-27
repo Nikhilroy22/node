@@ -4,9 +4,9 @@ let tokens = [];
 exports.democ = async (req, res) => {
   
   try {
-    await db.collection("users").doc("Nikhi9090").set({
+    await db.collection("users").doc("Nikhi90gg90").set({
       name: "Nikhil",
-      email: "nikhil@example.com",
+      email: "nikhil@exajmple.com",
       balance: 1000,
       createdAt: Date.now()
     });
