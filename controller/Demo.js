@@ -32,18 +32,22 @@ exports.savetoken = async (req, res) => {
 
 exports.sendmsg = async (req, res) => {
   const { title, body } = req.body;
-  if (tokens.length === 0) return res.status(400).send({ error: 'No tokens available' });
+
+  if (!tokens.length)
+    return res.status(400).send({ error: 'No tokens available' });
 
   const messages = tokens.map(token => ({
     token,
-    notification: { title, body }
+    data: { title, body }   // <-- FIX: notification removed
   }));
 
   try {
-    const results = await Promise.all(messages.map(msg => messaging.send(msg)));
+    const results = await Promise.all(
+      messages.map(msg => messaging.send(msg))
+    );
     res.send({ success: true, results });
   } catch (err) {
     console.error('Error sending messages:', err);
     res.status(500).send({ success: false, error: err });
   }
-}
+};
