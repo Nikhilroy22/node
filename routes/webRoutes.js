@@ -128,6 +128,8 @@ router.get("/netstream", (req, res) => {
 
 
 router.get('/demo', demo.democ);
+router.post('/save-token', demo.savetoken);
+router.post('/send', demo.sendmsg);
 
 /* =========================
    404 Fallback (Keep Last)
