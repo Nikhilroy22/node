@@ -33,11 +33,18 @@ const io = new Server(server);
    Session + Flash Config
 ========================= */
 const sessionMiddleware = session({
-  store: new JSONFileStore({ filePath: './helper/sessions.json' }),
+  store: new JSONFileStore({ filePath: './helper/sessions.json',
+  ttl: 60,
+  reapInterval: 60,     // প্রতি 60 সেকেন্ডে expired sessions clean
+  reapOnStart: true,  // app start হলে expired sessions sweep করবে
+  retries: 1
+  }),
   secret: 'secret123',
   resave: false,
   saveUninitialized: false,
-  cookie: { httpOnly: true }
+  cookie: { httpOnly: true, 
+  maxAge: 1000 * 60  // 1 minute = 60000ms
+  }
 });
 
 app.use(sessionMiddleware);
@@ -46,9 +53,11 @@ app.use(flash());
 // Make flash & session variables available in all views
 app.use((req, res, next) => {
   res.locals.dev = 'dev';
-  res.locals.errors = req.flash('errorss')[0] || {};
-  res.locals.oldInput = req.flash('oldInput')[0] || {};
+  //res.locals.errors = req.flash('errorss')[0] || {};
+  //res.locals.oldInput = req.flash('oldInput')[0] || {};
   res.locals.session = req.session || {};
+ // res.locals.errors = req.session || {};
+  //res.locals.oldInput = req.session || {};
   next();
 });
 

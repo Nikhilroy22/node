@@ -10,6 +10,8 @@ const { getUsers, createUser } = require('../model/db');
 exports.showLogin = (req, res) => {
   
   let showSplash = true;
+  res.locals.errors = req.flash('errorss')[0] || {};
+  res.locals.oldInput = req.flash('oldInput')[0] || {};
 
   // যদি session-এ skipSplash থাকে → false
   if (req.session.skipSplash) {

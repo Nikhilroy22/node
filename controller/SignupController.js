@@ -2,7 +2,8 @@ const { getUsers, createUser } = require('../model/db');
 
 
 exports.SignUp = (req, res) => {
-  
+  res.locals.errors = req.flash('errorss')[0] || {};
+  res.locals.oldInput = req.flash('oldInput')[0] || {};
   res.render('SignUp');
 }
 
