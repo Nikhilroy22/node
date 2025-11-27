@@ -36,7 +36,7 @@
       try {
         // 1️⃣ Register Service Worker
         const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
-        console.log('Service Worker registered', registration);
+        console.log('Service Worker registered');
 
         // 2️⃣ Request Notification Permission
         const permission = await Notification.requestPermission();
@@ -67,9 +67,9 @@
     initPush();
 
     // Foreground notification listener
-    onMessage(messaging, payload => {
+    /*onMessage(messaging, payload => {
       alert("Notification: " + payload.notification.title + "\n" + payload.notification.body);
-    });
+    });*/
 
     // Test button → trigger server notification
     document.getElementById("notifyBtn").addEventListener("click", async () => {
