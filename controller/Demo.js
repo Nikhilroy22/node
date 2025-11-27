@@ -61,24 +61,47 @@ exports.savetoken = async (req, res) => {
 exports.sendmsg = async (req, res) => {
   const { title, body } = req.body;
 
-  try {
-    const snapshot = await db.collection("fcmTokens").get();
-    const tokens = snapshot.docs.map(doc => doc.data().token);
+  const snapshot = await db.collection("tokens").get();
+  const tokens = snapshot.docs.map(doc => doc.data().token);
 
-    if (!tokens.length)
-      return res.status(400).send({ error: "No tokens found" });
-
-    // IMPORTANT → Only data send (NO duplicate notification)
-    const messages = tokens.map(token => ({
-      token,
-      notification: { title, body }
-    }));
-
-    const results = await Promise.all(messages.map(msg => messaging.send(msg)));
-
-    res.send({ success: true, results });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send({ error: err });
+  if (tokens.length === 0) {
+    return res.status(400).send({ error: "No tokens stored" });
   }
+
+  const messages = tokens.map(token => ({
+    token,
+    notification: { title, body }
+  }));
+
+  const results = await Promise.allSettled(
+    messages.map((msg) => messaging.send(msg))
+  );
+
+  // Auto delete expired tokens
+  let deleted = 0;
+
+  for (let i = 0; i < results.length; i++) {
+    const r = results[i];
+    const token = tokens[i];
+
+    if (r.status === "rejected") {
+      const errorCode = r.reason.errorInfo?.code;
+
+      if (
+        errorCode === "messaging/invalid-registration-token" ||
+        errorCode === "messaging/registration-token-not-registered"
+      ) {
+        // Delete from Firestore
+        await db.collection("tokens").doc(token).delete();
+        deleted++;
+        console.log("🗑 Deleted expired token:", token);
+      }
+    }
+  }
+
+  res.send({
+    success: true,
+    sent: messages.length - deleted,
+    deletedExpiredTokens: deleted
+  });
 };
