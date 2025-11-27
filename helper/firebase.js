@@ -1,9 +1,12 @@
 const admin = require("firebase-admin");
-const path = require("path");
 
-// Absolute path to your service account JSON
-const serviceAccount = require(path.resolve(__dirname, "node-dc510-firebase-adminsdk-fbsvc-9fa88afbc4.json"));
 
+// Environment variable থেকে JSON decode
+const serviceAccount = JSON.parse(
+  Buffer.from(process.env.SECRET_FIREBASE_KEY, 'base64').toString('utf-8')
+);
+
+/*console.log(serviceAccount)cat serviceAccountKey.json | base64 -w 0 */
 // Initialize Admin SDK
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
