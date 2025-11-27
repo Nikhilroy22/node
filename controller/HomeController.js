@@ -3,8 +3,14 @@ const { exec } = require('child_process');
 const util = require('util');
 const execPromise = util.promisify(exec);
 const os = require('os');
+const connectDB = require('../model/mdb');
 
 exports.HomePage = async (req, res) => {
+  const db = await connectDB();
+    const users = db.collection('users');
+        // READ
+    const allUsers = await users.find().toArray();
+    console.log('Users:', allUsers);
   try {
     // Get all users
     const users = await getUsers();
