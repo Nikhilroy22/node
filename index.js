@@ -27,6 +27,8 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
+
+
 /* =========================
    Session + Flash Config
 ========================= */
@@ -77,7 +79,7 @@ io.use((socket, next) => {
   });
 
 
- socketHandler(io, sessionMiddleware); // Crash socket (if needed)
+// socketHandler(io, sessionMiddleware); // Crash socket (if needed)
 //PrivateChat(io, sessionMiddleware); // Private chat socket
 
 /* =========================

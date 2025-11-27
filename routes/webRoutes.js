@@ -9,6 +9,7 @@ const Home = require('../controller/HomeController');
 const BetController = require('../controller/BetController');
 const BetApiController = require('../controller/BetApiController');
 const MessageView = require('../controller/MsgViewController');
+const demo = require('../controller/Demo');
 
 // Middleware
 const authMiddleware = require('../middleware/authMiddleware');
@@ -126,9 +127,7 @@ router.get("/netstream", (req, res) => {
 });
 
 
-router.get('/sse', (req, res) => {
-  res.render('demo');
-});
+router.get('/demo', demo.democ);
 
 /* =========================
    404 Fallback (Keep Last)
