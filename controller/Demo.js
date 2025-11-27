@@ -64,6 +64,8 @@ exports.sendmsg = async (req, res) => {
   const snapshot = await db.collection("fcmTokens").get();
   const tokens = snapshot.docs.map(doc => doc.data().token);
 
+console.log(tokens)
+
   if (tokens.length === 0) {
     return res.status(400).send({ error: "No tokens stored" });
   }

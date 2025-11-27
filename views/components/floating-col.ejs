@@ -1,0 +1,28 @@
+<!-- =======================
+     Floating Buttons
+======================= -->
+<div class="floating-col" id="floatingCol">
+  <!-- Lucky Wheel Item -->
+  <div class="float-item" id="wheelItem" title="লাকি হুইল ঘোরাও">
+    <div class="fi-icon" id="openWheel" aria-hidden="true">🎡</div>
+    <div class="fi-close" data-target="wheelItem">&times;</div>
+  </div>
+
+  <!-- Facebook Item -->
+  <div class="float-item" id="fbItem" title="ফেসবুকে যাও">
+    <div class="fi-icon" id="openFB" aria-hidden="true">f</div>
+    <div class="fi-label">ফেসবুক</div>
+    <div class="fi-close" data-target="fbItem">&times;</div>
+  </div>
+</div>
+
+<script>
+  // Close floating items
+  document.querySelectorAll('.fi-close').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const targetId = btn.getAttribute('data-target');
+      const el = document.getElementById(targetId);
+      if (el) el.remove();
+    });
+  });
+</script>
