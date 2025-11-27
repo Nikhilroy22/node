@@ -49,6 +49,12 @@ const firebaseConfig = {
     }
 
     initPush();
+    
+    navigator.serviceWorker.register('/firebase-messaging-sw.js')
+  .then(registration => {
+    console.log('Service Worker registered');
+  })
+  .catch(err => console.error('Service Worker registration failed:', err));
 
     // Foreground notification listener
     onMessage(messaging, payload => {
