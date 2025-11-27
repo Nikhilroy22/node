@@ -79,5 +79,14 @@
       "path": "/"
     },
     "flash": {}
+  },
+  "GT_oc8pWHEVYlvlLT-CIKB3SckmimD43": {
+    "cookie": {
+      "originalMaxAge": null,
+      "expires": null,
+      "httpOnly": true,
+      "path": "/"
+    },
+    "flash": {}
   }
 }

@@ -61,7 +61,7 @@ exports.savetoken = async (req, res) => {
 exports.sendmsg = async (req, res) => {
   const { title, body } = req.body;
 
-  const snapshot = await db.collection("tokens").get();
+  const snapshot = await db.collection("fcmTokens").get();
   const tokens = snapshot.docs.map(doc => doc.data().token);
 
   if (tokens.length === 0) {
