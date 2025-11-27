@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Firebase Web Push Demo</title>
   <!-- Dev-specific scripts -->
-    <script src="/js/eruda.js"></script>
-    <script>
-      eruda.init(); // Console চালু হবে
-    </script>
+  <script src="/js/eruda.js"></script>
+  <script>
+    eruda.init(); // Console চালু হবে
+  </script>
 </head>
 <body>
   <h1>Firebase Web Push Notification Demo</h1>
@@ -18,43 +18,53 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js";
 
-    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyDa1jib5JJfboOMkhw64Nwl6ia_LfcOoRk",
-  authDomain: "node-dc510.firebaseapp.com",
-  projectId: "node-dc510",
-  storageBucket: "node-dc510.firebasestorage.app",
-  messagingSenderId: "917525434182",
-  appId: "1:917525434182:web:265054ff20ea2a08409f47",
-  measurementId: "G-B6RK58PGN2"
-};
+    const firebaseConfig = {
+      apiKey: "AIzaSyDa1jib5JJfboOMkhw64Nwl6ia_LfcOoRk",
+      authDomain: "node-dc510.firebaseapp.com",
+      projectId: "node-dc510",
+      storageBucket: "node-dc510.firebasestorage.app",
+      messagingSenderId: "917525434182",
+      appId: "1:917525434182:web:265054ff20ea2a08409f47",
+      measurementId: "G-B6RK58PGN2"
+    };
 
     const app = initializeApp(firebaseConfig);
     const messaging = getMessaging(app);
 
-    // Request Notification Permission & Save Token
+    // Service Worker register এবং push token generate একসাথে
     async function initPush() {
-      const permission = await Notification.requestPermission();
-      if(permission === "granted") {
-        const token = await getToken(messaging, { vapidKey: "BDOJPavROsYTPloF7fcqsGVT9kFJuGjSngzbqkPPXrKKrl0LGdY08fZBcogSjSQ6hUdTflSALqW9l8l8cNmtf5Y" });
+      try {
+        // 1️⃣ Register Service Worker
+        const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+        console.log('Service Worker registered', registration);
+
+        // 2️⃣ Request Notification Permission
+        const permission = await Notification.requestPermission();
+        if (permission !== 'granted') {
+          console.warn('Notification permission not granted');
+          return;
+        }
+
+        // 3️⃣ Get FCM token
+        const token = await getToken(messaging, {
+          vapidKey: "BDOJPavROsYTPloF7fcqsGVT9kFJuGjSngzbqkPPXrKKrl0LGdY08fZBcogSjSQ6hUdTflSALqW9l8l8cNmtf5Y",
+          serviceWorkerRegistration: registration
+        });
         console.log("Device Token:", token);
 
-        // Save token to backend
+        // 4️⃣ Save token to backend
         await fetch("/save-token", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ token })
         });
+
+      } catch (err) {
+        console.error("Push init failed:", err);
       }
     }
 
     initPush();
-    
-    navigator.serviceWorker.register('/firebase-messaging-sw.js')
-  .then(registration => {
-    console.log('Service Worker registered');
-  })
-  .catch(err => console.error('Service Worker registration failed:', err));
 
     // Foreground notification listener
     onMessage(messaging, payload => {
@@ -72,8 +82,6 @@ const firebaseConfig = {
         })
       });
     });
-    
-    console.log("kala");
   </script>
 </body>
 </html>
