@@ -38,30 +38,47 @@ class SplashScene extends Phaser.Scene {
     constructor() { super({ key: 'SplashScene' }); }
 
     preload() {
-        const width = this.cameras.main.width;
-        const height = this.cameras.main.height;
+        const { width, height } = this.cameras.main;
 
-        const progressBar = this.add.graphics();
+        // Progress bar
+        this.progressBar = this.add.graphics();
+        this.progressBox = this.add.graphics();
+        this.progressBox.fillStyle(0x222222, 0.8);
+        this.progressBox.fillRect(width/4-10, height/2-25, width/2+20, 50);
 
-        // Loading bar update
-        this.load.on('progress', (value) => {
-            progressBar.clear();
-            progressBar.fillStyle(0xffd700, 1);
-            progressBar.fillRect(width/4, height/2 - 15, (width/2) * value, 30);
-        });
+        this.percentText = this.add.text(width/2, height/2, '0%', { font:'20px Arial', fill:'#fff' }).setOrigin(0.5);
 
-        this.load.on('complete', () => {
-            progressBar.destroy();
-        });
-
-        // Assets
+        // Load assets (example)
         this.load.audio('bgMusic', 'sound/background.mp3');
         this.load.image('soundOn', 'https://img.icons8.com/color/48/000000/speaker.png');
         this.load.image('soundOff', 'https://img.icons8.com/color/48/000000/mute.png');
     }
 
     create() {
-        this.scene.start('MainScene');
+        const { width, height } = this.cameras.main;
+
+        // Simulate 5 second progress
+        let elapsed = 0;
+        const duration = 5000; // 5 sec
+        this.time.addEvent({
+            delay: 16,
+            loop: true,
+            callback: () => {
+                elapsed += 16;
+                let value = Phaser.Math.Clamp(elapsed / duration, 0, 1);
+                this.progressBar.clear();
+                this.progressBar.fillStyle(0xffd700, 1);
+                this.progressBar.fillRect(width/4, height/2-15, (width/2)*value, 30);
+                this.percentText.setText(Math.round(value*100)+'%');
+
+                if(value>=1){
+                    this.percentText.destroy();
+                    this.progressBar.destroy();
+                    this.progressBox.destroy();
+                    this.scene.start('MainScene');
+                }
+            }
+        });
     }
 }
 
@@ -69,21 +86,16 @@ class MainScene extends Phaser.Scene {
     constructor() { super({ key: 'MainScene' }); }
 
     create() {
-        // First tap full-screen
-        this.input.once('pointerdown', () => {
-            if (!this.scale.isFullscreen) this.scale.startFullscreen();
-        });
+        const { width, height } = this.scale;
 
         // Background music
         this.bgMusic = this.sound.add('bgMusic', { loop: true, volume: 0.5 });
-        this.bgMusic.play();
 
-        // Sound toggle button
+        // Sound toggle
         this.soundOn = true;
-        this.soundButton = this.add.text(this.scale.width - 20, 20, 'Sound On', {
-            font: '24px Arial', fill: '#ffffff', backgroundColor: '#000000'
-        }).setPadding(10).setInteractive();
-        this.soundButton.setOrigin(1,0);
+        this.soundButton = this.add.text(width-20, 20, 'Sound On', {
+            font:'24px Arial', fill:'#ffffff', backgroundColor:'#000000'
+        }).setPadding(10).setInteractive().setOrigin(1,0);
 
         this.soundButton.on('pointerdown', () => {
             this.soundOn = !this.soundOn;
@@ -96,14 +108,25 @@ class MainScene extends Phaser.Scene {
             }
         });
 
+        // Tap to start fullscreen + music
+        const startText = this.add.text(width/2, height/2, 'Tap to Start', {
+            font:'32px Arial', fill:'#ffd700', backgroundColor:'#000'
+        }).setOrigin(0.5).setPadding(20).setInteractive();
+
+        startText.on('pointerdown', () => {
+            if(!this.scale.isFullscreen) this.scale.startFullscreen();
+            if(!this.bgMusic.isPlaying) this.bgMusic.play();
+            startText.destroy();
+        });
+
         // Moving circle example
         const graphics = this.add.graphics({ fillStyle: { color: 0xffd700 } });
-        const circle = new Phaser.Geom.Circle(100, this.scale.height/2, 30);
+        const circle = new Phaser.Geom.Circle(100, height/2, 30);
         graphics.fillCircleShape(circle);
 
         this.tweens.add({
             targets: circle,
-            x: this.scale.width - 100,
+            x: width-100,
             duration: 4000,
             yoyo: true,
             repeat: -1,
@@ -114,9 +137,9 @@ class MainScene extends Phaser.Scene {
             }
         });
 
-        // Resize handling
+        // Resize
         this.scale.on('resize', (gameSize) => {
-            this.soundButton.setPosition(gameSize.width - 20, 20);
+            this.soundButton.setPosition(gameSize.width-20, 20);
         });
     }
 }
