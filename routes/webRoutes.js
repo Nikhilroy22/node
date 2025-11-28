@@ -10,9 +10,13 @@ const BetController = require('../controller/BetController');
 const BetApiController = require('../controller/BetApiController');
 const MessageView = require('../controller/MsgViewController');
 const demo = require('../controller/Demo');
+const dhan = require('../controller/DhanKataController');
 
 // Middleware
 const authMiddleware = require('../middleware/authMiddleware');
+
+//DHAN Routes
+router.get('/dhan', dhan.index)
 
 /* =========================
    Bet Routes
