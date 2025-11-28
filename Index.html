@@ -1,71 +1,152 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="bn">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Attendance — Mobile Friendly Table</title>
-  <style>
-  
-  </style>
+    <meta charset="UTF-8">
+    <title>Ludo গেম</title>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #f0f0f0;
+            overflow: hidden;
+        }
+        #game-container {
+            width: 100vw;
+            height: 100vh;
+        }
+        button {
+            position: absolute;
+            z-index: 10;
+            font-size: 20px;
+            padding: 10px 20px;
+        }
+        #rollBtn {
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+    </style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <div class="logo">AD</div>
-      <div>
-        <h1>Attendance Report — মোবাইল বান্ধব</h1>
-        <p class="lead">৬ জন কর্মীর মোট কাজ, উপস্থিতি, টাকা ও পেমেন্ট লেজার দেখুন।</p>
-      </div>
-    </header>
+    <div id="game-container"></div>
+    <button id="rollBtn">Dice Roll 🎲</button>
+    <script>
+      const config = {
+    type: Phaser.AUTO,
+    width: window.innerWidth,
+    height: window.innerHeight,
+    backgroundColor: 0xffffff,
+    scale: {
+        mode: Phaser.Scale.RESIZE,
+        autoCenter: Phaser.Scale.CENTER_BOTH
+    },
+    scene: {
+        preload: preload,
+        create: create,
+        update: update
+    },
+    parent: 'game-container'
+};
 
-    <div class="controls">
-      <input id="q" class="search" placeholder="কর্মী খুঁজুন (নাম বা আইডি)" />
-      <select id="month" aria-label="month select">
-        <option value="all">All dates</option>
-      </select>
-      <button class="btn primary" id="export">Export CSV</button>
-    </div>
+const game = new Phaser.Game(config);
 
-    <!-- Desktop Table -->
-    <div class="table-wrap">
-      <table id="mainTable">
-        <thead>
-          <tr>
-            <th>Worker</th>
-            <th>Worked Days</th>
-            <th>Absent</th>
-            <th>Dates Worked</th>
-            <th>Total Wage</th>
-            <th>Paid</th>
-            <th>Due</th>
-            <th>Payments</th>
-          </tr>
-        </thead>
-        <tbody id="tableBody">
-          <!-- rows injected by JS -->
-        </tbody>
-      </table>
-    </div>
+let boardSize = 600;
+let cellSize = boardSize / 15;
+let boardOriginX, boardOriginY;
 
-    <!-- Mobile Cards -->
-    <div class="cards" id="cards"></div>
+let players = [];
+let currentPlayer = 0;
+let diceValue = 0;
 
-    <div class="empty" id="emptyMsg" style="display:none">কোনো ডাটা মেলেনি</div>
+let diceSound;
+let moveSound;
 
-    <footer>Designed for mobile first — Simple, clean and responsive.</footer>
-  </div>
+function preload() {
+    // লুডোর token লোড (রঙ)
+    this.load.image('red', 'https://i.postimg.cc/0y6h1j8R/red-token.png');
+    this.load.image('green', 'https://i.postimg.cc/B6KJfFgV/green-token.png');
+    this.load.image('yellow', 'https://i.postimg.cc/3x0hN9qM/yellow-token.png');
+    this.load.image('blue', 'https://i.postimg.cc/3JrptQ0b/blue-token.png');
 
-  <!-- Modal for payment history -->
-  <div class="modal-bg" id="modalBg">
-    <div class="modal" role="dialog" aria-modal="true">
-      <button class="close" id="closeModal">✕</button>
-      <h3 id="modalTitle">Payment History</h3>
-      <div id="modalContent"></div>
-    </div>
-  </div>
+    // সাউন্ড লোড
+    this.load.audio('dice', 'https://www.soundjay.com/misc/sounds/dice-roll-1.mp3');
+    this.load.audio('move', 'https://www.soundjay.com/button/sounds/button-16.mp3');
+}
 
-  <script>
-  
-  </script>
+function create() {
+    // সাউন্ড অবজেক্ট তৈরি
+    diceSound = this.sound.add('dice');
+    moveSound = this.sound.add('move');
+
+    // বোর্ড কেন্দ্র
+    boardOriginX = this.scale.width / 2 - boardSize / 2;
+    boardOriginY = this.scale.height / 2 - boardSize / 2;
+
+    drawBoard(this);
+
+    // প্লেয়ার তৈরি
+    const colors = ['red', 'green', 'yellow', 'blue'];
+    colors.forEach((color, i) => {
+        let tokens = [];
+        for (let j = 0; j < 4; j++) {
+            let token = this.add.sprite(boardOriginX + cellSize * 1.5 + j * cellSize, boardOriginY + cellSize * 1.5 + i * cellSize, color)
+                .setScale(0.7)
+                .setInteractive();
+            token.playerIndex = i;
+            token.tokenIndex = j;
+            tokens.push(token);
+        }
+        players.push(tokens);
+    });
+
+    // Dice Roll Button
+    const rollBtn = document.getElementById('rollBtn');
+    rollBtn.addEventListener('click', () => {
+        diceValue = Phaser.Math.Between(1, 6);
+        diceSound.play(); // Dice রোলের সময় সাউন্ড
+        alert(`Player ${currentPlayer + 1} rolled ${diceValue}`);
+        moveToken(players[currentPlayer][0], diceValue);
+        currentPlayer = (currentPlayer + 1) % 4;
+    });
+}
+
+function update() {}
+
+// বোর্ড ড্র করা
+function drawBoard(scene) {
+    const graphics = scene.add.graphics();
+    graphics.lineStyle(2, 0x000000, 1);
+
+    // সেল ড্র
+    for (let i = 0; i <= 15; i++) {
+        graphics.moveTo(boardOriginX + i * cellSize, boardOriginY);
+        graphics.lineTo(boardOriginX + i * cellSize, boardOriginY + boardSize);
+
+        graphics.moveTo(boardOriginX, boardOriginY + i * cellSize);
+        graphics.lineTo(boardOriginX + boardSize, boardOriginY + i * cellSize);
+    }
+    graphics.strokePath();
+
+    // ৪টি বেস কালার
+    graphics.fillStyle(0xff0000, 1); // Red
+    graphics.fillRect(boardOriginX, boardOriginY, cellSize*6, cellSize*6);
+
+    graphics.fillStyle(0x00ff00, 1); // Green
+    graphics.fillRect(boardOriginX + boardSize - cellSize*6, boardOriginY, cellSize*6, cellSize*6);
+
+    graphics.fillStyle(0xffff00, 1); // Yellow
+    graphics.fillRect(boardOriginX, boardOriginY + boardSize - cellSize*6, cellSize*6, cellSize*6);
+
+    graphics.fillStyle(0x0000ff, 1); // Blue
+    graphics.fillRect(boardOriginX + boardSize - cellSize*6, boardOriginY + boardSize - cellSize*6, cellSize*6, cellSize*6);
+}
+
+// সিম্পল টোকেন মুভ
+function moveToken(token, steps) {
+    moveSound.play(); // টোকেন মুভের সময় সাউন্ড
+    token.x += steps * cellSize;
+}
+    </script>
 </body>
 </html>

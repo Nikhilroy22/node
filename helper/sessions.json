@@ -245,5 +245,14 @@
       "path": "/"
     },
     "flash": {}
+  },
+  "BF7cL0CvDW2gg_Q2TpkCQPlhK8KlhBa0": {
+    "cookie": {
+      "originalMaxAge": 60000,
+      "expires": "2025-11-28T15:15:51.771Z",
+      "httpOnly": true,
+      "path": "/"
+    },
+    "flash": {}
   }
 }

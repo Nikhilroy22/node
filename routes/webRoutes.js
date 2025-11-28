@@ -17,6 +17,7 @@ const authMiddleware = require('../middleware/authMiddleware');
 
 //DHAN Routes
 router.get('/dhan', dhan.index)
+router.get('/ppp', dhan.phaser)
 
 /* =========================
    Bet Routes

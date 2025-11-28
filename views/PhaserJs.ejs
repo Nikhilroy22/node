@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Phaser Game with Splash Fullscreen</title>
+<script src="/js/eruda.js"></script>
+<script>
+  eruda.init(); // Console চালু হবে
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    background: #1d213f;
+}
+#game-container {
+    width: 100vw;
+    height: 100vh;
+    touch-action: none;
+}
+</style>
+</head>
+<body>
+
+<div id="game-container"></div>
+
+<script>
+class SplashScene extends Phaser.Scene {
+    constructor() { super({ key: 'SplashScene' }); }
+
+    preload() {
+        const width = this.cameras.main.width;
+        const height = this.cameras.main.height;
+
+        const progressBar = this.add.graphics();
+
+        // Loading bar update
+        this.load.on('progress', (value) => {
+            progressBar.clear();
+            progressBar.fillStyle(0xffd700, 1);
+            progressBar.fillRect(width/4, height/2 - 15, (width/2) * value, 30);
+        });
+
+        this.load.on('complete', () => {
+            progressBar.destroy();
+        });
+
+        // Assets
+        this.load.audio('bgMusic', 'sound/background.mp3');
+        this.load.image('soundOn', 'https://img.icons8.com/color/48/000000/speaker.png');
+        this.load.image('soundOff', 'https://img.icons8.com/color/48/000000/mute.png');
+    }
+
+    create() {
+        this.scene.start('MainScene');
+    }
+}
+
+class MainScene extends Phaser.Scene {
+    constructor() { super({ key: 'MainScene' }); }
+
+    create() {
+        // First tap full-screen
+        this.input.once('pointerdown', () => {
+            if (!this.scale.isFullscreen) this.scale.startFullscreen();
+        });
+
+        // Background music
+        this.bgMusic = this.sound.add('bgMusic', { loop: true, volume: 0.5 });
+        this.bgMusic.play();
+
+        // Sound toggle button
+        this.soundOn = true;
+        this.soundButton = this.add.text(this.scale.width - 20, 20, 'Sound On', {
+            font: '24px Arial', fill: '#ffffff', backgroundColor: '#000000'
+        }).setPadding(10).setInteractive();
+        this.soundButton.setOrigin(1,0);
+
+        this.soundButton.on('pointerdown', () => {
+            this.soundOn = !this.soundOn;
+            if(this.soundOn){
+                this.bgMusic.resume();
+                this.soundButton.setText('Sound On');
+            } else {
+                this.bgMusic.pause();
+                this.soundButton.setText('Sound Off');
+            }
+        });
+
+        // Moving circle example
+        const graphics = this.add.graphics({ fillStyle: { color: 0xffd700 } });
+        const circle = new Phaser.Geom.Circle(100, this.scale.height/2, 30);
+        graphics.fillCircleShape(circle);
+
+        this.tweens.add({
+            targets: circle,
+            x: this.scale.width - 100,
+            duration: 4000,
+            yoyo: true,
+            repeat: -1,
+            onUpdate: () => {
+                graphics.clear();
+                graphics.fillStyle(0xffd700, 1);
+                graphics.fillCircle(circle.x, circle.y, circle.radius);
+            }
+        });
+
+        // Resize handling
+        this.scale.on('resize', (gameSize) => {
+            this.soundButton.setPosition(gameSize.width - 20, 20);
+        });
+    }
+}
+
+const config = {
+    type: Phaser.AUTO,
+    parent: 'game-container',
+    width: window.innerWidth,
+    height: window.innerHeight,
+    scale: {
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH
+    },
+    backgroundColor: '#1d213f',
+    scene: [SplashScene, MainScene]
+};
+
+const game = new Phaser.Game(config);
+</script>
+
+</body>
+</html>
