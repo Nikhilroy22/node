@@ -12,26 +12,16 @@
   eruda.init(); // Console চালু হবে
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
+<script src="/phaser.min.js"></script>
 <style>
-html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    width: 100%;
-    overflow: hidden;
-    background: #1d213f;
-}
-#game-container {
-    width: 100vw;
-    height: 100vh;
-    touch-action: none;
-}
+  html, body { margin:0; padding:0; width:100%; height:100%; overflow:hidden; background:#1d213f; }
+</style>
+
 </style>
 </head>
 <body>
 
-<div id="game-container"></div>
+
 
 <script>
 class SplashScene extends Phaser.Scene {
@@ -91,38 +81,88 @@ class MainScene extends Phaser.Scene {
         // Background music
         this.bgMusic = this.sound.add('bgMusic', { loop: true, volume: 0.5 });
 
-        // Sound toggle
-        this.soundOn = true;
-        this.soundButton = this.add.text(width-20, 20, 'Sound On', {
-            font:'24px Arial', fill:'#ffffff', backgroundColor:'#000000'
-        }).setPadding(10).setInteractive().setOrigin(1,0);
-
-        this.soundButton.on('pointerdown', () => {
-            this.soundOn = !this.soundOn;
-            if(this.soundOn){
-                this.bgMusic.resume();
-                this.soundButton.setText('Sound On');
-            } else {
-                this.bgMusic.pause();
-                this.soundButton.setText('Sound Off');
-            }
-        });
-
-        // Tap to start fullscreen + music
+        // Tap to Start
         const startText = this.add.text(width/2, height/2, 'Tap to Start', {
             font:'32px Arial', fill:'#ffd700', backgroundColor:'#000'
         }).setOrigin(0.5).setPadding(20).setInteractive();
 
-        startText.on('pointerdown', () => {
-            if(!this.scale.isFullscreen) this.scale.startFullscreen();
-            if(!this.bgMusic.isPlaying) this.bgMusic.play();
-            startText.destroy();
+        // UI container (Initially hidden)
+        this.gameUI = this.add.container(0, 0);
+        this.gameUI.setVisible(false);
+
+
+        // -----------------------
+        // SOUND BUTTON
+        // -----------------------
+        this.soundOn = true;
+
+        this.soundButton = this.add.text(width-20, 20, 'Sound On', {
+            font:'24px Arial', fill:'#ffffff', backgroundColor:'#000'
+        })
+        .setPadding(10)
+        .setOrigin(1,0)
+        .setInteractive();
+
+        this.gameUI.add(this.soundButton);
+
+        // ➤ SOUND ON/OFF CLICK EVENT
+        this.soundButton.on('pointerdown', () => {
+            this.soundOn = !this.soundOn;
+
+            if (this.soundOn) {
+                this.bgMusic.play();
+                this.soundButton.setText("Sound On");
+            } else {
+                this.bgMusic.stop();
+                this.soundButton.setText("Sound Off");
+            }
         });
 
-        // Moving circle example
+
+
+        // Settings Button
+    this.settingsButton = this.add.text(width-20, 60, 'Settings ⚙️', {
+        font:'24px Arial', fill:'#ffffff', backgroundColor:'#000000'
+    }).setPadding(10).setInteractive().setOrigin(1,0);
+this.gameUI.add(this.settingsButton);
+    // Modal group
+    this.modalGroup = this.add.group();
+    this.settingsButton.on('pointerdown', () => {
+        // Overlay background
+        const overlay = this.add.rectangle(0, 0, width, height, 0x000000, 0.7)
+            .setOrigin(0,0)
+            .setInteractive();
+        // Modal box
+        const boxWidth = width*0.8;
+        const boxHeight = height*0.5;
+        const modalBox = this.add.rectangle(width/2, height/2, boxWidth, boxHeight, 0xffffff, 1)
+            .setStrokeStyle(2, 0x000000);
+        const modalText = this.add.text(width/2, height/2, 'সেটিংস\n\n🔊 সাউন্ড অন/অফ', {
+            font:'28px Arial', fill:'#000000', align:'center'
+        }).setOrigin(0.5);
+
+        // Close button
+        const closeButton = this.add.text(width/2, height/2 + boxHeight/2 - 40, 'বন্ধ করুন', {
+            font:'24px Arial', fill:'#ffffff', backgroundColor:'#000000'
+        }).setOrigin(0.5).setPadding(10).setInteractive();
+
+        closeButton.on('pointerdown', () => {
+            this.modalGroup.clear(true, true);
+        });
+
+        // Add to modal group
+        this.modalGroup.addMultiple([overlay, modalBox, modalText, closeButton]);
+    });
+
+
+
+        // -----------------------
+        // MOVING CIRCLE
+        // -----------------------
         const graphics = this.add.graphics({ fillStyle: { color: 0xffd700 } });
         const circle = new Phaser.Geom.Circle(100, height/2, 30);
         graphics.fillCircleShape(circle);
+        this.gameUI.add(graphics);
 
         this.tweens.add({
             targets: circle,
@@ -137,16 +177,37 @@ class MainScene extends Phaser.Scene {
             }
         });
 
-        // Resize
+
+
+        // -----------------------
+        // TAP TO START → SHOW UI
+        // -----------------------
+        startText.on('pointerdown', () => {
+            if (!this.scale.isFullscreen){ this.scale.startFullscreen();
+              
+            }
+
+            
+
+            startText.destroy();
+
+            this.gameUI.setVisible(true);
+        });
+
+
+        // -----------------------
+        // RESIZE FIX
+        // -----------------------
         this.scale.on('resize', (gameSize) => {
             this.soundButton.setPosition(gameSize.width-20, 20);
+            this.settingsButton.setPosition(gameSize.width-20, 60);
         });
     }
 }
 
 const config = {
     type: Phaser.AUTO,
-    parent: 'game-container',
+    
     width: window.innerWidth,
     height: window.innerHeight,
     scale: {
