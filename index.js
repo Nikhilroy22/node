@@ -88,7 +88,7 @@ io.use((socket, next) => {
   });
 
 
-socketHandler(io, sessionMiddleware); // Crash socket (if needed)
+//socketHandler(io, sessionMiddleware); // Crash socket (if needed)
 //PrivateChat(io, sessionMiddleware); // Private chat socket
 
 /* =========================

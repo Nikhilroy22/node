@@ -93,7 +93,7 @@ async function uploadFile() {
   formData.append("file", fileInput.files[0]);
   formData.append("path", currentPath);
 
-  await fetch("/upload", { method: "POST", body: formData });
+  await fetch("/admin/fileupload", { method: "POST", body: formData });
   fileInput.value = "";
   loadFiles(currentPath);
 }

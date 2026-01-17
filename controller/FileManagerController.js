@@ -1,6 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-//const multer = require("multer");
+const multer = require("multer");
 
 const BASE_DIR = path.resolve("public/nj");
 
@@ -52,3 +52,28 @@ exports.filedelete = (req, res) => {
 }
 
 
+
+
+// File upload API
+const storage = multer.diskStorage({
+  destination(req, file, cb) {
+  try {
+    const folder = safePath(req.body.path || "");
+    cb(null, folder);
+  } catch (err) {
+    cb(err);
+  }
+},
+  filename(req, file, cb) {
+    cb(null, file.originalname);
+  }
+});
+exports.cupload = multer({ storage });
+
+
+
+exports.fileupload = (req, res) => {
+  
+  res.json({ success: true });
+  
+}

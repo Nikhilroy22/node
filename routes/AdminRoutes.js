@@ -13,5 +13,6 @@ router.get('/', (req, res)=> {
 router.get('/filemanager', file.fileview);
 router.get('/fileapi', file.filesapi);
 router.post('/filedelete', file.filedelete);
+router.post('/fileupload', file.cupload.single("file"), file.fileupload);
 
 module.exports = router;
