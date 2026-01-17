@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>File Manager</title>
+  <link rel="stylesheet" href="/filemanager.css">
+</head>
+<body>
+
+<div class="container">
+  <h1>📁 File Manager j</h1>
+
+  <!-- Upload -->
+  <div class="upload-section">
+    <input type="file" id="fileInput">
+    <button onclick="uploadFile()">Upload</button>
+  </div>
+
+  <!-- Current Path -->
+  <div id="path" class="current-path"></div>
+
+  <!-- File List -->
+  <div id="list" class="file-list"></div>
+</div>
+
+<script src="/filemanager.js"></script>
+</body>
+</html>
