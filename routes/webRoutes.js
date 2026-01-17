@@ -11,9 +11,15 @@ const BetApiController = require('../controller/BetApiController');
 const MessageView = require('../controller/MsgViewController');
 const demo = require('../controller/Demo');
 const dhan = require('../controller/DhanKataController');
+const blog = require('../controller/BlogController');
 
 // Middleware
 const authMiddleware = require('../middleware/authMiddleware');
+
+//BLOG Routes
+router.get('/bview', blog.blogview)
+
+
 
 //DHAN Routes
 router.get('/dhan', dhan.index)

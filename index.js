@@ -34,16 +34,16 @@ const io = new Server(server);
 ========================= */
 const sessionMiddleware = session({
   store: new JSONFileStore({ filePath: './helper/sessions.json',
-  ttl: 60,
-  reapInterval: 60,     // প্রতি 60 সেকেন্ডে expired sessions clean
-  reapOnStart: true,  // app start হলে expired sessions sweep করবে
-  retries: 1
+ // ttl: 60,
+//  reapInterval: 60,     // প্রতি 60 সেকেন্ডে expired sessions clean
+ // reapOnStart: true,  // app start হলে expired sessions sweep করবে
+ // retries: 1
   }),
   secret: 'secret123',
   resave: false,
   saveUninitialized: false,
   cookie: { httpOnly: true, 
-  maxAge: 1000 * 60  // 1 minute = 60000ms
+ // maxAge: 1000 * 60  // 1 minute = 60000ms
   }
 });
 

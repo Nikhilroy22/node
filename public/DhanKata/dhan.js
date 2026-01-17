@@ -1,6 +1,8 @@
   // Sample data for six workers (you'll replace this by fetching from your API)
     const data = [
       { id: 'worker1', name: 'Rahim', workedDays: 20, absentDays: 4, datesWorked: ['2025-11-01','2025-11-02','2025-11-03','2025-11-01','2025-11-02','2025-11-03'], totalWage: 10000, payments: [{date:'2025-11-15',amount:4000,girosto:'Mizan'},{date:'2025-11-25',amount:3000,girosto:'Ali'}] },
+      
+      
       { id: 'worker2', name: 'Karim', workedDays: 18, absentDays: 6, datesWorked: ['2025-11-02','2025-11-04'], totalWage: 9000, payments: [{date:'2025-11-20',amount:5000,girosto:'Rahim'}] },
       { id: 'worker3', name: 'Salam', workedDays: 22, absentDays: 2, datesWorked: ['2025-11-01','2025-11-02'], totalWage: 11000, payments: [{date:'2025-11-10',amount:7000,girosto:'Mizan'}] },
       { id: 'worker4', name: 'Jamal', workedDays: 15, absentDays: 9, datesWorked: ['2025-11-03'], totalWage: 7500, payments: [] },
