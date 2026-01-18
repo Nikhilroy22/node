@@ -1,4 +1,4 @@
-const { getUsers, createUser } = require('../model/db');
+const { getUserss } = require('../model/LoginModel');
 
 // Dummy user data
 /*const users = [
@@ -26,7 +26,7 @@ exports.showLogin = (req, res) => {
 // POST /login
 exports.loginUser = async (req, res) => {
   const { user, pass } = req.body;
-  const users = await getUsers();
+  const users =  getUserss();
   const errors = {};
 
   // ফাঁকা ইনপুট চেক

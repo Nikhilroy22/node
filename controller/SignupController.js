@@ -1,4 +1,4 @@
-const { getUsers, createUser } = require('../model/db');
+const { signupm } = require('../model/SignupModel');
 
 
 exports.SignUp = (req, res) => {
@@ -26,7 +26,7 @@ exports.SignUpPost = async (req, res) => {
     req.flash('oldInput', req.body);
     return res.redirect('/signup');
   }
- const kk = await createUser(user, pass);
+ const kk =  signupm(user, pass);
   req.session.user = kk;
   
   res.redirect("/");

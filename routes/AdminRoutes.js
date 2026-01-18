@@ -7,16 +7,16 @@ const jj = require('../db/nodesqlite');
 
 router.get("/data", (req, res) => {
   // INSERT
-jj.db.prepare(
+/*jj.db.prepare(
   "INSERT INTO users (name, age) VALUES (?, ?)"
 ).run("Nikhil", 25);
-
+*/
 // SELECT
 const id = 1;
 
 const row = jj.db.prepare(
-  "SELECT * FROM posts WHERE id = ?"
-).get(id);
+  "SELECT * FROM users"
+).all();
 
 //console.log(row);
 

@@ -4,13 +4,13 @@ const pp = path.join(__dirname, 'app.db');
 const db = new sqlite.DatabaseSync(pp);
 
 // CREATE TABLE
-db.exec(`
+/*db.exec(`
   CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY,
     name TEXT,
     age INTEGER
   )
-`);
+`);*/
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS users (
