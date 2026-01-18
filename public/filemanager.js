@@ -91,7 +91,9 @@ async function uploadFile() {
 
   const formData = new FormData();
   formData.append("file", fileInput.files[0]);
-  formData.append("path", currentPath);
+  formData.append("path", "currentPath");
+
+
 
   await fetch("/admin/fileupload", { method: "POST", body: formData });
   fileInput.value = "";
@@ -154,3 +156,4 @@ function showAudioPlayer(url) {
 
 // Initial load
 loadFiles();
+console.log(currentPath)

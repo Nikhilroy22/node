@@ -57,11 +57,15 @@ exports.filedelete = (req, res) => {
 // File upload API
 const storage = multer.diskStorage({
   destination(req, file, cb) {
+    const upath = "Nikhil";
+    
+    console.log(req.body.file || "no")
   try {
     const folder = safePath(req.body.path || "");
     cb(null, folder);
   } catch (err) {
     cb(err);
+    console.log(err);
   }
 },
   filename(req, file, cb) {
@@ -74,6 +78,6 @@ exports.cupload = multer({ storage });
 
 exports.fileupload = (req, res) => {
   
-  res.json({ success: true });
+  res.json({ success: true  });
   
 }
