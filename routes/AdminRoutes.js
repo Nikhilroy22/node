@@ -12,10 +12,10 @@ jj.db.prepare(
 ).run("Nikhil", 25);
 
 // SELECT
-const id = 5;
+const id = 1;
 
 const row = jj.db.prepare(
-  "SELECT * FROM users WHERE id = ?"
+  "SELECT * FROM posts WHERE id = ?"
 ).get(id);
 
 //console.log(row);
