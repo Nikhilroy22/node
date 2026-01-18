@@ -11,7 +11,7 @@ exports.placeBet = async (req, res) => {
     if (!matchId) return res.status(400).json({ success: false, message: "❌ ম্যাচ আইডি দিতে হবে!" });
     if (!amount || isNaN(amount) || amount <= 0) return res.status(400).json({ success: false, message: "❌ সঠিক টাকার পরিমাণ দিন!" });
 
-    const url = "https://1xbet86.com/LiveFeed/Get1x2_VZip?sports=16&count=50&lng=en&gr=54&mode=4&country=19&getEmpty=true";
+    const url = "https://22play8.com/LiveFeed/Get1x2_VZip?sports=4&count=50&lng=en_GB&gr=322&mode=4&country=19&partner=151&getEmpty=true";
     const resp = await fetch(url);
     const json = await resp.json();
 
@@ -71,7 +71,7 @@ exports.bethome = (req, res) => {
 // Bet json API
 exports.betapi = async(req, res) =>{
   
-  const url = "https://1xbet86.com/LiveFeed/Get1x2_VZip?sports=16&count=50&lng=en&gr=54&mode=4&country=19&getEmpty=true";
+  const url = "https://22play8.com/LiveFeed/Get1x2_VZip?sports=4&count=50&lng=en_GB&gr=322&mode=4&country=19&partner=151&getEmpty=true";
 
 const fdata = await fetch(url, {
     method: "GET",
