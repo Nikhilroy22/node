@@ -1,78 +1,7 @@
-<!DOCTYPE html><html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Mobile Responsive Admin Panel</title>
-<link rel="stylesheet" href="/admincss/style.css">
-
-<!-- Main Script -->
-  <script src="/adminjs/script.js" defer></script>
-
-<style>
-  
-.accordion {
-  background: #444;
-  cursor: pointer;
-  padding: 15px 20px;
-  margin-bottom: 0px;
-  border-radius: 5px;
-  display: flex;
-  font-family:  monospace; /* gaming/futuristic feel */
-  justify-content: space-between;
-  align-items: center;
-  transition: background 0.3s;
-}
-
-.accordion:hover {
-  background: #555;
-}
-
-.accordion .live {
-  background: red;
-  color: #fff;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 12px;
-}
-.arrow {
-  font-size: 19px;
-  transition: transform 0.3s;
-}
- .accordion.active .arrow {
-  transform: rotate(180deg);
-}
+<%- include('Partials/header') %>
 
 
-.accordion-content {
-  background: #555;
-  overflow: hidden;
-  max-height: 0;
-  transition: max-height 0.3s ease;
-  border-radius: 5px;
-  margin-bottom: 5px;
-  padding: 0 20px;
-}
-
-.odds {
-  display: flex;
-  justify-content: space-around;
-  padding: 10px 0;
-}
-
-.odds button {
-  background: #222;
-  color: #fff;
-  border: none;
-  padding: 8px 15px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-}
-</style>
-
-
-</head>
-<body><div class="topbar">
+<div class="topbar">
   <span class="menu-btn" onclick="toggleMenu()">☰</span>
   <h2>Admin Panel</h2>
 </div>
@@ -131,22 +60,4 @@
 
 
 
-<script>
-// Accordion toggle
-const accordions = document.querySelectorAll(".accordion");
-
-accordions.forEach(acc => {
-  acc.addEventListener("click", () => {
-    acc.classList.toggle("active");
-    const panel = acc.nextElementSibling;
-    if(panel.style.maxHeight) {
-      panel.style.maxHeight = null;
-    } else {
-      panel.style.maxHeight = panel.scrollHeight + "px";
-    }
-  });
-});
-</script>
-
-</body>
-</html>
+<%- include('Partials/footer') %>
