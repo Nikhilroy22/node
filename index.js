@@ -23,9 +23,12 @@ const PrivateChat = require('./socket/PrivateChat'); // Private chat socket
 const webRoutes = require('./routes/webRoutes');
 const AdminRoutes = require('./routes/AdminRoutes');
 
+
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
+
+
 
 
 
@@ -70,8 +73,8 @@ app.set('views', path.join(__dirname, 'views'));
 /* =========================
    Middleware
 ========================= */
-app.use(express.urlencoded({ extended: true })); // Parse form data
-app.use(express.json()); // Parse JSON
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' })); //Parse JSON
 app.use(express.static(path.join(__dirname, 'public'))); // Static files
 
 /* =========================
@@ -96,5 +99,6 @@ io.use((socket, next) => {
 ========================= */
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+  
+  console.log(chalk.green.bold(`Server running at http://localhost:${PORT}`));
 });

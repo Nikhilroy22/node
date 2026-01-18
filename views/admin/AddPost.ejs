@@ -118,7 +118,10 @@ pre:hover .copy-btn { opacity: 1; }
 
 <header>
   <h1>Quill Code Editor</h1>
-  <button class="toggle" onclick="toggleDark()">🌙 Toggle</button>
+<div>
+    <button class="toggle" onclick="toggleDark()">🌙</button>
+    <button class="toggle" onclick="saveContent()">💾 Save</button>
+  </div>
 </header>
 
 <div class="container">
@@ -203,6 +206,21 @@ quill.on('text-change', () => {
 
 function toggleDark() {
   document.body.classList.toggle('dark');
+}
+
+
+function saveContent() {
+  const content = quill.root.innerHTML;
+
+  fetch('savepost', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ content })
+  })
+  .then(res => res.json())
+  .then(() => {
+    alert('Content saved successfully!');
+  });
 }
 </script>
 
