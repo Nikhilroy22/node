@@ -28,6 +28,11 @@ router.get('/', (req, res)=> {
   res.render('admin/home');
   
 });
+//SETTINGS
+router.get("/setting", (req, res) => {
+  res.render("admin/Setting");
+  
+});
 
 // post
 router.get('/addpost', post.blogview )

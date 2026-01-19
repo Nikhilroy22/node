@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>SQLite Inline Editor</title>
+  <style>
+    body { font-family: monospace; }
+    table { border-collapse: collapse; }
+    td, th { border: 1px solid #ccc; padding: 6px; }
+    td { cursor: pointer; }
+    input { width: 100%; }
+    button { margin: 5px; }
+  </style>
+</head>
+<body>
+
+<h3>Users Table</h3>
+<button onclick="createRow()">+ New Row</button>
+
+<table id="tbl"></table>
+
+<script>
+const table = "users";
+
+async function load() {
+  const res = await fetch(`/api/${table}`);
+  const data = await res.json();
+
+  const headers = Object.keys(data[0] || {});
+  let html = "<tr>" +
+    headers.map(h => `<th>${h}</th>`).join("") +
+    "<th>Action</th></tr>";
+
+  data.forEach(row => {
+    html += "<tr>";
+    headers.forEach(col => {
+      html += `<td onclick="editCell(this,'${col}',${row.id})">
+                ${row[col]}
+              </td>`;
+    });
+    html += `<td>
+      <button onclick="del(${row.id})">Delete</button>
+    </td></tr>`;
+  });
+
+  document.getElementById("tbl").innerHTML = html;
+}
+
+function editCell(td, col, id) {
+  const old = td.innerText;
+  td.innerHTML = `<input value="${old}" 
+    onblur="save(this,'${col}',${id})">`;
+  td.firstChild.focus();
+}
+
+async function save(input, col, id) {
+  await fetch("/api/update", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      table,
+      id,
+      column: col,
+      value: input.value
+    })
+  });
+  load();
+}
+
+async function del(id) {
+  if (!confirm("Delete row?")) return;
+  await fetch("/api/delete", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ table, id })
+  });
+  load();
+}
+
+async function createRow() {
+  const name = prompt("Name?");
+  const email = prompt("Email?");
+  await fetch("/api/create", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      table,
+      data: { name, email }
+    })
+  });
+  load();
+}
+
+load();
+</script>
+
+</body>
+</html>
