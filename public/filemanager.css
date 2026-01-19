@@ -1,9 +1,4 @@
-body {
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
-  margin: 0;
-  padding: 20px;
-}
+
 
 .container {
   max-width: 800px;
@@ -95,3 +90,17 @@ h1 {
 .delete-btn:hover {
   background-color: #c0392b;
 }
+
+
+.loading {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  border: 2px solid #ccc;
+  border-top-color: #333;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }

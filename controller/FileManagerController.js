@@ -16,7 +16,7 @@ function safePath(userPath = "") {
 
 exports.fileview = (req, res) => {
   
-  res.render("filemanager");
+  res.render("admin/FileManager");
 }
 
 exports.filesapi = (req, res) => {

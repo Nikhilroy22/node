@@ -211,5 +211,14 @@
       "path": "/"
     },
     "flash": {}
+  },
+  "GFvBVKahcN4vphMwW4iLGZoA55ZX9qs9": {
+    "cookie": {
+      "originalMaxAge": null,
+      "expires": null,
+      "httpOnly": true,
+      "path": "/"
+    },
+    "flash": {}
   }
 }

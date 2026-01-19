@@ -91,11 +91,14 @@ async function uploadFile() {
 
   // 🔒 disable input while uploading
   filekkk.disabled = true;
+  filekkk.textContent = "...";
+  filekkk.classList.add("loading");
   //fileInput.innertexr
 
   if (!fileInput.files.length) {
+    filekkk.textContent = "Upload";
     showAlert("অনুগ্রহ করে একটি ফাইল সিলেক্ট করুন", "Warning");
-    fileInput.disabled = false; // আবার enable
+    filekkk.disabled = false; // আবার enable
     return;
   }
 
@@ -125,6 +128,7 @@ async function uploadFile() {
   } finally {
     // 🔓 enable input after upload
     filekkk.disabled = false;
+    filekkk.textContent = "Upload";
   }
 }
 
