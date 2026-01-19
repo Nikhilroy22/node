@@ -91,8 +91,8 @@ async function uploadFile() {
 
   // 🔒 disable input while uploading
   filekkk.disabled = true;
-  filekkk.textContent = "...";
-  filekkk.classList.add("loading");
+  filekkk.textContent = "uploading...";
+  
   //fileInput.innertexr
 
   if (!fileInput.files.length) {
