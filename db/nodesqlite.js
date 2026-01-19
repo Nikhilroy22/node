@@ -29,4 +29,15 @@ db.exec(`
       created_at TEXT DEFAULT CURRENT_TIMESTAMP
     )
   `);
+  
+ db.exec(`CREATE TABLE IF NOT EXISTS settings (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  site_name TEXT,
+  site_description TEXT,
+  site_logo TEXT,
+  admin_email TEXT,
+  maintenance_mode INTEGER DEFAULT 0,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP)
+`);
 module.exports = {db}

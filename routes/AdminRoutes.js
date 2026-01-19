@@ -16,7 +16,13 @@ router.get("/data", (req, res) => {
 });
 
 router.get('/', (req, res) => {
-  res.render('admin/home');
+  const stats = jj.db.prepare(`
+    SELECT
+      (SELECT COUNT(*) FROM users) AS totalUsers,
+      (SELECT COUNT(*) FROM posts) AS totalPosts
+  `).get();
+
+  res.render("admin/home", { stats });
 });
 
 router.get("/setting", (req, res) => {
