@@ -52,7 +52,7 @@ async function postfetch() {
       const div = document.createElement("div");
       div.className = "post-item";
       div.innerHTML = `
-        <h3>${post.title}</h3>
+        <h3>${post.id} ${post.title}</h3>
         <p>${post.content.substring(0, 120)}...</p>
       `;
       postlist.appendChild(div);
