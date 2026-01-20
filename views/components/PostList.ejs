@@ -1,38 +1,59 @@
+<style>
+  .ploader {
+  text-align: center;
+  padding: 16px;
+  color: #666;
+  display: none;
+}
+
+.post-item {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .post-item h3 {
+    font-size: 16px;
+  }
+}
+</style>
+
+
 <div id="postlist"></div>
-<p id="loading" style="display:none">Loading...</p>
+
+<div id="loading" class="ploader">Loading...</div>
 
 <script>
 const postlist = document.getElementById("postlist");
 const loading = document.getElementById("loading");
 
 let page = 1;
-let loadingPost = false;
-let finished = false;
+let isLoading = false;
+let hasMore = true;
 
 async function postfetch() {
-  if (loadingPost || finished) return;
+  if (isLoading || !hasMore) return;
 
-  loadingPost = true;
+  isLoading = true;
   loading.style.display = "block";
 
   try {
     const res = await fetch(`/admin/data?page=${page}`);
-    const data = await res.json();
+    const posts = await res.json();
 
-    if (data.length === 0) {
-      finished = true;
+    if (posts.length === 0) {
+      hasMore = false;
       loading.innerText = "No more posts";
       return;
     }
 
-    data.forEach(post => {
-      console.log(post.title)
+    posts.forEach(post => {
       const div = document.createElement("div");
       div.className = "post-item";
       div.innerHTML = `
         <h3>${post.title}</h3>
         <p>${post.content.substring(0, 120)}...</p>
-        <hr>
       `;
       postlist.appendChild(div);
     });
@@ -40,23 +61,24 @@ async function postfetch() {
     page++;
 
   } catch (err) {
-    console.error(err);
+    console.error("Load error:", err);
   } finally {
-    loadingPost = false;
-    loading.style.display = "none";
+    isLoading = false;
+    loading.style.display = hasMore ? "none" : "block";
   }
 }
 
-// scroll detect
+// ✅ Smooth & accurate scroll detection
 window.addEventListener("scroll", () => {
-  if (
-    window.innerHeight + window.scrollY >=
-    document.body.offsetHeight - 100
-  ) {
+  const scrollTop = window.scrollY;
+  const viewportHeight = window.innerHeight;
+  const fullHeight = document.documentElement.scrollHeight;
+
+  if (scrollTop + viewportHeight >= fullHeight - 120) {
     postfetch();
   }
 });
 
-// initial load
+// Initial load
 postfetch();
 </script>
