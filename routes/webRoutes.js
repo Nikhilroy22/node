@@ -17,7 +17,7 @@ const blog = require('../controller/BlogController');
 const authMiddleware = require('../middleware/authMiddleware');
 
 //BLOG Routes
-router.get('/bview', blog.blogview)
+router.get('/bview', blog.userblog)
 
 
 

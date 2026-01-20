@@ -1,0 +1,62 @@
+<div id="postlist"></div>
+<p id="loading" style="display:none">Loading...</p>
+
+<script>
+const postlist = document.getElementById("postlist");
+const loading = document.getElementById("loading");
+
+let page = 1;
+let loadingPost = false;
+let finished = false;
+
+async function postfetch() {
+  if (loadingPost || finished) return;
+
+  loadingPost = true;
+  loading.style.display = "block";
+
+  try {
+    const res = await fetch(`/admin/data?page=${page}`);
+    const data = await res.json();
+
+    if (data.length === 0) {
+      finished = true;
+      loading.innerText = "No more posts";
+      return;
+    }
+
+    data.forEach(post => {
+      console.log(post.title)
+      const div = document.createElement("div");
+      div.className = "post-item";
+      div.innerHTML = `
+        <h3>${post.title}</h3>
+        <p>${post.content.substring(0, 120)}...</p>
+        <hr>
+      `;
+      postlist.appendChild(div);
+    });
+
+    page++;
+
+  } catch (err) {
+    console.error(err);
+  } finally {
+    loadingPost = false;
+    loading.style.display = "none";
+  }
+}
+
+// scroll detect
+window.addEventListener("scroll", () => {
+  if (
+    window.innerHeight + window.scrollY >=
+    document.body.offsetHeight - 100
+  ) {
+    postfetch();
+  }
+});
+
+// initial load
+postfetch();
+</script>

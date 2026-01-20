@@ -1,0 +1,44 @@
+<%- include('Partials/header') %>
+<h1>Post Add</h1>
+
+<button id="saveBtn">💾 Save</button>
+<input type="text" id="titlepost">
+<div id="editor"></div>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const quill = new Quill('#editor', {
+    theme: 'snow',
+    modules: {
+      toolbar: {
+        container: [
+          ['bold','italic','underline','code-block'],
+          [{ list: 'ordered' }, { list: 'bullet' }],
+          ['image'],
+          ['clean'],
+          [{ color: [] }, { background: [] }]
+        ]
+      }
+    }
+  });
+
+  const saveBtn = document.getElementById("saveBtn");
+  
+
+  saveBtn.addEventListener("click", () => {
+    const titlepost = document.getElementById("titlepost").value;
+    const contentt = quill.root.innerHTML;
+
+    fetch('/admin/savepost', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: titlepost, content: contentt })
+    })
+    .then(res => res.json())
+    .then(() => alert("Content saved successfully!"));
+  });
+});
+</script>
+
+<%- include('Partials/footer') %>

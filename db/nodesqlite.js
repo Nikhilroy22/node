@@ -25,6 +25,7 @@ db.exec(`
   db.exec(`
     CREATE TABLE IF NOT EXISTS posts (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT,
       content TEXT,
       created_at TEXT DEFAULT CURRENT_TIMESTAMP
     )

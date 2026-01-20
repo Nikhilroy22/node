@@ -10,9 +10,20 @@ const jj = require('../db/nodesqlite');
 router.use(admin);
 
 
+// /admin/data?page=1
 router.get("/data", (req, res) => {
-  const row = jj.db.prepare("SELECT * FROM users").all();
-  res.json(row);
+  const page = parseInt(req.query.page) || 1;
+  const limit = 3;
+  const offset = (page - 1) * limit;
+
+  const posts = jj.db.prepare(`
+    SELECT id, title, content
+    FROM posts
+    ORDER BY id DESC
+    LIMIT ? OFFSET ?
+  `).all(limit, offset);
+
+  res.json(posts);
 });
 
 router.get('/', (req, res) => {

@@ -148,7 +148,8 @@ const quill = new Quill('#editor', {
         ['bold','italic','underline','code-block'],
         [{ list: 'ordered' }, { list: 'bullet' }],
         ['image'],
-        ['clean']
+        ['clean'],
+        [{ color: [] }, { background: [] }], // ⭐ color add
       ],
       handlers: {
         image: imageHandler
