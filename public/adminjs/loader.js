@@ -1,6 +1,10 @@
+let loadingRAF = null;
+
 function ShowLoading() {
 
-  // overlay
+  // prevent duplicate
+  if (document.getElementById("loading-overlay")) return;
+
   const overlay = document.createElement("div");
   overlay.id = "loading-overlay";
   Object.assign(overlay.style, {
@@ -16,7 +20,6 @@ function ShowLoading() {
     zIndex: "9999"
   });
 
-  // loader
   const loader = document.createElement("div");
   Object.assign(loader.style, {
     width: "40px",
@@ -30,11 +33,22 @@ function ShowLoading() {
   function spin() {
     angle = (angle + 6) % 360;
     loader.style.transform = `rotate(${angle}deg)`;
-    requestAnimationFrame(spin);
+    loadingRAF = requestAnimationFrame(spin);
   }
   spin();
 
   overlay.appendChild(loader);
   document.body.appendChild(overlay);
 }
-ShowLoading()
+
+function HideLoading() {
+  const overlay = document.getElementById("loading-overlay");
+  if (!overlay) return;
+
+  if (loadingRAF) {
+    cancelAnimationFrame(loadingRAF);
+    loadingRAF = null;
+  }
+
+  overlay.remove();
+}

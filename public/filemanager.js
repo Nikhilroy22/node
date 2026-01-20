@@ -101,7 +101,7 @@ async function uploadFile() {
     filekkk.disabled = false; // আবার enable
     return;
   }
-
+ShowLoading();
   const formData = new FormData();
   formData.append("file", fileInput.files[0]);
   formData.append("path", currentPath);
@@ -129,6 +129,7 @@ async function uploadFile() {
     // 🔓 enable input after upload
     filekkk.disabled = false;
     filekkk.textContent = "Upload";
+    HideLoading();
   }
 }
 
