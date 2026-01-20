@@ -229,5 +229,27 @@
       "path": "/"
     },
     "flash": {}
+  },
+  "0UwKMZH9a8yTDBSO4CtJL2nrpz8SEB-v": {
+    "cookie": {
+      "originalMaxAge": null,
+      "expires": null,
+      "httpOnly": true,
+      "path": "/"
+    },
+    "flash": {}
+  },
+  "HiGgxI2C5FKGEsx_fCv7txOM9sqK0CKU": {
+    "cookie": {
+      "originalMaxAge": null,
+      "expires": null,
+      "httpOnly": true,
+      "path": "/"
+    },
+    "flash": {},
+    "user": {
+      "id": 1,
+      "username": "Niloy"
+    }
   }
 }
