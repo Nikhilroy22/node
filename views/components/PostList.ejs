@@ -1,4 +1,9 @@
 <style>
+#postlist{
+  padding: 0 14px;
+  
+}
+
   .ploader {
   text-align: center;
   padding: 16px;
@@ -17,6 +22,15 @@
     font-size: 16px;
   }
 }
+.post-link {
+  color: #111;
+  text-decoration: none;
+}
+
+.post-link:hover {
+  text-decoration: underline;
+  color: #2563eb;
+}
 </style>
 
 
@@ -25,60 +39,70 @@
 <div id="loading" class="ploader">Loading...</div>
 
 <script>
-const postlist = document.getElementById("postlist");
-const loading = document.getElementById("loading");
+document.addEventListener("DOMContentLoaded", () => {
 
-let page = 1;
-let isLoading = false;
-let hasMore = true;
+  const postlist = document.getElementById("postlist");
+  const loading = document.getElementById("loading");
 
-async function postfetch() {
-  if (isLoading || !hasMore) return;
+  let page = 1;
+  let isLoading = false;
+  let hasMore = true;
 
-  isLoading = true;
-  loading.style.display = "block";
+  async function postfetch() {
+    if (isLoading || !hasMore) return;
 
-  try {
-    const res = await fetch(`/admin/data?page=${page}`);
-    const posts = await res.json();
+    isLoading = true;
+    loading.style.display = "block";
 
-    if (posts.length === 0) {
-      hasMore = false;
-      loading.innerText = "No more posts";
-      return;
+    try {
+      const res = await fetch(`/admin/data?page=${page}`);
+      const posts = await res.json();
+
+      if (posts.length === 0) {
+        hasMore = false;
+        loading.innerText = "No more posts";
+        return;
+      }
+
+      posts.forEach(post => {
+        const div = document.createElement("div");
+        div.className = "post-item";
+
+        div.innerHTML = `
+          <h3>
+            <a href="/post/${post.id}" class="post-link">
+              ${post.id} ${post.title}
+            </a>
+          </h3>
+          <p>${post.content.substring(0, 120)}...</p>
+        `;
+
+        postlist.appendChild(div);
+      });
+
+      page++;
+
+    } catch (err) {
+      console.error("Load error:", err);
+    } finally {
+      isLoading = false;
+      loading.style.display = hasMore ? "none" : "block";
     }
-
-    posts.forEach(post => {
-      const div = document.createElement("div");
-      div.className = "post-item";
-      div.innerHTML = `
-        <h3>${post.id} ${post.title}</h3>
-        <p>${post.content.substring(0, 120)}...</p>
-      `;
-      postlist.appendChild(div);
-    });
-
-    page++;
-
-  } catch (err) {
-    console.error("Load error:", err);
-  } finally {
-    isLoading = false;
-    loading.style.display = hasMore ? "none" : "block";
   }
-}
 
-// ✅ Smooth & accurate scroll detection
-window.addEventListener("scroll", () => {
-  const scrollTop = window.scrollY;
-  const viewportHeight = window.innerHeight;
-  const fullHeight = document.documentElement.scrollHeight;
+  // ✅ Smooth & accurate scroll detection
+  window.addEventListener("scroll", () => {
+    const scrollTop = window.scrollY;
+    const viewportHeight = window.innerHeight;
+    const fullHeight = document.documentElement.scrollHeight;
 
-  if (scrollTop + viewportHeight >= fullHeight - 120) {
-    postfetch();
-  }
+    if (scrollTop + viewportHeight >= fullHeight - 120) {
+      postfetch();
+    }
+  });
+
+  // Initial load
+  postfetch();
+
 });
-
-// Initial load
-postfetch();
 </script>

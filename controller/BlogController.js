@@ -13,12 +13,12 @@ function quillToHighlight(html) {
 exports.userblog = (req, res) => {
   const post = jj.db
     .prepare("SELECT * FROM posts WHERE id = ?")
-    .get(4);
-post.content = quillToHighlight(post.content);
+    .get(req.params.jj);
   if (!post) {
     return res.status(404).send("Post not found");
   }
 
+post.content = quillToHighlight(post.content);
   res.render("Blog", {
     post: post
   });
