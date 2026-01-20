@@ -25,3 +25,5 @@ window.addEventListener('online', () =>{ statusEl.textContent = 'Online ✅'
 
 window.addEventListener('offline', () => statusEl.textContent = 'Offline ❌');
 }
+
+
