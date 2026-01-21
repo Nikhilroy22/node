@@ -410,5 +410,18 @@
       "id": 2,
       "username": "Puja"
     }
+  },
+  "uyx8XvdsmfmGnhAyJh2RogGYLoMmCW9q": {
+    "cookie": {
+      "originalMaxAge": null,
+      "expires": null,
+      "httpOnly": true,
+      "path": "/"
+    },
+    "flash": {},
+    "user": {
+      "id": 1,
+      "username": "Niloy"
+    }
   }
 }

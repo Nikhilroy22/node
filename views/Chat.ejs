@@ -5,7 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>চ্যাট অ্যাপ</title>
 
+<!-- Dev-specific scripts -->
+    <script src="/js/eruda.js"></script>
+    <script>
+      eruda.init(); // Console চালু হবে
+    </script>
 <script src="/socket.io/socket.io.js"></script>
+<script src="/adminjs/loader.js" defer></script>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Poppins,system-ui}
@@ -169,26 +175,33 @@ const chatBox = document.getElementById("chatMessages");
    OPEN CHAT + LOAD OLD
 ===================== */
 async function openChat(u){
+  ShowLoading();
+
   currentUser = u;
   document.getElementById("chatUser").textContent = u.username;
   chatBox.innerHTML = "";
 
-  // 🔥 LOAD OLD CHAT
-  const res = await fetch(`/chat/${u.userid}`);
-  const history = await res.json();
+  try{
+    const res = await fetch(`/chat/${u.userid}`);
+    const history = await res.json();
 
-  history.forEach(m=>{
-    if(m.sender_id == userId){
-      addMsg(m.message,"me");
-    }else{
-      addMsg(m.message,"other");
-    }
-  });
+    history.forEach(m=>{
+      if(m.from_user == userId){
+        addMsg(m.message,"me");
+      }else{
+        addMsg(m.message,"other");
+      }
+    });
+  }catch(err){
+    console.error("Chat load failed", err);
+  }
 
   unread[u.userid] = 0;
   updateNotif();
   document.getElementById("chatModal").style.display="flex";
   scrollBottom();
+
+  HideLoading(); // ✅ always শেষে
 }
 
 function closeChat(){
