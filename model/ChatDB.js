@@ -1,62 +1,60 @@
-const { loadDb, DB_PATH, fs, saveDB } = require('./SqlDb');
+const { db } = require('../db/nodesqlite');
 
-
-
-// Save message
-async function saveMessage(from_user, to_user, message, delivered=0) {
-  
-  const db = await loadDb();
-  const stmt = db.prepare("INSERT INTO messages (from_user, to_user, message, delivered) VALUES (?,?,?,?)");
-  stmt.run([from_user, to_user, message, delivered]);
-  stmt.free();
-  saveDB(db); // save to file
-}
-//get messages
-async function getMessages(user1, user2) {
-  const db = await loadDb();
-  
+/* =========================
+   SAVE MESSAGE
+========================= */
+function saveMessage(from_user, to_user, message, delivered = 0) {
   const stmt = db.prepare(`
-    SELECT * FROM messages
+    INSERT INTO messages (from_user, to_user, message, delivered)
+    VALUES (?, ?, ?, ?)
+  `);
+  stmt.run(from_user, to_user, message, delivered);
+  return stmt.lastInsertRowid;
+}
+
+/* =========================
+   GET CHAT HISTORY
+========================= */
+function getMessages(user1, user2) {
+  const stmt = db.prepare(`
+    SELECT *
+    FROM messages
     WHERE (from_user = ? AND to_user = ?)
        OR (from_user = ? AND to_user = ?)
     ORDER BY id ASC
   `);
 
-  stmt.bind([user1, user2, user2, user1]); // ← bind() করতে হবে
-
-  const rows = [];
-  while (stmt.step()) {
-    rows.push(stmt.getAsObject()); // এখানে কিছু দেবার দরকার নেই
-  }
-
-  stmt.free();
-  return rows;
+  return stmt.all(user1, user2, user2, user1);
 }
 
+/* =========================
+   GET PENDING (OFFLINE)
+========================= */
+function getPendingMessages(to_user) {
+  const stmt = db.prepare(`
+    SELECT *
+    FROM messages
+    WHERE to_user = ? AND delivered = 0
+    ORDER BY id ASC
+  `);
 
-// Get pending messages
-async function getPendingMessages(to_user) {
-  const db = await loadDb();
-  const stmt = db.prepare("SELECT * FROM messages WHERE to_user=? AND delivered=0");
-  stmt.bind([to_user]);
-
-  const rows = [];
-  while (stmt.step()) {
-    rows.push(stmt.getAsObject());
-  }
-  stmt.free();
-  return rows;
+  return stmt.all(to_user);
 }
 
-// Mark delivered
-async function markDelivered(messageId) {
-  const db = await loadDb();
-  const stmt = db.prepare("UPDATE messages SET delivered=1 WHERE id=?");
-  stmt.run([messageId]);
-  stmt.free();
-  saveDB(db);
+/* =========================
+   MARK DELIVERED
+========================= */
+function markDelivered(messageId) {
+  const stmt = db.prepare(`
+    UPDATE messages SET delivered = 1 WHERE id = ?
+  `);
+  stmt.run(messageId);
+  return true;
 }
 
-
-
-module.exports = { saveMessage, getPendingMessages, markDelivered, getMessages};
+module.exports = {
+  saveMessage,
+  getMessages,
+  getPendingMessages,
+  markDelivered,
+};

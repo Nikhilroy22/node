@@ -372,19 +372,6 @@
       "username": "Niloy"
     }
   },
-  "7qqiWKB7BG6B3iFx6W4nTVCmVsDHE0r9": {
-    "cookie": {
-      "originalMaxAge": null,
-      "expires": null,
-      "httpOnly": true,
-      "path": "/"
-    },
-    "flash": {},
-    "user": {
-      "id": 3,
-      "username": "Puja"
-    }
-  },
   "9UGI5BNf200gfu151SpQMd4jQynihzMB": {
     "cookie": {
       "originalMaxAge": null,
@@ -398,7 +385,7 @@
       "username": "Niloy"
     }
   },
-  "FwNnL6Z1HZpY426enkSIGVjHo8z80e-x": {
+  "8qEDFsA-8uBVkiXhcRHugQQyjSOv_YhH": {
     "cookie": {
       "originalMaxAge": null,
       "expires": null,
@@ -409,6 +396,19 @@
     "user": {
       "id": 1,
       "username": "Niloy"
+    }
+  },
+  "0DKB3sk3qIsiUQODzKf6wC815x9yFqqn": {
+    "cookie": {
+      "originalMaxAge": null,
+      "expires": null,
+      "httpOnly": true,
+      "path": "/"
+    },
+    "flash": {},
+    "user": {
+      "id": 2,
+      "username": "Puja"
     }
   }
 }

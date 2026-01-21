@@ -41,4 +41,15 @@ db.exec(`
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP)
 `);
+
+db.exec(`
+      CREATE TABLE IF NOT EXISTS messages (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        from_user INTEGER,
+        to_user INTEGER,
+        message TEXT,
+        delivered INTEGER DEFAULT 0,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
 module.exports = {db}
