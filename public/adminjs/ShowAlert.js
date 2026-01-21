@@ -7,13 +7,15 @@ function showAlert(message, title = "Alert") {
     left: 0,
     width: "100%",
     height: "100%",
-    background: "rgba(0,0,0,0.6)",
+    //background: "rgba(0,0,0,0.6)",
+    background: "rgba(15,23,42,0.45)",
     display: "flex",
+    backdropFilter: "blur(3px)",
     alignItems: "center",
     justifyContent: "center",
     zIndex: 9999
   });
-
+console.log(overlay)
   // Modal box
   const modal = document.createElement("div");
   Object.assign(modal.style, {

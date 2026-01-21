@@ -18,9 +18,5 @@ if (!foundUser) {
 
 
 
-  res.render('MessageView', {
-    me: sessionUser,
-    chatWith: foundUser,
-    messages
-  });
+  res.json(messages)
 }

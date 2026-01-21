@@ -1,7 +1,7 @@
 .navbar-main {
    display: none;  
   position: fixed; /* Stay in place */
-  overflow: hidden;
+  
   top: 0;
   bottom: 0;
   width: 100%; /* Full width */

@@ -1,32 +1,15 @@
 <%- include('header', { showSplash }) %>
 
 <%- include('components/tabs') %>
-
-
-<div id="statusnet"></div>
-
+<%- include('components/floating-col') %>
 
 <!-- =======================
      Node Info & Status
 ======================= -->
 <p><%= nodeVersion %></p>
 
-<!-- =======================
-     Home Container (Conditional Session)
-======================= -->
-<div class="home-container">
-  <% if (session.user) { %>
-    <h1><%= data.username %></h1>
-    <p>আপনি সফলভাবে লগইন করেছেন।</p>
-    <a href="/logout">Logout</a>
-  <!--  <%- include("partials/bottom-nav", { path: "/" }) %> -->
-  <% } else { %>
-    <h1><a href="/login">Login</a></h1>
-  <% } %>
-</div>
-
 <%- include('components/category') %>
-<%- include('components/PostList', {data: "nikhil"}) %>
+<%- include('components/PostList') %>
 
 
 <%- include('footer') %>

@@ -1,97 +1,172 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>SQLite Inline Editor</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mobile Inbox UI</title>
   <style>
-    body { font-family: monospace; }
-    table { border-collapse: collapse; }
-    td, th { border: 1px solid #ccc; padding: 6px; }
-    td { cursor: pointer; }
-    input { width: 100%; }
-    button { margin: 5px; }
+    
+    * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: system-ui, sans-serif;
+}
+
+body {
+  background: #111827;
+  color: #fff;
+}
+
+.app {
+  max-width: 480px;
+  margin: auto;
+}
+
+/* Top bar */
+.topbar {
+  padding: 15px;
+  font-size: 18px;
+}
+
+/* Stories */
+.stories {
+  display: flex;
+  gap: 15px;
+  padding: 10px;
+  overflow-x: auto;
+}
+
+.story {
+  text-align: center;
+  font-size: 12px;
+}
+
+.story img {
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+}
+
+/* Chat list */
+.chat-list {
+  padding: 10px;
+}
+
+.chat {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #1f2933;
+}
+
+.chat img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.chat-info {
+  flex: 1;
+}
+
+.chat-info h4 {
+  font-size: 15px;
+}
+
+.chat-info p {
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+.time {
+  font-size: 12px;
+  color: #22c55e;
+}
+
+.seen {
+  color: #3b82f6;
+}
+
+/* Meta AI icon */
+.meta-ai {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(135deg,#9333ea,#3b82f6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+
+/* Desktop support */
+@media (min-width: 768px) {
+  .app {
+    max-width: 600px;
+  }
+}
   </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h3>Users Table</h3>
-<button onclick="createRow()">+ New Row</button>
+<div class="app">
 
-<table id="tbl"></table>
+  <!-- Top bar -->
+  <header class="topbar">
+    <h2>Chats</h2>
+  </header>
 
-<script>
-const table = "users";
+  <!-- Stories -->
+  <div class="stories">
+    <div class="story">
+      <img src="https://i.pravatar.cc/100?1">
+      <span>Your note</span>
+    </div>
+    <div class="story">
+      <img src="https://i.pravatar.cc/100?2">
+      <span>Noboni</span>
+    </div>
+    <div class="story">
+      <img src="https://i.pravatar.cc/100?3">
+      <span>Prama</span>
+    </div>
+  </div>
 
-async function load() {
-  const res = await fetch(`/api/${table}`);
-  const data = await res.json();
+  <!-- Chat list -->
+  <div class="chat-list">
 
-  const headers = Object.keys(data[0] || {});
-  let html = "<tr>" +
-    headers.map(h => `<th>${h}</th>`).join("") +
-    "<th>Action</th></tr>";
+    <div class="chat">
+      <img src="https://i.pravatar.cc/100?4">
+      <div class="chat-info">
+        <h4>Pollob Roy</h4>
+        <p>Pollob sent an attachment</p>
+      </div>
+      <span class="time">5h</span>
+    </div>
 
-  data.forEach(row => {
-    html += "<tr>";
-    headers.forEach(col => {
-      html += `<td onclick="editCell(this,'${col}',${row.id})">
-                ${row[col]}
-              </td>`;
-    });
-    html += `<td>
-      <button onclick="del(${row.id})">Delete</button>
-    </td></tr>`;
-  });
+    <div class="chat active">
+      <img src="https://i.pravatar.cc/100?5">
+      <div class="chat-info">
+        <h4>Tumisha Roy</h4>
+        <p>You: Hi Tumisha</p>
+      </div>
+      <span class="seen">✓✓</span>
+    </div>
 
-  document.getElementById("tbl").innerHTML = html;
-}
+    <div class="chat">
+      <div class="meta-ai">◎</div>
+      <div class="chat-info">
+        <h4>Meta AI</h4>
+        <p>😊 তোমার প্রজেক্টের জন্য...</p>
+      </div>
+    </div>
 
-function editCell(td, col, id) {
-  const old = td.innerText;
-  td.innerHTML = `<input value="${old}" 
-    onblur="save(this,'${col}',${id})">`;
-  td.firstChild.focus();
-}
+  </div>
 
-async function save(input, col, id) {
-  await fetch("/api/update", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      table,
-      id,
-      column: col,
-      value: input.value
-    })
-  });
-  load();
-}
-
-async function del(id) {
-  if (!confirm("Delete row?")) return;
-  await fetch("/api/delete", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ table, id })
-  });
-  load();
-}
-
-async function createRow() {
-  const name = prompt("Name?");
-  const email = prompt("Email?");
-  await fetch("/api/create", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      table,
-      data: { name, email }
-    })
-  });
-  load();
-}
-
-load();
-</script>
+</div>
 
 </body>
 </html>

@@ -70,7 +70,7 @@ exports.bethome = (req, res) => {
 
 // Bet json API
 exports.betapi = async(req, res) =>{
-  
+  try{
   const url = "https://22play8.com/LiveFeed/Get1x2_VZip?sports=4&count=50&lng=en_GB&gr=322&mode=4&country=19&partner=151&getEmpty=true";
 
 const fdata = await fetch(url, {
@@ -83,5 +83,10 @@ const fdata = await fetch(url, {
 const jjj = await fdata.json();
 res.set("Content", "Nikhil"); // header set
 res.json(jjj);
-  
+  }catch(err){
+    //console.log("nao internet:" + err)
+    chalk(err);
+    res.end();
+    
+  }
 }

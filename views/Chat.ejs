@@ -1,177 +1,276 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>চ্যাট অ্যাপ</title>
-  <script src="/js/eruda.js"></script>
-  <script>eruda.init();</script>
-  <script src="/socket.io/socket.io.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>চ্যাট অ্যাপ</title>
 
-  <style>
-    body {
-      font-family: "Poppins", sans-serif;
-      background: #f4f6f9;
-      margin: 0;
-      padding: 0;
-    }
+<script src="/socket.io/socket.io.js"></script>
 
-    header {
-      background: #0084ff;
-      color: white;
-      padding: 10px 15px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-weight: 600;
-    }
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Poppins,system-ui}
+body{background:#f1f5f9}
 
-    #notifBtn {
-      background: #fff;
-      color: #0084ff;
-      border: none;
-      border-radius: 8px;
-      padding: 6px 12px;
-      font-weight: bold;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    #notifCount {
-      background: red;
-      color: white;
-      border-radius: 50%;
-      padding: 3px 7px;
-      font-size: 12px;
-    }
-
-    main {
-      padding: 15px;
-    }
-
-    .chat-box {
-      background: #fff;
-      border-radius: 10px;
-      padding: 10px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .active-users {
-      margin-bottom: 20px;
-    }
-
-    .active-users h3 {
-      margin: 0 0 10px 0;
-      color: #333;
-    }
-
-    .active-users ul {
-      list-style: none;
-      padding: 0;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .active-users li {
-      background: #0084ff;
-      color: white;
-      border-radius: 20px;
-      padding: 6px 12px;
-      font-size: 14px;
-    }
-
-   
-
-    #notifList {
-      margin-top: 15px;
-      list-style: none;
-      padding: 0;
-    }
-
-    #notifList li {
-      background: #e9f3ff;
-      padding: 8px 10px;
-      border-radius: 8px;
-      margin-bottom: 5px;
-      color: #333;
-    }
-
-    @media (max-width: 600px) {
-      header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-      }
-      .active-users ul {
-        flex-direction: column;
-      }
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <div>চ্যাট সিস্টেম</div>
-    <button id="notifBtn">
-      নোটিফিকেশন <span id="notifCount">0</span>
-    </button>
-  </header>
-
-  <main>
-    <div class="chat-box">
-      <div class="active-users">
-        <h3>🟢 বর্তমানে অনলাইনে:</h3>
-        <ul id="activeList"></ul>
-      </div>
-
-      
-    </div>
-  </main>
-
-  <script>
-    const socket = io();
-    const userId = "<%= session.user.id %>";
-
-    const notifCount = document.getElementById("notifCount");
-    
-    const activeList = document.getElementById("activeList");
-    const sendBtn = document.getElementById("sendBtn");
-
-    let count = 0;
-
-   
-
-    // নতুন মেসেজ আসলে
-    socket.on("private_message", data => {
-      count++;
-      notifCount.textContent = count;
-
-      const li = document.createElement("li");
-      li.textContent = `From ${data.fromUser}: ${data.message}`;
-      notifList.prepend(li);
-    });
-
-    // Active user লিস্ট
-    socket.on("active_users", users => {
-      activeList.innerHTML = "";
-      users.forEach(u => {
-        const li = document.createElement("li");
-const a = document.createElement("a");
-
-a.textContent = u.username;
-a.href = `chat/${u.userid}`; // এখানে তোমার লিংক বসাও যেমন "/profile" বা `"/user/" + u.id`
-if (userId == u.userid) {
-  a.style.color = "red";
-  a.style.fontWeight = "bold";
-  a.textContent += " Nije";
+header{
+  background:linear-gradient(135deg,#0084ff,#0066cc);
+  color:#fff;
+  padding:14px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
 }
 
-li.appendChild(a);
-activeList.appendChild(li);
-      });
-    });
-  </script>
+#notifBtn{
+  background:#fff;
+  border:none;
+  border-radius:20px;
+  padding:6px 14px;
+  font-weight:600;
+  cursor:pointer;
+}
+
+#notifCount{
+  background:red;
+  color:#fff;
+  border-radius:50%;
+  padding:2px 7px;
+  font-size:12px;
+}
+
+.chat-box{
+  background:#fff;
+  margin:15px;
+  padding:15px;
+  border-radius:14px;
+}
+
+.active-users ul{
+  list-style:none;
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+.active-users li{
+  background:#e9f3ff;
+  padding:6px 14px;
+  border-radius:20px;
+  cursor:pointer;
+}
+
+.self{color:red;font-weight:bold}
+
+/* ===== Modal Chat ===== */
+#chatModal{
+  position:fixed;
+  inset:0;
+  background:#fff;
+  display:none;
+  flex-direction:column;
+}
+
+.chat-header{
+  background:#0084ff;
+  color:#fff;
+  padding:12px;
+  display:flex;
+  justify-content:space-between;
+}
+
+#chatMessages{
+  flex:1;
+  padding:12px;
+  overflow-y:auto;
+
+  /* 🔥 ADD */
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+/* message bubble */
+.msg{
+  max-width:70%;
+  padding:8px 12px;
+  border-radius:12px;
+  font-size:14px;
+  word-wrap:break-word;
+  display:inline-block;
+}
+
+/* sent message (right side) */
+.me{
+  background:#0084ff;
+  color:#fff;
+  align-self:flex-end;
+  border-bottom-right-radius:4px;
+}
+
+/* received message (left side) */
+.other{
+  background:#e5e7eb;
+  color:#111;
+  align-self:flex-start;
+  border-bottom-left-radius:4px;
+}
+
+.chat-input{
+  display:flex;
+  gap:8px;
+  padding:10px;
+  border-top:1px solid #ddd;
+}
+.chat-input input{flex:1;padding:8px;border-radius:20px;border:1px solid #ccc}
+.chat-input button{background:#0084ff;color:#fff;border:none;padding:8px 14px;border-radius:50%}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div>💬 চ্যাট সিস্টেম</div>
+  <button id="notifBtn">🔔 <span id="notifCount">0</span></button>
+</header>
+
+<div class="chat-box">
+  <div class="active-users">
+    <h3>🟢 অনলাইনে</h3>
+    <ul id="activeList"></ul>
+  </div>
+</div>
+
+<!-- CHAT MODAL -->
+<div id="chatModal">
+  <div class="chat-header">
+    <span id="chatUser"></span>
+    <button onclick="closeChat()">✖</button>
+  </div>
+
+  <div id="chatMessages"></div>
+
+  <div class="chat-input">
+    <input id="msgInput" placeholder="মেসেজ লিখুন…" />
+    <button onclick="sendMsg()">➤</button>
+  </div>
+</div>
+
+<script>
+const socket = io();
+const userId = "<%= session.user.id %>";
+
+let currentUser = null;
+let unread = {};
+
+const notifCount = document.getElementById("notifCount");
+const activeList = document.getElementById("activeList");
+const chatBox = document.getElementById("chatMessages");
+
+/* =====================
+   OPEN CHAT + LOAD OLD
+===================== */
+async function openChat(u){
+  currentUser = u;
+  document.getElementById("chatUser").textContent = u.username;
+  chatBox.innerHTML = "";
+
+  // 🔥 LOAD OLD CHAT
+  const res = await fetch(`/chat/${u.userid}`);
+  const history = await res.json();
+
+  history.forEach(m=>{
+    if(m.sender_id == userId){
+      addMsg(m.message,"me");
+    }else{
+      addMsg(m.message,"other");
+    }
+  });
+
+  unread[u.userid] = 0;
+  updateNotif();
+  document.getElementById("chatModal").style.display="flex";
+  scrollBottom();
+}
+
+function closeChat(){
+  document.getElementById("chatModal").style.display="none";
+  currentUser = null;
+}
+
+/* =====================
+   SEND MESSAGE
+===================== */
+function sendMsg(){
+  const input = document.getElementById("msgInput");
+  const text = input.value.trim();
+  if(!text || !currentUser) return;
+
+  socket.emit("private_message",{
+    sendid: currentUser.userid,
+    message: text
+  });
+
+  addMsg(text,"me");
+  input.value="";
+  scrollBottom();
+}
+
+/* =====================
+   ADD MESSAGE
+===================== */
+function addMsg(msg,type){
+  const div = document.createElement("div");
+  div.classList.add("msg", type);
+  div.textContent = msg;
+  chatBox.appendChild(div);
+}
+
+/* =====================
+   HELPERS
+===================== */
+function scrollBottom(){
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function updateNotif(){
+  const total = Object.values(unread).reduce((a,b)=>a+b,0);
+  notifCount.textContent = total;
+}
+
+/* =====================
+   SOCKET EVENTS
+===================== */
+socket.on("private_message",data=>{
+  // নিজের পাঠানো হলে ignore
+  if(data.fromUser == userId) return;
+
+  if(currentUser && data.fromUser == currentUser.userid){
+    addMsg(data.message,"other");
+    scrollBottom();
+  }else{
+    unread[data.fromUser] = (unread[data.fromUser] || 0) + 1;
+    updateNotif();
+  }
+});
+
+socket.on("active_users",users=>{
+  activeList.innerHTML="";
+  users.forEach(u=>{
+    const li=document.createElement("li");
+    li.textContent=u.username;
+
+    if(u.userid == userId){
+      li.classList.add("self");
+      li.textContent+=" (নিজে)";
+    }else{
+      li.onclick=()=>openChat(u);
+      if(unread[u.userid]){
+        li.textContent += ` (${unread[u.userid]})`;
+      }
+    }
+    activeList.appendChild(li);
+  });
+});
+</script>
+
 </body>
 </html>

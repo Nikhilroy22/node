@@ -6,7 +6,7 @@ const http = require('http');
 const path = require('path');
 const fs = require('fs');
 const chalk = require('chalk');
-global.chalk = chalk;
+
 
 const session = require('express-session');
 const flash = require('connect-flash');
@@ -28,7 +28,11 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
+//CHALK COLOR SYSTEM
+global.chalk = (data) =>{
 
+console.log(chalk.red.bold('❌ Error!:', data));
+}
 
 
 
@@ -92,7 +96,7 @@ io.use((socket, next) => {
 
 
 //socketHandler(io, sessionMiddleware); // Crash socket (if needed)
-//PrivateChat(io, sessionMiddleware); // Private chat socket
+PrivateChat(io, sessionMiddleware); // Private chat socket
 
 /* =========================
    Start Server
