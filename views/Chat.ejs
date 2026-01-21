@@ -175,6 +175,7 @@ const chatBox = document.getElementById("chatMessages");
    OPEN CHAT + LOAD OLD
 ===================== */
 async function openChat(u){
+  history.pushState({ chat: u.userid }, "", `#chat-${u.userid}`);
   ShowLoading();
 
   currentUser = u;
@@ -282,6 +283,13 @@ socket.on("active_users",users=>{
     }
     activeList.appendChild(li);
   });
+});
+
+
+window.addEventListener("popstate", () => {
+  if (document.getElementById("chatModal").style.display === "flex") {
+    closeChat();
+  }
 });
 </script>
 
