@@ -36,7 +36,7 @@ function generateCrashPoint() {
     }
 
    // console.log(`🎯 Generated Crash Point: ${crashPoint}x`);
-    console.log(chalk.blue.bold(`🎯 Generated Crash Point: ${crashPoint}x`));
+    
     return crashPoint;
 }
 

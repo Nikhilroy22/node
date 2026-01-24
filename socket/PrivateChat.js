@@ -1,56 +1,68 @@
+const WebSocket = require("ws");
+
 const {
   saveMessage,
   getPendingMessages,
   markDelivered
-} = require('../model/ChatDB');
+} = require("../model/ChatDB");
 
-module.exports = (io) => {
+module.exports = (server, sessionMiddleware) => {
 
-  // userId => { socketId, username, userid }
+  const wss = new WebSocket.Server({ noServer: true });
+
+  // userId => { ws, username, userid }
   const onlineUsers = new Map();
 
   /* =====================
-     SESSION CHECK
+     HTTP → WS UPGRADE
   ====================== */
-  io.use((socket, next) => {
-    const session = socket.request.session;
-    if (session && session.user) {
-      return next();
-    }
-    return next(new Error("Unauthorized"));
+  server.on("upgrade", (req, socket, head) => {
+    sessionMiddleware(req, {}, () => {
+
+      // 🔐 session required (same as io.use)
+      if (!req.session || !req.session.user) {
+        socket.destroy();
+        return;
+      }
+
+      wss.handleUpgrade(req, socket, head, (ws) => {
+        wss.emit("connection", ws, req);
+      });
+    });
   });
 
   /* =====================
      CONNECTION
   ====================== */
-  io.on("connection", async (socket) => {
-    const { id: userId, username } = socket.request.session.user;
+  wss.on("connection", async (ws, req) => {
+
+    const { id: userId, username } = req.session.user;
     const uid = String(userId);
 
     console.log(`✅ ${username} connected`);
 
-    // Save online user
+    // save online user
     onlineUsers.set(uid, {
-      socketId: socket.id,
+      ws,
       username,
       userid: userId
     });
 
-    // Broadcast active users
     broadcastActiveUsers();
 
     /* =====================
-       SEND OFFLINE MESSAGES
+       SEND OFFLINE MSG
     ====================== */
     try {
       const pending = await getPendingMessages(userId);
 
       for (const msg of pending) {
-        socket.emit("private_message", {
+        ws.send(JSON.stringify({
+          type: "private_message",
           fromUser: msg.from_user,
           message: msg.message,
           offline: true
-        });
+        }));
 
         await markDelivered(msg.id);
       }
@@ -59,31 +71,42 @@ module.exports = (io) => {
     }
 
     /* =====================
-       PRIVATE MESSAGE
+       MESSAGE HANDLER
     ====================== */
-    socket.on("private_message", async ({ sendid, message }) => {
+    ws.on("message", async (data) => {
+      let payload;
+      try {
+        payload = JSON.parse(data);
+      } catch {
+        return;
+      }
+
+      if (payload.type !== "private_message") return;
+
+      const { sendid, message } = payload;
       if (!sendid || !message) return;
 
       const receiverId = String(sendid);
       const receiver = onlineUsers.get(receiverId);
       const delivered = receiver ? 1 : 0;
 
-      // Save message
+      // save message
       await saveMessage(userId, sendid, message, delivered);
 
-      // Send to receiver if online
+      // send if online
       if (receiver) {
-        io.to(receiver.socketId).emit("private_message", {
+        receiver.ws.send(JSON.stringify({
+          type: "private_message",
           fromUser: userId,
           message
-        });
+        }));
       }
     });
 
     /* =====================
        DISCONNECT
     ====================== */
-    socket.on("disconnect", () => {
+    ws.on("close", () => {
       onlineUsers.delete(uid);
       console.log(`❌ ${username} disconnected`);
       broadcastActiveUsers();
@@ -97,7 +120,17 @@ module.exports = (io) => {
         username: u.username,
         userid: u.userid
       }));
-      io.emit("active_users", users);
+
+      const msg = JSON.stringify({
+        type: "active_users",
+        users
+      });
+
+      onlineUsers.forEach(u => {
+        if (u.ws.readyState === WebSocket.OPEN) {
+          u.ws.send(msg);
+        }
+      });
     }
   });
 };

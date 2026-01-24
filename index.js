@@ -13,7 +13,9 @@ const flash = require('connect-flash');
 const JSONFileStore = require('./helper/jsonFileStore'); // Custom JSON session store
 const FileStore = require('session-file-store')(session);
 
+//WebSocket
 const { Server } = require('socket.io');
+const initWebSocket = require("./ws/wsServer");
 
 // Controllers / Socket handlers
 const socketHandler = require('./socket/socketHandler'); // Crash socket
@@ -26,7 +28,9 @@ const AdminRoutes = require('./routes/AdminRoutes');
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
+//const io = new Server(server);
+
+
 
 //CHALK COLOR SYSTEM
 global.chalk = (data) =>{
@@ -87,16 +91,26 @@ app.use(express.static(path.join(__dirname, 'public'))); // Static files
 app.use('/admin', AdminRoutes);
 app.use('/', webRoutes);
 
+
+/* =====================
+   INIT WEBSOCKET
+===================== */
+initWebSocket(server, sessionMiddleware);
+
+
+PrivateChat(server, sessionMiddleware); // Private chat socket
+
+
 /* =========================
    Socket.IO Handlers
 ========================= */
-io.use((socket, next) => {
+/*io.use((socket, next) => {
     sessionMiddleware(socket.request, {}, next);
-  });
+  });*/
 
 
-//socketHandler(io, sessionMiddleware); // Crash socket (if needed)
-PrivateChat(io, sessionMiddleware); // Private chat socket
+//socketHandler(io, sessionMiddleware);
+// Crash socket (if needed)
 
 /* =========================
    Start Server

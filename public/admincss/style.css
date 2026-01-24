@@ -17,7 +17,7 @@ body {
 /* ---------- TOPBAR ---------- */
 .topbar {
   width: 100%;
-  background: #1d213f;
+  background: #f97316;
   color: #fff;
   padding: 4px 18px;
   display: flex;
@@ -151,23 +151,3 @@ body {
   line-height: 1.5;
 }
 
-/* ---------- RESPONSIVE ---------- */
-@media (min-width: 768px) {
-  .sidebar {
-    left: 0;
-  }
-
-  /* Menu button hidden in desktop */
-  .topbar .menu-btn {
-    display: none;
-  }
-
-  /* Close button hidden in desktop */
-  .nj-btn {
-    display: none;
-  }
-
-  .content {
-    margin-left: 240px;
-  }
-}

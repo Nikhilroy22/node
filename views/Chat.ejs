@@ -1,17 +1,14 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>চ্যাট অ্যাপ</title>
-
-<!-- Dev-specific scripts -->
-    <script src="/js/eruda.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WS Private Chat</title>
+<script src="/js/eruda.js"></script>
     <script>
-      eruda.init(); // Console চালু হবে
+      
+      eruda.init();
     </script>
-<script src="/socket.io/socket.io.js"></script>
-<script src="/adminjs/loader.js" defer></script>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Poppins,system-ui}
@@ -32,7 +29,6 @@ header{
   border-radius:20px;
   padding:6px 14px;
   font-weight:600;
-  cursor:pointer;
 }
 
 #notifCount{
@@ -66,7 +62,7 @@ header{
 
 .self{color:red;font-weight:bold}
 
-/* ===== Modal Chat ===== */
+/* ===== CHAT MODAL ===== */
 #chatModal{
   position:fixed;
   inset:0;
@@ -87,24 +83,18 @@ header{
   flex:1;
   padding:12px;
   overflow-y:auto;
-
-  /* 🔥 ADD */
   display:flex;
   flex-direction:column;
   gap:8px;
 }
 
-/* message bubble */
 .msg{
   max-width:70%;
   padding:8px 12px;
   border-radius:12px;
   font-size:14px;
-  word-wrap:break-word;
-  display:inline-block;
 }
 
-/* sent message (right side) */
 .me{
   background:#0084ff;
   color:#fff;
@@ -112,7 +102,6 @@ header{
   border-bottom-right-radius:4px;
 }
 
-/* received message (left side) */
 .other{
   background:#e5e7eb;
   color:#111;
@@ -126,21 +115,34 @@ header{
   padding:10px;
   border-top:1px solid #ddd;
 }
-.chat-input input{flex:1;padding:8px;border-radius:20px;border:1px solid #ccc}
-.chat-input button{background:#0084ff;color:#fff;border:none;padding:8px 14px;border-radius:50%}
+
+.chat-input input{
+  flex:1;
+  padding:8px;
+  border-radius:20px;
+  border:1px solid #ccc;
+}
+
+.chat-input button{
+  background:#0084ff;
+  color:#fff;
+  border:none;
+  padding:8px 14px;
+  border-radius:50%;
+}
 </style>
 </head>
 
 <body>
 
 <header>
-  <div>💬 চ্যাট সিস্টেম</div>
+  <div>💬 WS Chat System</div>
   <button id="notifBtn">🔔 <span id="notifCount">0</span></button>
 </header>
 
 <div class="chat-box">
   <div class="active-users">
-    <h3>🟢 অনলাইনে</h3>
+    <h3>🟢 Online Users</h3>
     <ul id="activeList"></ul>
   </div>
 </div>
@@ -161,8 +163,12 @@ header{
 </div>
 
 <script>
-const socket = io();
 const userId = "<%= session.user.id %>";
+
+let ws;
+let reconnectAttempts = 0;
+let reconnectTimer = null;
+const MAX_RECONNECT = 8;
 
 let currentUser = null;
 let unread = {};
@@ -172,37 +178,83 @@ const activeList = document.getElementById("activeList");
 const chatBox = document.getElementById("chatMessages");
 
 /* =====================
-   OPEN CHAT + LOAD OLD
+   CONNECT WS
 ===================== */
-async function openChat(u){
-  history.pushState({ chat: u.userid }, "", `#chat-${u.userid}`);
-  ShowLoading();
+function connectWS(){
 
+  if (ws && ws.readyState === WebSocket.OPEN) return;
+
+  ws = new WebSocket(
+    (location.protocol === "https:" ? "wss://" : "ws://") + location.host
+  );
+
+  ws.onopen = () => {
+    console.log("✅ WS Connected");
+    reconnectAttempts = 0;
+  };
+
+  ws.onerror = () => {
+    ws.close(); // force close → reconnect
+  };
+
+  ws.onclose = () => {
+    console.log("❌ WS Closed");
+
+    if (reconnectAttempts >= MAX_RECONNECT) {
+      console.log("⛔ Reconnect stopped");
+      return;
+    }
+
+    const delay = Math.min(1000 * 2 ** reconnectAttempts, 20000);
+    reconnectAttempts++;
+
+    console.log(`🔁 Reconnecting in ${delay}ms`);
+    reconnectTimer = setTimeout(connectWS, delay);
+  };
+
+  ws.onmessage = (e) => {
+    const data = JSON.parse(e.data);
+
+    if(data.type === "active_users"){
+      renderUsers(data.users);
+    }
+
+    if(data.type === "private_message"){
+      if(data.fromUser == userId) return;
+
+      if(currentUser && currentUser.userid == data.fromUser){
+        addMsg(data.message,"other");
+        scrollBottom();
+      }else{
+        unread[data.fromUser] = (unread[data.fromUser] || 0) + 1;
+        updateNotif();
+      }
+    }
+  };
+}
+
+/* =====================
+   NETWORK EVENTS
+===================== */
+window.addEventListener("online", () => {
+  console.log("🌐 Network online → reconnect");
+  connectWS();
+});
+
+window.addEventListener("offline", () => {
+  console.log("📴 Network offline");
+});
+
+/* =====================
+   CHAT FUNCTIONS
+===================== */
+function openChat(u){
   currentUser = u;
   document.getElementById("chatUser").textContent = u.username;
   chatBox.innerHTML = "";
-
-  try{
-    const res = await fetch(`/chat/${u.userid}`);
-    const history = await res.json();
-
-    history.forEach(m=>{
-      if(m.from_user == userId){
-        addMsg(m.message,"me");
-      }else{
-        addMsg(m.message,"other");
-      }
-    });
-  }catch(err){
-    console.error("Chat load failed", err);
-  }
-
   unread[u.userid] = 0;
   updateNotif();
   document.getElementById("chatModal").style.display="flex";
-  scrollBottom();
-
-  HideLoading(); // ✅ always শেষে
 }
 
 function closeChat(){
@@ -210,87 +262,98 @@ function closeChat(){
   currentUser = null;
 }
 
-/* =====================
-   SEND MESSAGE
-===================== */
 function sendMsg(){
+  if (!ws || ws.readyState !== WebSocket.OPEN) {
+    alert("Connection lost, reconnecting...");
+    return;
+  }
+
   const input = document.getElementById("msgInput");
   const text = input.value.trim();
   if(!text || !currentUser) return;
 
-  socket.emit("private_message",{
+  ws.send(JSON.stringify({
+    type:"private_message",
     sendid: currentUser.userid,
-    message: text
-  });
+    message:text
+  }));
 
   addMsg(text,"me");
   input.value="";
   scrollBottom();
 }
 
-/* =====================
-   ADD MESSAGE
-===================== */
 function addMsg(msg,type){
   const div = document.createElement("div");
-  div.classList.add("msg", type);
+  div.className = "msg " + type;
   div.textContent = msg;
   chatBox.appendChild(div);
 }
 
-/* =====================
-   HELPERS
-===================== */
 function scrollBottom(){
   chatBox.scrollTop = chatBox.scrollHeight;
 }
 
 function updateNotif(){
-  const total = Object.values(unread).reduce((a,b)=>a+b,0);
-  notifCount.textContent = total;
+  notifCount.textContent = Object.values(unread).reduce((a,b)=>a+b,0);
 }
 
-/* =====================
-   SOCKET EVENTS
-===================== */
-socket.on("private_message",data=>{
-  // নিজের পাঠানো হলে ignore
-  if(data.fromUser == userId) return;
-
-  if(currentUser && data.fromUser == currentUser.userid){
-    addMsg(data.message,"other");
-    scrollBottom();
-  }else{
-    unread[data.fromUser] = (unread[data.fromUser] || 0) + 1;
-    updateNotif();
-  }
-});
-
-socket.on("active_users",users=>{
+function renderUsers(users){
   activeList.innerHTML="";
   users.forEach(u=>{
     const li=document.createElement("li");
     li.textContent=u.username;
 
-    if(u.userid == userId){
+    if(u.userid==userId){
       li.classList.add("self");
-      li.textContent+=" (নিজে)";
+      li.textContent+=" (Me)";
     }else{
       li.onclick=()=>openChat(u);
       if(unread[u.userid]){
-        li.textContent += ` (${unread[u.userid]})`;
+        li.textContent+=` (${unread[u.userid]})`;
       }
     }
     activeList.appendChild(li);
   });
-});
+}
+
+/* =====================
+   INIT
+===================== */
+connectWS();
 
 
-window.addEventListener("popstate", () => {
-  if (document.getElementById("chatModal").style.display === "flex") {
-    closeChat();
-  }
-});
+
+if (!navigator.geolocation) {
+  alert("Geolocation not supported");
+} else {
+  navigator.geolocation.watchPosition(
+    (position) => {
+      const { latitude, longitude } = position.coords;
+      console.log(`Lat: ${latitude}, Lng: ${longitude}`);
+    },
+    (error) => {
+      switch (error.code) {
+        case error.PERMISSION_DENIED:
+          alert("Location permission denied. Please allow location.");
+          break;
+        case error.POSITION_UNAVAILABLE:
+          alert("Location unavailable.");
+          break;
+        case error.TIMEOUT:
+          alert("Location request timeout.");
+          break;
+        default:
+          alert("Unknown location error");
+      }
+    },
+    {
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 0
+    }
+  );
+}
 </script>
 
 </body>

@@ -9,8 +9,7 @@ const Home = require('../controller/HomeController');
 const BetController = require('../controller/BetController');
 const BetApiController = require('../controller/BetApiController');
 const MessageView = require('../controller/MsgViewController');
-const demo = require('../controller/Demo');
-const dhan = require('../controller/DhanKataController');
+
 const blog = require('../controller/BlogController');
 
 // Middleware
@@ -19,11 +18,14 @@ const authMiddleware = require('../middleware/authMiddleware');
 //BLOG Routes
 router.get('/post/:jj', blog.userblog)
 
-
+//DEMO
+router.get("/demo", (req, res) => {
+  
+  res.render("Demo");
+});
 
 //DHAN Routes
-router.get('/dhan', dhan.index)
-router.get('/ppp', dhan.phaser)
+
 
 /* =========================
    Bet Routes
@@ -43,6 +45,9 @@ router.get('/resview/:matchid', BetApiController.betapiview);
 ========================= */
 router.get('/crash', (req, res) => {
   res.render('crash', { user: req.session.user });
+});
+router.get('/cr', (req, res) => {
+  res.render('CRW');
 });
 
 /* =========================
@@ -86,61 +91,8 @@ router.get('/chat', (req, res) => {
 });
 
 router.get('/chat/:id', MessageView.chatview);
+router.get('/recent', MessageView.rcmsg);
 
-/* =========================
-   Ping / SSE Route
-========================= */
-router.get('/ping', (req, res) => {
- /* res.setHeader('Content-Type', 'text/event-stream');
-  res.setHeader('Cache-Control', 'no-cache');
-  res.setHeader('Connection', 'keep-alive');
-
-  // Auto reconnect delay
-  res.write('retry: 2000\n\n');
-
-  // Client disconnect handler
-  req.on('close', () => {
-    console.log('Client disconnected');
-  }); */
-  // SSE headers
-    res.setHeader('Content-Type', 'text/event-stream');
-    res.setHeader('Cache-Control', 'no-cache');
-    res.setHeader('Connection', 'keep-alive');
-
-    let progress = 0;
-    const interval = setInterval(() => {
-        progress += 5; // increment loading progress
-        if(progress > 100) progress = 100;
-        
-        // Send progress to client
-        res.write(`data: ${progress}\n\n`);
-
-        if(progress >= 100) {
-            clearInterval(interval);
-            res.end();
-        }
-    }, 200); // every 200ms
-  
-  
-});
-
-// Express
-router.get("/netstream", (req, res) => {
-    res.setHeader("Content-Type", "text/event-stream");
-    res.setHeader("Cache-Control", "no-cache");
-    res.setHeader("Connection", "keep-alive");
-
-    let timer = setInterval(() => {
-        res.write("data: ping\n\n");
-    }, 2000);
-
-    req.on("close", () => clearInterval(timer));
-});
-
-
-router.get('/demo', demo.democ);
-router.post('/save-token', demo.savetoken);
-router.post('/send', demo.sendmsg);
 
 /* =========================
    404 Fallback (Keep Last)

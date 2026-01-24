@@ -41,21 +41,13 @@
    HTML & BODY
 ========================= */
 
-html,
 body {
-  height: 100%;
-  width: 100%;
-  overflow-x: hidden;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont,
-               "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Arial;
+  margin:0;
+  background:#0b1020;
+  font-family:system-ui,sans-serif;
+  color:#fff;
 }
 
-body {
-  background: var(--bg);
-  color: var(--text);
-  line-height: 1.5;
-  transition: background-color .25s ease, color .25s ease;
-}
 
 /* =========================
    LINKS
@@ -66,71 +58,3 @@ a {
   color: inherit;
 }
 
-/* =========================
-   COMMON ELEMENTS
-========================= */
-
-img {
-  max-width: 100%;
-  display: block;
-}
-
-button {
-  cursor: pointer;
-  border: none;
-  outline: none;
-  background: none;
-  font: inherit;
-}
-
-input,
-select,
-textarea {
-  font: inherit;
-  outline: none;
-}
-
-/* =========================
-   LAYOUT HELPERS
-========================= */
-
-.container {
-  width: 100%;
-  max-width: 1200px;
-  margin: auto;
-  padding: 1rem;
-}
-
-.card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 1rem;
-}
-
-/* =========================
-   ADMIN / UI HELPERS
-========================= */
-
-.hidden {
-  display: none !important;
-}
-
-.text-center {
-  text-align: center;
-}
-
-/* =========================
-   SCROLLBAR (OPTIONAL)
-========================= */
-
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--primary);
-  border-radius: 10px;
-}
-    
-   

@@ -52,9 +52,43 @@ function markDelivered(messageId) {
   return true;
 }
 
+/* =====================
+   RECENT CHAT LIST
+===================== */
+/* =====================
+   RECENT CHAT LIST
+===================== */
+function getRecentChats(userId) {
+  const stmt = db.prepare(`
+    SELECT
+      u.id AS userid,
+      u.username,
+      m.message,
+      m.created_at,
+      SUM(
+        CASE 
+          WHEN m.to_user = ? AND m.delivered = 0 
+          THEN 1 ELSE 0 
+        END
+      ) AS unread
+    FROM messages m
+    JOIN users u
+      ON u.id = CASE
+        WHEN m.from_user = ? THEN m.to_user
+        ELSE m.from_user
+      END
+    WHERE m.from_user = ? OR m.to_user = ?
+    GROUP BY u.id
+    ORDER BY MAX(m.id) DESC
+  `);
+
+  return stmt.all(userId, userId, userId, userId);
+}
+
 module.exports = {
   saveMessage,
   getMessages,
   getPendingMessages,
   markDelivered,
+  getRecentChats
 };

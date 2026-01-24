@@ -13,7 +13,7 @@ router.use(admin);
 // /admin/data?page=1
 router.get("/data", (req, res) => {
   const page = parseInt(req.query.page) || 1;
-  const limit = 3;
+  const limit = 9;
   const offset = (page - 1) * limit;
 
   const posts = jj.db.prepare(`

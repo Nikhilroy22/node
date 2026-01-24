@@ -1,75 +1,82 @@
+<style>
+  
+  .ploader{
+  text-align:center;
+  padding:20px;
+  color:#555;
+}
 
-
+.post-item{
+  padding:15px;
+  border-bottom:1px solid #ddd;
+}
+</style>
 
 <div id="postlist"></div>
 
-<div id="loading" class="ploader">Loading...</div>
+<div id="loader" class="ploader">
+  Loading...
+</div>
+<button onclick="lldd()">load more</button>
 
 <script>
-document.addEventListener("DOMContentLoaded", () => {
+
 
   const postlist = document.getElementById("postlist");
-  const loading = document.getElementById("loading");
+  const loader = document.getElementById("loader");
 
   let page = 1;
   let isLoading = false;
   let hasMore = true;
 
-  async function postfetch() {
+  async function loadPosts() {
     if (isLoading || !hasMore) return;
 
     isLoading = true;
-    loading.style.display = "block";
+    loader.style.display = "block";
 
     try {
       const res = await fetch(`/admin/data?page=${page}`);
       const posts = await res.json();
 
-      if (posts.length === 0) {
+      if (!posts.length) {
         hasMore = false;
-        loading.innerText = "No more posts";
+        loader.innerText = "আর কোনো পোস্ট নেই";
         return;
       }
 
       posts.forEach(post => {
         const div = document.createElement("div");
         div.className = "post-item";
-
         div.innerHTML = `
           <h3>
-            <a href="/post/${post.id}" class="post-link">
-              ${post.id} ${post.title}
+            <a href="/post/${post.id}">
+              ${post.title}
             </a>
           </h3>
-          <p>${post.content.substring(0, 120)}...</p>
+          <p>${post.content.slice(0,120)}...</p>
         `;
-
         postlist.appendChild(div);
       });
 
       page++;
 
-    } catch (err) {
-      console.error("Load error:", err);
+    } catch (e) {
+      console.error(e);
     } finally {
       isLoading = false;
-      loading.style.display = hasMore ? "none" : "block";
+      if (hasMore) loader.style.display = "none";
     }
   }
 
-  // ✅ Smooth & accurate scroll detection
-  window.addEventListener("scroll", () => {
-    const scrollTop = window.scrollY;
-    const viewportHeight = window.innerHeight;
-    const fullHeight = document.documentElement.scrollHeight;
+  function lldd(){
+    
+  loadPosts();
+    
+  }
 
-    if (scrollTop + viewportHeight >= fullHeight - 120) {
-      postfetch();
-    }
-  });
+  // initial load
+  loadPosts();
 
-  // Initial load
-  postfetch();
 
-});
 </script>

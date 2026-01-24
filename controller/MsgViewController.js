@@ -1,4 +1,4 @@
-const { getMessages } = require('../model/ChatDB');
+const { getMessages, getRecentChats } = require('../model/ChatDB');
 //Model
 const { getUsers, createUser } = require('../model/db');
 
@@ -19,4 +19,10 @@ if (!foundUser) {
 
 
   res.json(messages)
+}
+
+exports.rcmsg = (req, res) => {
+  const myId = req.session.user.id;
+  const list = getRecentChats(myId);
+  res.json(list);
 }
