@@ -3,33 +3,18 @@ const WebSocket = require("ws");
 const {
   saveMessage,
   getPendingMessages,
-  markDelivered
+  markDelivered,
+  getRecentChats
 } = require("../model/ChatDB");
 
-module.exports = (server, sessionMiddleware) => {
+module.exports = (wss) => {
 
-  const wss = new WebSocket.Server({ noServer: true });
+  
 
   // userId => { ws, username, userid }
   const onlineUsers = new Map();
 
-  /* =====================
-     HTTP → WS UPGRADE
-  ====================== */
-  server.on("upgrade", (req, socket, head) => {
-    sessionMiddleware(req, {}, () => {
-
-      // 🔐 session required (same as io.use)
-      if (!req.session || !req.session.user) {
-        socket.destroy();
-        return;
-      }
-
-      wss.handleUpgrade(req, socket, head, (ws) => {
-        wss.emit("connection", ws, req);
-      });
-    });
-  });
+  
 
   /* =====================
      CONNECTION
@@ -49,6 +34,19 @@ module.exports = (server, sessionMiddleware) => {
     });
 
     broadcastActiveUsers();
+
+    /* =====================
+       SEND RECENT CHATS
+    ====================== */
+    try {
+      const recentChats = await getRecentChats(userId);
+      ws.send(JSON.stringify({
+        type: "recent_chats",
+        chats: recentChats
+      }));
+    } catch (err) {
+      console.error("Recent chat error:", err);
+    }
 
     /* =====================
        SEND OFFLINE MSG
@@ -93,14 +91,28 @@ module.exports = (server, sessionMiddleware) => {
       // save message
       await saveMessage(userId, sendid, message, delivered);
 
-      // send if online
+      // send to receiver if online
       if (receiver) {
         receiver.ws.send(JSON.stringify({
           type: "private_message",
           fromUser: userId,
           message
         }));
+
+        // update receiver recent chats
+        const rChats = await getRecentChats(sendid);
+        receiver.ws.send(JSON.stringify({
+          type: "recent_chats",
+          chats: rChats
+        }));
       }
+
+      // update sender recent chats
+      const sChats = await getRecentChats(userId);
+      ws.send(JSON.stringify({
+        type: "recent_chats",
+        chats: sChats
+      }));
     });
 
     /* =====================

@@ -1,93 +1,202 @@
-.match { 
-  background:  linear-gradient(180deg,#155226,#0f3d18); 
-  padding:10px; 
-  margin:10px 10px; 
-  border-radius:3px;
-  border:1px solid rgba(255,255,255,0.18);
-  box-shadow:0 8px 25px rgba(0,0,0,0.18);
-  
+/* =====================
+   MATCH CARD
+===================== */
+.match {
+  background: linear-gradient(180deg, #1a6b32, #0f3d18);
+  padding: 14px;
+  margin: 10px 8px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.15);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+  color: #fff;
 }
 
-   .match .team { 
-      display:flex; 
-      justify-content:space-between; 
-      margin:5px 0; 
-      flex-wrap:wrap; 
-      gap:5px;
-      
-      }
-    
-   .match .btn { 
-     background:#fff; 
-     display: inline-block;
-     border:none; 
-     border-radius:5px; 
-     padding:5px 10px;  
-     
-   }
-  .match  .oddd{
-      
-      background:linear-gradient(135deg, #9f9f42, #214224);
-      border-radius:10px
-      padding:5px 10px;
-    }
-    
-   /* Place BET MODAL */
-    
-    .placebetmodal { 
-      display:none; 
-      position:fixed; 
-      top:0; 
-      left:0; 
-      width:100%; 
-      height:100%; 
-      background:rgba(0,0,0,0.7); 
-      justify-content:center; 
-      align-items:center; 
-      z-index: 1000;
-    }
-    
-    .placebetmodal .placebetmodal-content { 
-      background:#073615; 
-      padding:20px; 
-      border-radius:10px; 
-      text-align:center; 
-      width:300px; 
-      
-    }
-    
-    .placebetmodal .placebetclose { 
-      float:right; 
-      cursor:pointer; 
-      color:red; 
-      font-size: 30px; 
-  text-transform: uppercase;
+/* =====================
+   MATCH TITLE (optional)
+===================== */
+.match-title {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: #e9ffe9;
+  text-decoration: none;
+}
+
+/* =====================
+   TEAMS ROW
+===================== */
+.match .team {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin: 6px 0;
+}
+
+/* team name */
+.match .team span {
+  font-size: 14px;
+  font-weight: 600;
+  flex: 1;
+}
+
+/* =====================
+   MAIN ODDS BUTTON
+===================== */
+.match .btn {
+  background: linear-gradient(135deg, #ffffff, #e8e8e8);
+  color: #111;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-weight: 800;
+  min-width: 64px;
+  cursor: pointer;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.25);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.match .btn:active {
+  transform: scale(0.95);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+}
+
+/* =====================
+   ODDS BADGE
+===================== */
+.match .oddd {
+  background: linear-gradient(135deg, #b4b44d, #2a5c33);
+  border-radius: 12px;
+  padding: 4px 10px;
+  font-size: 12px;
+  margin-left: 6px;
+  display: inline-block;
+}
+
+/* =====================
+   EXTRA ODDS SCROLLER
+===================== */
+.teamm {
+  margin-top: 10px;
+  padding: 10px 8px;
+  background: rgba(0,0,0,0.2);
+  border-radius: 8px;
+
+  display: flex;
+  gap: 10px;
+
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* hide scrollbar (mobile clean look) */
+.teamm::-webkit-scrollbar {
+  display: none;
+}
+
+/* =====================
+   EXTRA ODDS BUTTON
+===================== */
+.btnn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  background: linear-gradient(135deg, #000, #222);
+  color: #fff;
+  font-weight: 700;
+  font-size: 13px;
+  border-radius: 12px;
+  cursor: pointer;
+  flex-shrink: 0;
+  white-space: nowrap;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+  transition: transform 0.12s ease, opacity 0.12s ease;
+}
+
+.btnn:active {
+  transform: scale(0.95);
+  opacity: 0.85;
+}
+
+/* =====================
+   PLACE BET MODAL
+===================== */
+.placebetmodal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.placebetmodal-content {
+  background: linear-gradient(180deg, #0b4a1f, #073615);
+  padding: 20px;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 340px;
+  text-align: center;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+  animation: modalPop 0.25s ease;
+}
+
+@keyframes modalPop {
+  from { transform: translateY(20px) scale(0.95); opacity: 0; }
+  to   { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.placebetclose {
+  position: absolute;
+  right: 18px;
+  top: 12px;
+  cursor: pointer;
+  color: #ff4d4d;
+  font-size: 28px;
   font-weight: bold;
-    }
-    
-    .teamm{
-      
-      position: relative;
-    overflow-x: auto;      /* horizontal scroll */
-    overflow-y: hidden;    /* hide vertical scroll */
-    white-space: nowrap;   /* keep tabs in one line */
-    padding: 8px 0px;     /* leave space for scroll buttons */
-    background: #0f3d18;
-    -webkit-overflow-scrolling: touch; /* smooth scroll on mobile */
-    
-    
-    }
-    
-    .btnn{
-      
-      display: inline-block;
-    padding: 10px 20px;
-    background: black;
-    color: #fff;
-    font-weight: bold;
-    border-radius: 8px;
-    cursor: pointer;
-    flex-shrink: 0;        /* important so tab width doesn't shrink */
-    transition: transform 0.2s, opacity 0.2s;
-    gap: 10px;  
-    }
+}
+
+/* =====================
+   BLINK (ODDS CHANGE)
+===================== */
+.blink {
+  animation: blinkAnim 0.8s ease;
+}
+
+@keyframes blinkAnim {
+  0%   { background: #ffd700; color: #000; }
+  100% { background: transparent; color: inherit; }
+}
+
+/* =====================
+   MOBILE TWEAKS
+===================== */
+@media (max-width: 480px) {
+
+  .match {
+    margin: 8px 6px;
+    padding: 12px;
+  }
+
+  .match-title {
+    font-size: 14px;
+  }
+
+  .match .team span {
+    font-size: 13px;
+  }
+
+  .match .btn {
+    padding: 8px 14px;
+    font-size: 14px;
+  }
+
+  .btnn {
+    padding: 9px 14px;
+    font-size: 12px;
+  }
+}

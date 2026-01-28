@@ -28,6 +28,6 @@ exports.SignUpPost = async (req, res) => {
   }
  const kk =  signupm(user, pass);
   req.session.user = kk;
-  
+  console.log(kk);
   res.redirect("/");
 }

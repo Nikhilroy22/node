@@ -14,7 +14,9 @@ const JSONFileStore = require('./helper/jsonFileStore'); // Custom JSON session 
 const FileStore = require('session-file-store')(session);
 
 //WebSocket
-const { Server } = require('socket.io');
+
+const WebSocket = require("ws");
+//const { Server } = require('socket.io');
 const initWebSocket = require("./ws/wsServer");
 
 // Controllers / Socket handlers
@@ -30,6 +32,7 @@ const app = express();
 const server = http.createServer(app);
 //const io = new Server(server);
 
+const wss = new WebSocket.Server({ noServer: true });
 
 
 //CHALK COLOR SYSTEM
@@ -91,14 +94,30 @@ app.use(express.static(path.join(__dirname, 'public'))); // Static files
 app.use('/admin', AdminRoutes);
 app.use('/', webRoutes);
 
+/* =====================
+     HTTP → WS UPGRADE
+  ====================== */
+  server.on("upgrade", (req, socket, head) => {
+    sessionMiddleware(req, {}, () => {
 
+      // 🔐 require login
+      if (!req.session || !req.session.user) {
+        socket.destroy();
+        return;
+      }
+
+      wss.handleUpgrade(req, socket, head, ws => {
+        wss.emit("connection", ws, req);
+      });
+    });
+  });
 /* =====================
    INIT WEBSOCKET
 ===================== */
-initWebSocket(server, sessionMiddleware);
+initWebSocket(wss);
 
 
-PrivateChat(server, sessionMiddleware); // Private chat socket
+//PrivateChat(server, sessionMiddleware); // Private chat socket
 
 
 /* =========================

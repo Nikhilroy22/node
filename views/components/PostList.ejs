@@ -1,82 +1,182 @@
 <style>
-  
-  .ploader{
-  text-align:center;
-  padding:20px;
-  color:#555;
-}
+  #postlist{
+    max-width:800px;
+    margin:0 auto;
+    padding:10px;
+  }
 
-.post-item{
-  padding:15px;
-  border-bottom:1px solid #ddd;
-}
+  .post-item{
+    background:#fff;
+    padding:15px;
+    margin-bottom:12px;
+    border-radius:8px;
+    box-shadow:0 2px 6px rgba(0,0,0,0.05);
+  }
+
+  .post-item h3{
+    margin:0 0 8px;
+    font-size:18px;
+  }
+
+  .post-item a{
+    text-decoration:none;
+    color:#222;
+  }
+
+  .post-item a:hover{
+    text-decoration:underline;
+  }
+
+  .post-item p{
+    margin:0;
+    color:#555;
+    font-size:14px;
+    line-height:1.5;
+  }
+
+  /* ===== Skeleton (FB style) ===== */
+  .skeleton{
+    background:#fff;
+    padding:15px;
+    margin-bottom:12px;
+    border-radius:8px;
+  }
+
+  .sk-line{
+    height:12px;
+    margin-bottom:10px;
+    border-radius:6px;
+    background:linear-gradient(
+      90deg,#eee 25%,#f5f5f5 37%,#eee 63%
+    );
+    background-size:400% 100%;
+    animation:shimmer 1.4s infinite;
+  }
+
+  .sk-title{ height:16px; width:60%; }
+  .sk-text{ width:100%; }
+
+  @keyframes shimmer{
+    0%{background-position:100% 0}
+    100%{background-position:0 0}
+  }
+
+  /* Empty state */
+  .empty{
+    text-align:center;
+    padding:20px;
+    color:#777;
+  }
+
+  @media (max-width:480px){
+    .post-item h3{ font-size:16px; }
+    .post-item p{ font-size:13px; }
+  }
 </style>
 
 <div id="postlist"></div>
 
-<div id="loader" class="ploader">
-  Loading...
-</div>
-<button onclick="lldd()">load more</button>
+<!-- sentinel for observer -->
+<div id="sentinel"></div>
 
 <script>
+const postlist = document.getElementById("postlist");
+const sentinel = document.getElementById("sentinel");
 
+let cursor = null;
+let loading = false;
+let hasMore = true;
+let canLoad = false;   // 🔒 splash gate
 
-  const postlist = document.getElementById("postlist");
-  const loader = document.getElementById("loader");
+/* ===== Skeleton ===== */
+function showSkeleton(){
+  for(let i=0;i<9;i++){
+    const sk = document.createElement("div");
+    sk.className = "skeleton";
+    sk.innerHTML = `
+      <div class="sk-line sk-title"></div>
+      <div class="sk-line sk-text"></div>
+      <div class="sk-line sk-text"></div>
+    `;
+    postlist.appendChild(sk);
+  }
+}
 
-  let page = 1;
-  let isLoading = false;
-  let hasMore = true;
+function removeSkeleton(){
+  document.querySelectorAll(".skeleton").forEach(s=>s.remove());
+}
 
-  async function loadPosts() {
-    if (isLoading || !hasMore) return;
+/* ===== Fetch posts ===== */
+async function loadPosts(){
+  if(!canLoad || loading || !hasMore) return;
 
-    isLoading = true;
-    loader.style.display = "block";
+  loading = true;
+  showSkeleton();
 
-    try {
-      const res = await fetch(`/admin/data?page=${page}`);
-      const posts = await res.json();
+  try{
+    const url = cursor
+      ? `/admin/data?after=${cursor}`
+      : `/admin/data`;
 
-      if (!posts.length) {
-        hasMore = false;
-        loader.innerText = "আর কোনো পোস্ট নেই";
-        return;
-      }
+    const res = await fetch(url);
+    const data = await res.json();
 
-      posts.forEach(post => {
-        const div = document.createElement("div");
-        div.className = "post-item";
-        div.innerHTML = `
-          <h3>
-            <a href="/post/${post.id}">
-              ${post.title}
-            </a>
-          </h3>
-          <p>${post.content.slice(0,120)}...</p>
-        `;
-        postlist.appendChild(div);
-      });
+    removeSkeleton();
 
-      page++;
-
-    } catch (e) {
-      console.error(e);
-    } finally {
-      isLoading = false;
-      if (hasMore) loader.style.display = "none";
+    if(!data.posts.length){
+      hasMore = false;
+      sentinel.innerHTML = `<div class="empty">আর কোনো পোস্ট নেই</div>`;
+      return;
     }
+
+    data.posts.forEach(post=>{
+      const div = document.createElement("div");
+      div.className = "post-item";
+      div.innerHTML = `
+        <h3>
+          <a href="/post/${post.id}">
+            ${post.title}
+          </a>
+        </h3>
+        <p>${post.content.slice(0,120)}</p>
+      `;
+      postlist.appendChild(div);
+    });
+
+    cursor = data.nextCursor;
+
+  }catch(err){
+    console.error(err);
+  }finally{
+    loading = false;
   }
+}
 
-  function lldd(){
-    
-  loadPosts();
-    
+/* ===== Observer ===== */
+const observer = new IntersectionObserver(entries=>{
+  if(entries[0].isIntersecting){
+    loadPosts();
   }
+},{
+  rootMargin:"0px"
+});
 
-  // initial load
-  loadPosts();
+observer.observe(sentinel);
 
+/* ===== Splash finished ===== */
+window.addEventListener("splashFinished", () => {
+  
+  canLoad = true;
+  loadPosts();   // 🚀 first load
+});
 
+showSkeleton();
+
+/* ===== Fallback: no splash ===== */
+/*document.addEventListener("DOMContentLoaded", () => {
+  if(!document.getElementById("splash")){
+    canLoad = true;
+    loadPosts();
+  }
+});*/
 </script>

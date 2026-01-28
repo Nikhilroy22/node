@@ -31,13 +31,13 @@ function showAlert(message, title = "Alert") {
 
   // Close icon
   const close = document.createElement("span");
-  close.innerHTML = "✕";
+  close.innerHTML = "&times";
   Object.assign(close.style, {
     position: "absolute",
-    top: "10px",
+    top: "0px",
     right: "12px",
     cursor: "pointer",
-    fontSize: "14px",
+    fontSize: "30px",
     opacity: .7
   });
   close.onclick = () => overlay.remove();

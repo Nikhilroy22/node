@@ -86,7 +86,7 @@ router.get('/logout', (req, res) => {
    Chat Routes
 ========================= */
 router.get('/chat', (req, res) => {
-  if (!req.session.user) return res.redirect('/login');
+  /*if (!req.session.user) return res.redirect('/login');*/
   res.render('Chat');
 });
 

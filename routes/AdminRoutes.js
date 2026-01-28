@@ -12,18 +12,35 @@ router.use(admin);
 
 // /admin/data?page=1
 router.get("/data", (req, res) => {
-  const page = parseInt(req.query.page) || 1;
   const limit = 9;
-  const offset = (page - 1) * limit;
+  const after = req.query.after; // cursor
 
-  const posts = jj.db.prepare(`
-    SELECT id, title, content
-    FROM posts
-    ORDER BY id DESC
-    LIMIT ? OFFSET ?
-  `).all(limit, offset);
+  let posts;
 
-  res.json(posts);
+  if (after) {
+    posts = jj.db.prepare(`
+      SELECT id, title, content
+      FROM posts
+      WHERE id < ?
+      ORDER BY id DESC
+      LIMIT ?
+    `).all(after, limit);
+  } else {
+    // first load
+    posts = jj.db.prepare(`
+      SELECT id, title, content
+      FROM posts
+      ORDER BY id DESC
+      LIMIT ?
+    `).all(limit);
+  }
+
+  res.json({
+    posts,
+    nextCursor: posts.length
+      ? posts[posts.length - 1].id
+      : null
+  });
 });
 
 router.get('/', (req, res) => {
@@ -48,6 +65,6 @@ router.post('/savepost', post.savepost);
 router.get('/filemanager', file.fileview);
 router.get('/fileapi', file.filesapi);
 router.post('/filedelete', file.filedelete);
-router.post('/fileupload', file.cupload.single("file"), file.fileupload);
+router.post('/fileupload',  file.fileupload);
 
 module.exports = router;
