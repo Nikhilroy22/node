@@ -12,7 +12,7 @@ router.use(admin);
 
 // /admin/data?page=1
 router.get("/data", (req, res) => {
-  const limit = 9;
+  const limit = 5;
   const after = req.query.after; // cursor
 
   let posts;

@@ -36,10 +36,13 @@
 /* =====================
    STATE
 ===================== */
-let liveMatches = {};
-let selectedBet = null;
-let pollTimer = null;
-const REFRESH_INTERVAL = 3000;
+const state = {
+  liveMatches: {},
+  selectedBet: null,
+  pollTimer: null,
+  REFRESH_INTERVAL: 3000,
+  domCache: new Map()   // 🧠 DOM cache
+};
 
 /* =====================
    FETCH ODDS
@@ -51,29 +54,53 @@ async function fetchOdds() {
 
     const data = await res.json();
     const matches = data?.Value || [];
-    const container = document.getElementById("matches");
-    container.innerHTML = "";
 
-    if (!matches.length) {
-      container.innerHTML = "<div class='empty'>No live matches</div>";
-      return;
-    }
-
-    matches.forEach(m => renderMatch(m, container));
+    renderMatches(matches);
     updateModalOdds();
 
   } catch (err) {
     console.error("Fetch odds error:", err);
   } finally {
-    clearTimeout(pollTimer);
-    pollTimer = setTimeout(fetchOdds, REFRESH_INTERVAL);
+    clearTimeout(state.pollTimer);
+    state.pollTimer = setTimeout(fetchOdds, state.REFRESH_INTERVAL);
   }
 }
 
 /* =====================
-   RENDER MATCH
+   RENDER MATCH LIST (NO SCROLL RESET)
 ===================== */
-function renderMatch(m, container) {
+function renderMatches(matches) {
+  const container = document.getElementById("matches");
+
+  if (!matches.length) {
+    container.replaceChildren(
+      Object.assign(document.createElement("div"), {
+        className: "empty",
+        textContent: "No live matches"
+      })
+    );
+    return;
+  }
+
+  matches.forEach(m => {
+    const id = m.I;
+
+    if (state.domCache.has(id)) {
+      // 🔁 update only odds
+      updateMatchNode(m, state.domCache.get(id));
+    } else {
+      // ➕ new match
+      const node = createMatchNode(m);
+      state.domCache.set(id, node);
+      container.appendChild(node);
+    }
+  });
+}
+
+/* =====================
+   CREATE MATCH NODE
+===================== */
+function createMatchNode(m) {
   const id = m.I;
   const teamA = m.O1E;
   const teamB = m.O2E;
@@ -99,120 +126,153 @@ function renderMatch(m, container) {
     })
   );
 
-  liveMatches[id] = { teamA, teamB, oddsA, oddsB, nestedOdds };
+  state.liveMatches[id] = { teamA, teamB, oddsA, oddsB, nestedOdds };
 
   const div = document.createElement("div");
   div.className = "match";
+  div.dataset.id = id;
 
-  div.innerHTML = `
-    <a href="/bet/${id}" class="match-title">${teamA} vs ${teamB}</a>
+  const title = document.createElement("a");
+  title.href = `/bet/${id}`;
+  title.className = "match-title";
+  title.textContent = `${teamA} vs ${teamB}`;
 
-    <div class="team">
-      <span>${teamA}</span>
-      <button class="btn" onclick="openModal('${id}','A','${teamA}',${oddsA})">${oddsA}</button>
-    </div>
+  div.appendChild(title);
+  div.appendChild(createTeamRow(id, "A", teamA, oddsA));
+  div.appendChild(createTeamRow(id, "B", teamB, oddsB));
 
-    <div class="team">
-      <span>${teamB}</span>
-      <button class="btn" onclick="openModal('${id}','B','${teamB}',${oddsB})">${oddsB}</button>
-    </div>
+  if (nestedOdds.length) {
+    const extra = document.createElement("div");
+    extra.className = "teamm";
 
-    ${
-      nestedOdds.length
-        ? `<div class="teamm">
-            ${nestedOdds.map(o =>
-              `<button class="btnn"
-                onclick="openModal('${id}','X','${o.key}',${o.odds})">
-                ${o.label} - <span class="oddd">${o.odds}</span>
-              </button>`
-            ).join("")}
-          </div>`
-        : ""
-    }
-  `;
+    nestedOdds.forEach(o => {
+      const btn = document.createElement("button");
+      btn.className = "btnn";
+      btn.innerHTML = `${o.label} - <span class="oddd" data-key="${o.key}">${o.odds}</span>`;
+      btn.addEventListener("click", () =>
+        openModal(id, "X", o.key, o.odds)
+      );
+      extra.appendChild(btn);
+    });
 
-  container.appendChild(div);
+    div.appendChild(extra);
+  }
+
+  return div;
+}
+
+/* =====================
+   UPDATE MATCH NODE (ONLY ODDS)
+===================== */
+function updateMatchNode(m, node) {
+  const oddsA = m.E?.[0]?.C || 1.0;
+  const oddsB = m.E?.[1]?.C || 1.0;
+
+  state.liveMatches[m.I].oddsA = oddsA;
+  state.liveMatches[m.I].oddsB = oddsB;
+
+  const btnA = node.querySelector('[data-team="A"]');
+  const btnB = node.querySelector('[data-team="B"]');
+
+  if (btnA && btnA.textContent != oddsA) {
+    btnA.textContent = oddsA;
+    blink(btnA);
+  }
+
+  if (btnB && btnB.textContent != oddsB) {
+    btnB.textContent = oddsB;
+    blink(btnB);
+  }
+
+  m.AE?.forEach(a =>
+    a.ME?.forEach(k => {
+      if (k.CE !== 1) return;
+
+      const key = `${m.I}_${k.CE}_${k.T}`;
+      const el = node.querySelector(`[data-key="${key}"]`);
+
+      if (el && el.textContent != k.C) {
+        el.textContent = k.C;
+        blink(el);
+      }
+    })
+  );
+}
+
+/* =====================
+   TEAM ROW
+===================== */
+function createTeamRow(matchId, team, name, odds) {
+  const row = document.createElement("div");
+  row.className = "team";
+
+  const span = document.createElement("span");
+  span.textContent = name;
+
+  const btn = document.createElement("button");
+  btn.className = "btn";
+  btn.dataset.team = team;
+  btn.textContent = odds;
+  btn.addEventListener("click", () =>
+    openModal(matchId, team, name, odds)
+  );
+
+  row.append(span, btn);
+  return row;
+}
+
+/* =====================
+   BLINK HELPER
+===================== */
+function blink(el) {
+  el.classList.add("blink");
+  setTimeout(() => el.classList.remove("blink"), 800);
 }
 
 /* =====================
    MODAL
 ===================== */
 function openModal(matchId, team, name, odds) {
-  selectedBet = { matchId, team, name, odds };
-  const match = liveMatches[matchId];
+  state.selectedBet = { matchId, team, name, odds };
+  const match = state.liveMatches[matchId];
 
-  document.getElementById("matchTitle").innerText =
+  document.getElementById("matchTitle").textContent =
     `${match.teamA} vs ${match.teamB}`;
-  document.getElementById("teamName").innerText = name;
-  document.getElementById("teamOdds").innerText = odds;
+  document.getElementById("teamName").textContent = name;
+  document.getElementById("teamOdds").textContent = odds;
   document.getElementById("betModal").style.display = "flex";
 }
 
 function closeModal() {
   document.getElementById("betModal").style.display = "none";
-  selectedBet = null;
+  state.selectedBet = null;
   document.getElementById("betAmount").value = 500;
 }
 
 /* =====================
-   LIVE ODDS UPDATE
+   LIVE MODAL ODDS
 ===================== */
 function updateModalOdds() {
-  if (!selectedBet) return;
+  const bet = state.selectedBet;
+  if (!bet) return;
 
-  const match = liveMatches[selectedBet.matchId];
+  const match = state.liveMatches[bet.matchId];
   if (!match) return;
 
-  let newOdds = selectedBet.odds;
+  let newOdds = bet.odds;
 
-  if (selectedBet.team === "A") newOdds = match.oddsA;
-  else if (selectedBet.team === "B") newOdds = match.oddsB;
+  if (bet.team === "A") newOdds = match.oddsA;
+  else if (bet.team === "B") newOdds = match.oddsB;
   else {
-    const opt = match.nestedOdds.find(o => o.key === selectedBet.name);
+    const opt = match.nestedOdds.find(o => o.key === bet.name);
     if (opt) newOdds = opt.odds;
   }
 
   const el = document.getElementById("teamOdds");
-  if (parseFloat(el.innerText) !== newOdds) {
-    el.innerText = newOdds;
-    selectedBet.odds = newOdds;
-    el.classList.add("blink");
-    setTimeout(() => el.classList.remove("blink"), 800);
-  }
-}
-
-/* =====================
-   PLACE BET
-===================== */
-async function placeBet() {
-  if (!selectedBet) return;
-
-  const amount = Number(document.getElementById("betAmount").value);
-  if (!amount || amount <= 0) {
-    return showToast("Enter valid amount", "error");
-  }
-
-  try {
-    const res = await fetch("/bet", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        matchId: selectedBet.matchId,
-        option: selectedBet.team,
-        amount,
-        odds: selectedBet.odds
-      })
-    });
-
-    const data = await res.json();
-    if (!data.success) throw new Error(data.message);
-
-    showToast(`✅ Bet placed @ ${data.data.odds}`, "success");
-    closeModal();
-
-  } catch (err) {
-    console.error(err);
-    showToast("Bet failed", "error");
+  if (Number(el.textContent) !== newOdds) {
+    el.textContent = newOdds;
+    bet.odds = newOdds;
+    blink(el);
   }
 }
 
@@ -220,6 +280,14 @@ async function placeBet() {
    INIT
 ===================== */
 fetchOdds();
+
+
+function placeBet(){
+  
+  
+showToast("Invalid credentials", "error");
+
+}
 </script>
 
 <%- include('footer') %>
