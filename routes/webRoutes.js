@@ -11,9 +11,75 @@ const BetApiController = require('../controller/BetApiController');
 const MessageView = require('../controller/MsgViewController');
 
 const blog = require('../controller/BlogController');
+const search = require('../controller/SearchController');
 
 // Middleware
 const authMiddleware = require('../middleware/authMiddleware');
+
+//SearchController
+router.get('/searchview', search.searchview);
+router.get('/search', search.searchpost);
+
+router.get("/sse", async (req, res) => {
+  // SSE headers
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+
+  const logs = [
+    "🔄 Starting deployment...",
+    "📦 Installing dependencies",
+    "📦 npm install completed",
+    "🏗 Building project",
+    "⚙ Optimizing assets",
+    "🚀 Deploying to server",
+    "✅ Deployment successful!"
+  ];
+
+  for (const line of logs) {
+    res.write(`data: ${line}\n\n`);
+    await sleep(800); // delay like real deploy
+  }
+
+  res.write("event: done\ndata: END\n\n");
+  res.end();
+});
+
+function sleep(ms) {
+  return new Promise(r => setTimeout(r, ms));
+}
+let stats = {
+  users: 120,
+  active: 23,
+  orders: 4
+};
+
+
+router.get("/rr", (req, res) => {
+  // (এখানে চাইলে session / JWT check করবে)
+
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+
+  // initial data
+  res.write(`data: ${JSON.stringify(stats)}\n\n`);
+
+  // update every 2 sec (simulation)
+  const timer = setInterval(() => {
+    stats.active = Math.floor(Math.random() * stats.users);
+    stats.orders += Math.random() > 0.7 ? 1 : 0;
+
+    res.write(`data: ${JSON.stringify(stats)}\n\n`);
+  }, 5000);
+
+  // client disconnect
+  req.on("close", () => {
+    clearInterval(timer);
+    res.end();
+  });
+});
+
 
 //BLOG Routes
 router.get('/post/:jj', blog.userblog)
@@ -31,7 +97,7 @@ router.get("/demo", (req, res) => {
    Bet Routes
 ========================= */
 router.get('/bet', BetController.bethome);
-router.post('/bet', BetController.placeBet);
+router.post('/placebet', BetController.placeBet);
 
 // Bet API Get by ID
 router.get('/bet/:id', BetApiController.ParamsBet);

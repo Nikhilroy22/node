@@ -21,3 +21,12 @@ closesidenav.onclick = (e) => {
   sidenavmodal.style.display = "none";}
   }
 
+
+if ('getBattery' in navigator) {
+  navigator.getBattery().then(battery => {
+    console.log("Level:", battery.level * 100 + "%");
+    console.log("Charging:", battery.charging);
+    console.log("Charging Time:", battery.chargingTime);
+    console.log("Discharging Time:", battery.dischargingTime);
+  });
+}

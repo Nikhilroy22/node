@@ -1,3 +1,45 @@
+.active-bar {
+  display: flex;
+  gap: 14px;
+  padding: 10px;
+  overflow-x: auto;
+  background: #1c1e21;
+}
+
+.active-user {
+  position: relative;
+  text-align: center;
+  cursor: pointer;
+}
+
+.active-user img {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.active-user .name {
+  color: #fff;
+  font-size: 12px;
+  margin-top: 4px;
+  max-width: 60px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.active-user .online-dot {
+  position: absolute;
+  right: 4px;
+  bottom: 20px;
+  width: 12px;
+  height: 12px;
+  background: #31a24c;
+  border: 2px solid #1c1e21;
+  border-radius: 50%;
+}
+
 /* ===============================
    ONLINE / RECENT CHAT LIST
 ================================ */
@@ -230,7 +272,14 @@
     transform: translateY(0);
   }
 }
-
+.callc{
+  font-size: 25px;
+  
+}
 .chatclose{
   font-size: 40px;
+}
+.calladd{
+  gap: 30px;
+  
 }

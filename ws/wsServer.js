@@ -1,15 +1,16 @@
 const clients = new Map();      // online users
 const messages = [];           // all messages (memory)
-const chatUsers = new Map();   // recent chat users (online + offline)
-const lastSeen = new Map();    // 🔥 last active time
+const chatUsers = new Map();   // recent chat users
+const lastSeen = new Map();    // last active time
+const activeChats = new Map(); // 🔥 who is chatting with whom
 
 /*
 messages = [
   { from, to, message, time, readBy: [] }
 ]
 
-chatUsers = {
-  userId: { id, name }
+activeChats = {
+  userId: chattingWithUserId
 }
 */
 
@@ -31,7 +32,6 @@ module.exports = function initWebSocket(wss) {
       name: ws.username
     });
 
-    // 🔥 user just active now
     lastSeen.set(userId, Date.now());
 
     /* ===== INIT ===== */
@@ -46,10 +46,8 @@ module.exports = function initWebSocket(wss) {
 
     ws.on("close", () => {
       clients.delete(ws.userId);
-
-      // 🔥 save last active time
+      activeChats.delete(ws.userId); // 🔥 clear active chat
       lastSeen.set(ws.userId, Date.now());
-
       sendUsersToAll();
       console.log("❌ Disconnected:", ws.username);
     });
@@ -61,10 +59,12 @@ module.exports = function initWebSocket(wss) {
       try {
         const msg = JSON.parse(data);
 
-        /* 🔹 CHAT HISTORY (MARK READ) */
+        /* 🔹 CHAT HISTORY */
         if (msg.type === "chat_history") {
-
           const withUser = msg.with;
+
+          // 🔥 mark as active chat
+          activeChats.set(ws.userId, withUser);
 
           // 🔥 mark unread → read
           messages.forEach(m => {
@@ -88,24 +88,52 @@ module.exports = function initWebSocket(wss) {
             messages: history
           }));
 
-          sendUsersToAll(); // 🔄 refresh unread + last active
+          sendUsersToAll();
+          return;
+        }
+
+        /* 🔹 MARK READ (chat open) */
+        if (msg.type === "mark_read") {
+          activeChats.set(ws.userId, msg.with);
+
+          messages.forEach(m => {
+            if (
+              m.from === msg.with &&
+              m.to === ws.userId &&
+              !m.readBy.includes(ws.userId)
+            ) {
+              m.readBy.push(ws.userId);
+            }
+          });
+
+          sendUsersToAll();
+          return;
+        }
+
+        /* 🔹 CHAT CLOSED */
+        if (msg.type === "chat_closed") {
+          activeChats.delete(ws.userId);
           return;
         }
 
         /* 🔒 PRIVATE MESSAGE */
         if (msg.type === "private_message") {
 
+          const isReceiverActive =
+            activeChats.get(msg.to) === ws.userId;
+
           const messageObj = {
             from: ws.userId,
             to: msg.to,
             message: msg.message,
             time: Date.now(),
-            readBy: [ws.userId]
+            readBy: isReceiverActive
+              ? [ws.userId, msg.to] // 🔥 auto read
+              : [ws.userId]
           };
 
           messages.push(messageObj);
 
-          // 🔹 recent chat list update
           chatUsers.set(ws.userId, {
             id: ws.userId,
             name: ws.username
@@ -120,7 +148,6 @@ module.exports = function initWebSocket(wss) {
 
           const toWs = clients.get(msg.to);
 
-          // 🔹 realtime send if online
           if (toWs && toWs.readyState === 1) {
             toWs.send(JSON.stringify({
               type: "private_message",
@@ -168,7 +195,7 @@ module.exports = function initWebSocket(wss) {
           id: u.id,
           name: u.name,
           online: clients.has(u.id),
-          lastSeen: lastSeen.get(u.id) || null,   // 🔥 NEW
+          lastSeen: lastSeen.get(u.id) || null,
           lastText: lastMsg ? lastMsg.message : "",
           lastTime: lastMsg ? lastMsg.time : 0,
           unread: unreadCount

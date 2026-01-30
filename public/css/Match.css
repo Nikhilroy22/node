@@ -1,97 +1,99 @@
 /* =====================
-   MATCH CARD
+   MATCH CARD (1xBet Style)
 ===================== */
 .match {
-  background: linear-gradient(180deg, #1a6b32, #0f3d18);
+  background: linear-gradient(180deg, #1a2f5a, #0f1f3d);
   padding: 14px;
   margin: 10px 8px;
   border-radius: 10px;
-  border: 1px solid rgba(255,255,255,0.15);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.35);
   color: #fff;
 }
 
 /* =====================
-   MATCH TITLE (optional)
+   MATCH TITLE
 ===================== */
 .match-title {
   display: block;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
-  margin-bottom: 6px;
-  color: #e9ffe9;
+  margin-bottom: 8px;
+  color: #eaf2ff;
   text-decoration: none;
 }
 
 /* =====================
-   TEAMS ROW
+   TEAM ROW
 ===================== */
 .match .team {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 10px;
-  margin: 6px 0;
+  margin: 8px 0;
 }
 
-/* team name */
 .match .team span {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   flex: 1;
+  color: #e5ecff;
 }
 
 /* =====================
    MAIN ODDS BUTTON
 ===================== */
 .match .btn {
-  background: linear-gradient(135deg, #ffffff, #e8e8e8);
-  color: #111;
+  background: linear-gradient(180deg, #ffffff, #f0f0f0);
+  color: #0b1b36;
   border: none;
-  border-radius: 8px;
-  padding: 8px 16px;
+  border-radius: 6px;
+  padding: 8px 14px;
   font-weight: 800;
-  min-width: 64px;
+  font-size: 14px;
+  min-width: 62px;
   cursor: pointer;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.25);
-  transition: transform 0.12s ease, box-shadow 0.12s ease;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  transition: background 0.12s ease, transform 0.12s ease;
+}
+
+.match .btn:hover {
+  background: #e7efff;
 }
 
 .match .btn:active {
-  transform: scale(0.95);
-  box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+  transform: scale(0.96);
 }
 
 /* =====================
-   ODDS BADGE
+   ODDS BADGE (INLINE)
 ===================== */
 .match .oddd {
-  background: linear-gradient(135deg, #b4b44d, #2a5c33);
-  border-radius: 12px;
-  padding: 4px 10px;
-  font-size: 12px;
+  background: #ffcc00;
+  color: #000;
+  border-radius: 10px;
+  padding: 3px 8px;
+  font-size: 11px;
+  font-weight: 700;
   margin-left: 6px;
-  display: inline-block;
 }
 
 /* =====================
-   EXTRA ODDS SCROLLER
+   EXTRA ODDS CONTAINER
 ===================== */
 .teamm {
   margin-top: 10px;
-  padding: 10px 8px;
-  background: rgba(0,0,0,0.2);
+  padding: 8px 6px;
+  background: rgba(0,0,0,0.35);
   border-radius: 8px;
-
   display: flex;
-  gap: 10px;
-
+  gap: 8px;
   overflow-x: auto;
-  overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
 }
 
-/* hide scrollbar (mobile clean look) */
+/* Hide scrollbar */
 .teamm::-webkit-scrollbar {
   display: none;
 }
@@ -103,77 +105,47 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 10px 16px;
-  background: linear-gradient(135deg, #000, #222);
+  padding: 8px 14px;
+  background: linear-gradient(180deg, #1e3a73, #132b52);
   color: #fff;
   font-weight: 700;
-  font-size: 13px;
-  border-radius: 12px;
+  font-size: 12px;
+  border-radius: 8px;
   cursor: pointer;
   flex-shrink: 0;
   white-space: nowrap;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-  transition: transform 0.12s ease, opacity 0.12s ease;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.35);
+  transition: background 0.12s ease, transform 0.12s ease;
+}
+
+.btnn:hover {
+  background: linear-gradient(180deg, #244a91, #173567);
 }
 
 .btnn:active {
-  transform: scale(0.95);
-  opacity: 0.85;
-}
-
-/* =====================
-   PLACE BET MODAL
-===================== */
-.placebetmodal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.75);
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.placebetmodal-content {
-  background: linear-gradient(180deg, #0b4a1f, #073615);
-  padding: 20px;
-  border-radius: 16px;
-  width: 90%;
-  max-width: 340px;
-  text-align: center;
-  box-shadow: 0 15px 40px rgba(0,0,0,0.6);
-  animation: modalPop 0.25s ease;
-}
-
-@keyframes modalPop {
-  from { transform: translateY(20px) scale(0.95); opacity: 0; }
-  to   { transform: translateY(0) scale(1); opacity: 1; }
-}
-
-.placebetclose {
-  position: absolute;
-  right: 18px;
-  top: 12px;
-  cursor: pointer;
-  color: #ff4d4d;
-  font-size: 28px;
-  font-weight: bold;
+  transform: scale(0.96);
 }
 
 /* =====================
    BLINK (ODDS CHANGE)
 ===================== */
 .blink {
-  animation: blinkAnim 0.8s ease;
+  animation: blinkAnim 0.7s ease;
 }
 
 @keyframes blinkAnim {
-  0%   { background: #ffd700; color: #000; }
-  100% { background: transparent; color: inherit; }
+  0% {
+    background: #22c55e;
+    color: #000;
+  }
+  100% {
+    background: transparent;
+    color: inherit;
+  }
 }
 
 /* =====================
-   MOBILE TWEAKS
+   MOBILE OPTIMIZATION
 ===================== */
 @media (max-width: 480px) {
 
@@ -183,20 +155,20 @@
   }
 
   .match-title {
-    font-size: 14px;
-  }
-
-  .match .team span {
     font-size: 13px;
   }
 
+  .match .team span {
+    font-size: 12px;
+  }
+
   .match .btn {
-    padding: 8px 14px;
-    font-size: 14px;
+    padding: 8px 12px;
+    font-size: 13px;
   }
 
   .btnn {
-    padding: 9px 14px;
-    font-size: 12px;
+    padding: 7px 12px;
+    font-size: 11px;
   }
 }

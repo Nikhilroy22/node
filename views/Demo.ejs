@@ -1,148 +1,64 @@
-<%- include('header') %>
-<script src="https://cdn.jsdelivr.net/npm/pixi.js@7.x/dist/pixi.min.js"></script>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Admin Live Dashboard</title>
+<style>
+body {
+  font-family: Arial;
+  background: #f0f2f5;
+  padding: 30px;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 200px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 6px rgba(0,0,0,.1);
+}
+
+.value {
+  font-size: 28px;
+  font-weight: bold;
+}
+</style>
+</head>
+<body>
+
+<h2>📊 Admin Live Dashboard</h2>
+
+<div class="card">
+  Users
+  <div id="users" class="value">0</div>
+</div>
+
+<div class="card">
+  Active Users
+  <div id="active" class="value">0</div>
+</div>
+
+<div class="card">
+  Orders
+  <div id="orders" class="value">0</div>
+</div>
+
 <script>
-  // ================= PIXI APP =================
-const app = new PIXI.Application({
-  resizeTo: window,
-  backgroundColor: 0x020617,
-  antialias: true
-});
-document.body.appendChild(app.view);
+const es = new EventSource("/rr");
 
-// ================= STATES =================
-const STATE = { SPLASH: 0, GAME: 1 };
-let currentState = STATE.SPLASH;
+es.onmessage = e => {
+  const data = JSON.parse(e.data);
 
-// ================= SPLASH SCREEN =================
-const splash = new PIXI.Container();
+  users.textContent = data.users;
+  active.textContent = data.active;
+  orders.textContent = data.orders;
+};
 
-const splashTitle = new PIXI.Text("CRASH GAME", {
-  fill: "#38bdf8",
-  fontSize: 44,
-  fontWeight: "bold"
-});
-splashTitle.anchor.set(0.5);
-
-const splashTap = new PIXI.Text("TAP TO START", {
-  fill: "#94a3b8",
-  fontSize: 16
-});
-splashTap.anchor.set(0.5);
-
-splash.interactive = true;
-splash.cursor = "pointer";
-splash.on("pointerdown", () => {
-  requestFullscreen();
-  startGame();
-});
-
-splash.addChild(splashTitle, splashTap);
-app.stage.addChild(splash);
-
-// splash animation
-app.ticker.add(() => {
-  if (currentState !== STATE.SPLASH) return;
-  splashTitle.scale.set(1 + Math.sin(Date.now() / 300) * 0.03);
-});
-
-// ================= GAME =================
-const game = new PIXI.Container();
-
-let multiplier = 1;
-let crashed = false;
-let crashPoint = getCrashPoint();
-
-const multiplierText = new PIXI.Text("1.00x", {
-  fill: "#22c55e",
-  fontSize: 52,
-  fontWeight: "bold"
-});
-multiplierText.anchor.set(0.5);
-
-const statusText = new PIXI.Text("Flying...", {
-  fill: "#9ca3af",
-  fontSize: 16
-});
-statusText.anchor.set(0.5);
-
-const graph = new PIXI.Graphics();
-
-game.addChild(graph, multiplierText, statusText);
-
-// ================= GAME LOOP =================
-app.ticker.add((delta) => {
-  if (currentState !== STATE.GAME || crashed) return;
-
-  multiplier += 0.01 * delta;
-  multiplierText.text = multiplier.toFixed(2) + "x";
-
-  graph.lineStyle(2, 0x22c55e);
-  graph.lineTo(multiplier * 60, -multiplier * 35);
-
-  if (multiplier >= crashPoint) crash();
-});
-
-// ================= FUNCTIONS =================
-function startGame() {
-  currentState = STATE.GAME;
-  app.stage.removeChild(splash);
-  app.stage.addChild(game);
-  resize();
-}
-
-function crash() {
-  crashed = true;
-  multiplierText.style.fill = "#ef4444";
-  statusText.text = "CRASHED!";
-
-  setTimeout(resetGame, 2500);
-}
-
-function resetGame() {
-  multiplier = 1;
-  crashed = false;
-  crashPoint = getCrashPoint();
-
-  graph.clear();
-  multiplierText.text = "1.00x";
-  multiplierText.style.fill = "#22c55e";
-  statusText.text = "Flying...";
-}
-
-function getCrashPoint() {
-  return Math.random() * 4 + 1.5;
-}
-
-// ================= FULLSCREEN =================
-function requestFullscreen() {
-  const el = app.view;
-  if (el.requestFullscreen) el.requestFullscreen();
-  else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-  else if (el.msRequestFullscreen) el.msRequestFullscreen();
-}
-
-// ================= RESIZE =================
-function resize() {
-  splashTitle.x = app.screen.width / 2;
-  splashTitle.y = app.screen.height / 2 - 20;
-
-  splashTap.x = app.screen.width / 2;
-  splashTap.y = app.screen.height / 2 + 30;
-
-  multiplierText.x = app.screen.width / 2;
-  multiplierText.y = app.screen.height / 2;
-
-  statusText.x = app.screen.width / 2;
-  statusText.y = multiplierText.y + 50;
-
-  graph.x = app.screen.width * 0.15;
-  graph.y = app.screen.height * 0.8;
-}
-
-window.addEventListener("resize", resize);
-resize();
-  
-  
+es.onerror = () => {
+  console.log("SSE disconnected, retrying...");
+};
 </script>
 
-<%- include('footer') %>
+</body>
+</html>

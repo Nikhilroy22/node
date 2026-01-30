@@ -1,5 +1,6 @@
 // =======================================
 // PROFESSIONAL TOAST SYSTEM (JS ONLY)
+// TOP-RIGHT VERSION
 // =======================================
 (function initToastSystem() {
   // Prevent duplicate init
@@ -10,13 +11,14 @@
 
   Object.assign(container.style, {
     position: "fixed",
-    top: "20px",
-    right: "20px",
+    top: "16px",
+    right: "16px",
     zIndex: "9999",
     display: "flex",
     flexDirection: "column",
     gap: "10px",
-    maxWidth: "90vw",
+    maxWidth: "92vw",
+    alignItems: "flex-end",
     fontFamily: "system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
   });
 
@@ -26,20 +28,31 @@
   const style = document.createElement("style");
   style.innerHTML = `
     @keyframes toastIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes toastOut {
-      to { opacity: 0; transform: translateY(10px); }
+      from {
+        opacity: 0;
+        transform: translateY(-6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
+    @keyframes toastOut {
+      to {
+        opacity: 0;
+        transform: translateY(-6px);
+      }
+    }
+
+    /* 📱 Mobile safe-area (top-right) */
     @media (max-width: 640px) {
       #toastContainer {
-        top: auto !important;
-        bottom: 16px !important;
-        right: 50% !important;
-        transform: translateX(50%);
-        align-items: center;
+        top: calc(env(safe-area-inset-top, 0px) + 12px) !important;
+        right: 12px !important;
+        left: auto !important;
+        bottom: auto !important;
+        align-items: flex-end;
       }
     }
   `;
@@ -57,15 +70,17 @@ function showToast(message, type = "info", duration = 4000) {
 
   Object.assign(toast.style, {
     minWidth: "240px",
+    maxWidth: "360px",
     background: "#1f2937",
     color: "#fff",
     padding: "12px 40px 12px 16px",
-    borderRadius: "8px",
-    boxShadow: "0 6px 18px rgba(0,0,0,.35)",
+    borderRadius: "10px",
+    boxShadow: "0 8px 20px rgba(0,0,0,.35)",
     position: "relative",
-    animation: "toastIn .3s ease forwards",
+    animation: "toastIn .25s ease forwards",
     fontSize: "14px",
-    lineHeight: "1.4"
+    lineHeight: "1.4",
+    wordBreak: "break-word"
   });
 
   const colors = {
@@ -87,10 +102,11 @@ function showToast(message, type = "info", duration = 4000) {
     right: "10px",
     cursor: "pointer",
     fontSize: "18px",
-    opacity: "0.7"
+    opacity: "0.7",
+    lineHeight: "1"
   });
 
-  closeBtn.onclick = () => removeToast();
+  closeBtn.onclick = removeToast;
   toast.appendChild(closeBtn);
 
   container.appendChild(toast);
@@ -99,14 +115,7 @@ function showToast(message, type = "info", duration = 4000) {
 
   function removeToast() {
     clearTimeout(timer);
-    toast.style.animation = "toastOut .25s ease forwards";
-    setTimeout(() => toast.remove(), 350);
+    toast.style.animation = "toastOut .2s ease forwards";
+    setTimeout(() => toast.remove(), 220);
   }
 }
-
-
-
-
-
-
-

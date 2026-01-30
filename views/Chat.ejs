@@ -1,8 +1,11 @@
 <%- include('header') %>
 
+
+<div class="active-bar" id="activeBar"></div>
+
 <div class="chat-box">
   <div class="active-users">
-    <h3>🟢 Online Users</h3>
+    
     <ul id="activeList"></ul>
   </div>
 </div>
@@ -15,7 +18,11 @@
     <div id="chatUser"></div>
     <small id="chatStatus"></small>
   </div>
-  <div class="chatclose" onclick="closeChat()">&times</div>
+    
+  <div class="calladd">
+  <span class="callc" onclick="callbtn()">📞</span>
+  <span class="chatclose" onclick="closeChat()">&times</span>
+  </div>
 </div>
 
   <div id="chatMessages"></div>

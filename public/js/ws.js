@@ -4,6 +4,8 @@ let currentUser = null;
 const activeList = document.getElementById("activeList");
 const chatBox = document.getElementById("chatMessages");
 
+const activeBar = document.getElementById("activeBar");
+
 const ws = new WebSocket(
   (location.protocol === "https:" ? "wss://" : "ws://") + location.host
 );
@@ -25,14 +27,18 @@ ws.onmessage = (e) => {
       return;
     }
 
-    /* 🔹 USERS (RECENT CHAT LIST + STATUS UPDATE) */
+    /* 🔹 USERS LIST */
     if (data.type === "users") {
       if (myUserId !== null) {
         renderUsers(data.users);
+        
+        renderActiveUsers(data.users); // 🔥 active bar
 
-        // 🔥 update open chat header status realtime
+        // 🔥 realtime status update for open chat
         if (currentUser) {
-          const updated = data.users.find(u => u.id === currentUser.id);
+          const updated = data.users.find(
+            u => u.id === currentUser.id
+          );
           if (updated) updateChatHeader(updated);
         }
       }
@@ -56,10 +62,19 @@ ws.onmessage = (e) => {
 
     /* 🔹 PRIVATE MESSAGE */
     if (data.type === "private_message") {
+
+      // 🔥 only show if this chat is open
       if (currentUser && data.from === currentUser.id) {
         addMsg(data.message, "other");
         scrollBottom();
+
+        // 🔥 immediately mark read (safety)
+        ws.send(JSON.stringify({
+          type: "mark_read",
+          with: data.from
+        }));
       }
+
       return;
     }
 
@@ -69,7 +84,7 @@ ws.onmessage = (e) => {
 };
 
 /* =====================
-   CHAT
+   OPEN CHAT
 ===================== */
 function openChat(u) {
   currentUser = u;
@@ -80,10 +95,29 @@ function openChat(u) {
   chatBox.innerHTML = "";
   document.getElementById("chatModal").style.display = "flex";
 
-  // 🔥 opening chat = mark read
+  // 🔥 load history + mark active
   ws.send(JSON.stringify({
     type: "chat_history",
     with: u.id
+  }));
+
+  // 🔥 explicitly mark read
+  ws.send(JSON.stringify({
+    type: "mark_read",
+    with: u.id
+  }));
+}
+
+/* =====================
+   CLOSE CHAT
+===================== */
+function closeChat() {
+  currentUser = null;
+  document.getElementById("chatModal").style.display = "none";
+
+  // 🔥 tell server chat closed
+  ws.send(JSON.stringify({
+    type: "chat_closed"
   }));
 }
 
@@ -132,14 +166,26 @@ function renderUsers(users) {
   });
 }
 
-/* =====================
-   CLOSE CHAT
-===================== */
-function closeChat() {
-  currentUser = null;
-  document.getElementById("chatModal").style.display = "none";
-}
 
+function renderActiveUsers(users) {
+  activeBar.innerHTML = "";
+
+  users
+    .filter(u => u.online) // 🔥 only online users
+    .forEach(u => {
+      const div = document.createElement("div");
+      div.className = "active-user";
+
+      div.innerHTML = `
+        <img src="https://ui-avatars.com/api/?name=${u.name}&background=random" />
+        <span class="online-dot"></span>
+        <div class="name">${u.name}</div>
+      `;
+
+      div.onclick = () => openChat(u);
+      activeBar.appendChild(div);
+    });
+}
 /* =====================
    MESSAGE UI
 ===================== */
@@ -175,7 +221,7 @@ function sendMsg() {
 }
 
 /* =====================
-   TIME AGO HELPER
+   TIME AGO
 ===================== */
 function timeAgo(time) {
   if (!time) return "";
