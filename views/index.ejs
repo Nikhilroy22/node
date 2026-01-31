@@ -32,7 +32,7 @@ async function enablePush() {
     console.log("Old subscription found → removing");
     await existingSub.unsubscribe();
   }
-try{
+
   // 4️⃣ Fresh subscribe
  const subscription = await registration.pushManager.subscribe({
     userVisibleOnly: true,
@@ -40,9 +40,7 @@ try{
   });
 
   console.log("Subscribed successfully", subscription); 
-}catch(e){
-  console.log("erro", e)
-}
+
   // 5️⃣ Send to server
   await fetch("/subscribe", {
     method: "POST",

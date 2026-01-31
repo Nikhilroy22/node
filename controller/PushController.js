@@ -7,7 +7,7 @@ exports.subscribe = (req, res) => {
 
 
 exports.sendpush = async (req, res) => {
-  const { title } = req.body;
+  //const { title } = req.body;
 
   // 🗄️ Save post (DB logic এখানে)
  // console.log("Post saved:", title);
