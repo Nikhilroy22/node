@@ -18,5 +18,5 @@ exports.sendpush = async (req, res) => {
     body: "Nikhil"
   });
 
-  res.json({ ok: true });
+  res.json({ ok: true data: "sucess"});
 };
