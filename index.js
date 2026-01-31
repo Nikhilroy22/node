@@ -21,7 +21,7 @@ const initWebSocket = require("./ws/wsServer");
 
 // Controllers / Socket handlers
 const socketHandler = require('./socket/socketHandler'); // Crash socket
-const PrivateChat = require('./socket/PrivateChat'); // Private chat socket
+
 
 // Routes
 const webRoutes = require('./routes/webRoutes');
@@ -117,7 +117,6 @@ app.use('/', webRoutes);
 initWebSocket(wss);
 
 
-//PrivateChat(server, sessionMiddleware); // Private chat socket
 
 
 /* =========================

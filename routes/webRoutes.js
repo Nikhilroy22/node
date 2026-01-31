@@ -12,9 +12,14 @@ const MessageView = require('../controller/MsgViewController');
 
 const blog = require('../controller/BlogController');
 const search = require('../controller/SearchController');
+const push = require('../controller/PushController');
 
 // Middleware
 const authMiddleware = require('../middleware/authMiddleware');
+//PushController
+router.post("/subscribe", push.subscribe);
+router.get("/sendpush", push.sendpush);
+
 
 //SearchController
 router.get('/searchview', search.searchview);

@@ -304,5 +304,14 @@
       "id": 3,
       "username": "Pakhi"
     }
+  },
+  "neHOgcID7X86pM92eIg7sdmnOp7RzxTT": {
+    "cookie": {
+      "originalMaxAge": null,
+      "expires": null,
+      "httpOnly": true,
+      "path": "/"
+    },
+    "flash": {}
   }
 }
