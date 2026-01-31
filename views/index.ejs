@@ -34,7 +34,7 @@ async function enablePush() {
   }
 try{
   // 4️⃣ Fresh subscribe
- const subscriptionn = await registration.pushManager.subscribe({
+ const subscription = await registration.pushManager.subscribe({
     userVisibleOnly: true,
     applicationServerKey: urlBase64ToUint8Array(publicKey)
   });
