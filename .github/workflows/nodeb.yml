@@ -56,7 +56,7 @@ jobs:
       - name: Apply Android patch
         run: |
           cd node
-          PATCH_PATH=./android-patches/trap-handler.h.patch
+          PATCH_PATH=../android-patches/trap-handler.h.patch
           if [ -f $PATCH_PATH ]; then
             git apply $PATCH_PATH
             echo "Patch applied successfully."
