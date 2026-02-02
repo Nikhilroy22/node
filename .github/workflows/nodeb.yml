@@ -14,26 +14,28 @@ jobs:
       ANDROID_NDK_VERSION: r25b
       TARGET: armv7a-linux-androideabi
       API_LEVEL: 21
-      NODE_VERSION: v20.0.0   # Node.js version
+      NODE_VERSION: v20.0.0
+      HOST_OS: linux
+      HOST_ARCH: x64
 
     steps:
       # 1️⃣ Checkout repo
       - name: Checkout workflow repo
         uses: actions/checkout@v4
 
-      # 2️⃣ Setup Python 3.10 using actions/setup-python
+      # 2️⃣ Setup Python 3.10
       - name: Setup Python 3.10
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
-      # 3️⃣ Install required system packages
+      # 3️⃣ Install system dependencies
       - name: Install system dependencies
         run: |
           sudo apt update
-          sudo apt install -y git clang make cmake ninja-build wget unzip curl
+          sudo apt install -y git clang make cmake ninja-build wget unzip curl pkg-config
 
-      # 4️⃣ Clone Node.js source code
+      # 4️⃣ Clone Node.js source
       - name: Clone Node.js source
         run: |
           git clone --branch $NODE_VERSION https://github.com/nodejs/node.git
@@ -68,11 +70,15 @@ jobs:
       - name: Configure Node.js
         run: |
           cd node
-          ./configure \
+          export PATH=$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH
+          export TARGET=armv7a-linux-androideabi
+          export API_LEVEL=21
+          export HOST_OS=linux
+          export HOST_ARCH=x64
+          python3 configure \
             --dest-os=android \
             --dest-cpu=arm \
             --cross-compiling \
-            --without-snapshot \
             --without-inspector \
             --openssl-no-asm
 
@@ -82,7 +88,7 @@ jobs:
           cd node
           make -j$(nproc)
 
-      # 🔟 Upload build artifact
+      # 🔟 Upload artifact
       - name: Upload Node.js ARM32 binary
         uses: actions/upload-artifact@v4
         with:
