@@ -17,18 +17,18 @@ jobs:
       NODE_VERSION: v20.0.0
 
     steps:
-      # 1️⃣ Checkout repo
+      # 1️⃣ Checkout repository
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      # 2️⃣ Setup Python 3.10
+      # 2️⃣ Setup Python 3.10 (Node.js compatible)
       - name: Setup Python 3.10
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
       # 3️⃣ Install system dependencies
-      - name: Install dependencies
+      - name: Install system dependencies
         run: |
           sudo apt update
           sudo apt install -y git clang make cmake ninja-build wget unzip curl pkg-config
@@ -68,10 +68,11 @@ jobs:
       - name: Configure Node.js
         run: |
           cd node
+          # PATH and environment for Android cross-compiling
           export PATH=$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH
-          export API_LEVEL=21
           export TARGET_ARCH=arm
-          # Node.js configure (Python auto-detects correct version)
+          export API_LEVEL=21
+          # Node.js configure command for Android
           ./configure \
             --dest-os=android \
             --dest-cpu=arm \
@@ -84,7 +85,7 @@ jobs:
           cd node
           make -j$(nproc)
 
-      # 🔟 Upload artifact
+      # 🔟 Upload build artifact
       - name: Upload Node.js ARM32 binary
         uses: actions/upload-artifact@v4
         with:
