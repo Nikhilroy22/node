@@ -12,15 +12,13 @@ jobs:
 
     env:
       ANDROID_NDK_VERSION: r25b
-      TARGET: armv7a-linux-androideabi
+      TARGET_ARCH: arm
       API_LEVEL: 21
       NODE_VERSION: v20.0.0
-      HOST_OS: linux
-      HOST_ARCH: x64
 
     steps:
       # 1️⃣ Checkout repo
-      - name: Checkout workflow repo
+      - name: Checkout repo
         uses: actions/checkout@v4
 
       # 2️⃣ Setup Python 3.10
@@ -30,7 +28,7 @@ jobs:
           python-version: '3.10'
 
       # 3️⃣ Install system dependencies
-      - name: Install system dependencies
+      - name: Install dependencies
         run: |
           sudo apt update
           sudo apt install -y git clang make cmake ninja-build wget unzip curl pkg-config
@@ -58,7 +56,7 @@ jobs:
       - name: Apply Android patch
         run: |
           cd node
-          PATCH_PATH=../android-patches/trap-handler.h.patch
+          PATCH_PATH=./android-patches/trap-handler.h.patch
           if [ -f $PATCH_PATH ]; then
             git apply $PATCH_PATH
             echo "Patch applied successfully."
@@ -71,16 +69,14 @@ jobs:
         run: |
           cd node
           export PATH=$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH
-          export TARGET=armv7a-linux-androideabi
           export API_LEVEL=21
-          export HOST_OS=linux
-          export HOST_ARCH=x64
-          python3 configure \
+          export TARGET_ARCH=arm
+          # Node.js configure (Python auto-detects correct version)
+          ./configure \
             --dest-os=android \
             --dest-cpu=arm \
             --cross-compiling \
-            --without-inspector \
-            --openssl-no-asm
+            --without-inspector
 
       # 9️⃣ Build Node.js
       - name: Build Node.js
