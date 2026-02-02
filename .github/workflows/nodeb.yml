@@ -25,7 +25,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y git python3 clang make cmake ninja wget unzip curl
+          sudo apt install -y git python3 clang make cmake ninja-build wget unzip curl
 
       # 3️⃣ Clone Node.js source code
       - name: Clone Node.js source
