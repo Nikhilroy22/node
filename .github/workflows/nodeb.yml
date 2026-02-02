@@ -12,23 +12,25 @@ jobs:
 
     env:
       ANDROID_NDK_VERSION: r25b
+      NODE_VERSION: v20.0.0
       TARGET_ARCH: arm
       API_LEVEL: 21
-      NODE_VERSION: v20.0.0
+      DEST_CPU: arm
+      DEST_OS: android
 
     steps:
       # 1️⃣ Checkout repository
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      # 2️⃣ Setup Python 3.10 (Node.js compatible)
+      # 2️⃣ Setup Python 3.10
       - name: Setup Python 3.10
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
       # 3️⃣ Install system dependencies
-      - name: Install system dependencies
+      - name: Install dependencies
         run: |
           sudo apt update
           sudo apt install -y git clang make cmake ninja-build wget unzip curl pkg-config
@@ -68,16 +70,21 @@ jobs:
       - name: Configure Node.js
         run: |
           cd node
-          # PATH and environment for Android cross-compiling
           export PATH=$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH
-          export TARGET_ARCH=arm
-          export API_LEVEL=21
-          # Node.js configure command for Android
+          export API_LEVEL=$API_LEVEL
+          export TARGET_ARCH=$TARGET_ARCH
+          export CC="$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi21-clang"
+          export CXX="$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi21-clang++"
+          export AR="$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-ar"
+          export RANLIB="$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-ranlib"
+          # Node.js configure for Android ARM32
           ./configure \
             --dest-os=android \
             --dest-cpu=arm \
             --cross-compiling \
-            --without-inspector
+            --without-inspector \
+            --without-snapshot \
+            --openssl-no-asm
 
       # 9️⃣ Build Node.js
       - name: Build Node.js
@@ -85,7 +92,7 @@ jobs:
           cd node
           make -j$(nproc)
 
-      # 🔟 Upload build artifact
+      # 🔟 Upload artifact
       - name: Upload Node.js ARM32 binary
         uses: actions/upload-artifact@v4
         with:
