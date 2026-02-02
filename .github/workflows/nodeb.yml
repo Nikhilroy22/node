@@ -17,20 +17,24 @@ jobs:
       NODE_VERSION: v20.0.0   # Node.js version
 
     steps:
+      # 1️⃣ Checkout repo
       - name: Checkout workflow repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
+      # 2️⃣ Install required packages
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y git python3 clang make cmake ninja wget unzip
+          sudo apt install -y git python3 clang make cmake ninja wget unzip curl
 
+      # 3️⃣ Clone Node.js source code
       - name: Clone Node.js source
         run: |
           git clone --branch $NODE_VERSION https://github.com/nodejs/node.git
           cd node
           ls -la
 
+      # 4️⃣ Download Android NDK
       - name: Download Android NDK
         run: |
           wget https://dl.google.com/android/repository/android-ndk-${ANDROID_NDK_VERSION}-linux.zip
@@ -40,16 +44,19 @@ jobs:
           export PATH=$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH
           echo "$PATH" >> $GITHUB_ENV
 
+      # 5️⃣ Apply Android patch
       - name: Apply Android patch
         run: |
           cd node
-          if [ -f ../android-patches/trap-handler.h.patch ]; then
-            git apply ../android-patches/trap-handler.h.patch
+          PATCH_PATH=../android-patches/trap-handler.h.patch
+          if [ -f $PATCH_PATH ]; then
+            git apply $PATCH_PATH
             echo "Patch applied successfully."
           else
             echo "Patch file not found."
           fi
 
+      # 6️⃣ Configure Node.js for Android ARM32
       - name: Configure Node.js
         run: |
           cd node
@@ -61,13 +68,15 @@ jobs:
             --without-inspector \
             --openssl-no-asm
 
+      # 7️⃣ Build Node.js
       - name: Build Node.js
         run: |
           cd node
           make -j$(nproc)
 
+      # 8️⃣ Upload build artifact
       - name: Upload Node.js ARM32 binary
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: nodejs-android-arm32
           path: node/out/Release/node
